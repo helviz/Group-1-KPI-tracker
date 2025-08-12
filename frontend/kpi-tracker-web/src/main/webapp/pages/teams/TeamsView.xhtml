@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="title">Manage Teams</ui:define>
+
+    <ui:define name="content">
+        <h:form id="teamForm">
+            <p:growl id="growl" showDetail="true" sticky="false" life="3000"/>
+
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="New Team" icon="ui-icon-plus" actionListener="#{teamView.resetBean()}"
+                                     update=":teamDialogForm" oncomplete="PF('teamDialogWidget').show()"
+                                     styleClass="ui-button-success"/>
+                </p:toolbarGroup>
+                <p:toolbarGroup align="right">
+                    <p:inputText value="#{teamView.searchTerm}" placeholder="Search..."/>
+                    <p:commandButton icon="ui-icon-search" update="teamsTable"/>
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <p:dataTable id="teamsTable" var="team" value="#{teamView.teamLazyDataModel}"
+                         paginator="true" rows="10" lazy="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20,50,100"
+                         emptyMessage="No teams found.">
+
+                <p:column headerText="Team Name" sortBy="#{team.teamName}">
+                    <h:outputText value="#{team.teamName}"/>
+                </p:column>
+
+                <p:column headerText="Team Lead" sortBy="#{team.teamLead.username}">
+                    <h:outputText value="#{team.teamLead.fullName}"/>
+                </p:column>
+
+                <p:column headerText="Description">
+                    <h:outputText value="#{team.description}"/>
+                </p:column>
+
+                <p:column headerText="Actions" style="width:100px;text-align: center">
+                    <p:commandButton icon="ui-icon-pencil" title="Edit" update=":teamDialogForm"
+                                     oncomplete="PF('teamDialogWidget').show()" styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{team}" target="#{teamView.model}"/>
+                    </p:commandButton>
+                    <p:commandButton icon="ui-icon-trash" title="Delete" styleClass="rounded-button ui-button-danger"
+                                     actionListener="#{teamView.delete(team)}" update="teamsTable growl">
+                        <p:confirm header="Confirmation" message="Are you sure you want to delete this team?"
+                                   icon="ui-icon-alert"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                 icon="ui-icon-close"/>
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog header="Team Details" widgetVar="teamDialogWidget" modal="true"
+                  showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form id="teamDialogForm">
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+
+                    <p:outputLabel for="teamName" value="Team Name:"/>
+                    <p:inputText id="teamName" value="#{teamView.model.teamName}" required="true"/>
+
+                    <p:outputLabel for="teamLead" value="Team Lead:"/>
+                    <p:selectOneMenu id="teamLead" value="#{teamView.model.teamLead}"
+                                     converter="#{userConverter}" required="true" filter="true" filterMatchMode="contains">
+                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{teamView.users}" var="user"
+                                       itemLabel="#{user.fullName}" itemValue="#{user}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="description" value="Description:"/>
+                    <p:inputTextarea id="description" value="#{teamView.model.description}" rows="4" cols="30"/>
+
+                </p:panelGrid>
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Save" actionListener="#{teamView.persist()}"
+                                         update=":teamForm:teamsTable :teamForm:growl"
+                                         oncomplete="if (!args.validationFailed) PF('teamDialogWidget').hide();"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
