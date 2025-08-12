@@ -17,4 +17,5 @@ public class HyperLinks {
     public static final String NAME_DIALOG = "/pages/registerUser/DemoDialog.xhtml";
     public static final String DEPARTMENT_VIEW = "/pages/department/DepartmentView.xhtml?faces-redirect=true";
     public static  final String DEPARTMENT_FORM_DIALOG = "/pages/dialogs/DepartmentForm.xhtml";
+    public static final String TEAMS_VIEW = "/pages/teams/TeamsView.xhtml?faces-redirect=true";
 }
