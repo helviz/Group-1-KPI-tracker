@@ -6,143 +6,283 @@
                 xmlns:po="http://primefaces.org/california">
 
     <div class="layout-topbar">
-        <h:link outcome="/dashboard" styleClass="logo">
-            <p:graphicImage name="images/logo.png" library="california-layout"/>
-        </h:link>
+        <!-- Left section with logo and title -->
+        <div class="topbar-left">
+            <h:link outcome="/dashboard" styleClass="logo">
+                <p:graphicImage name="images/Logo-KPI.png" library="california-layout"/>
+            </h:link>
+        </div>
 
-        <a id="menu-button" href="#">
+        <!-- Mobile menu button -->
+        <a id="menu-button" href="#" class="mobile-menu-btn">
             <i class="pi pi-align-left"/>
         </a>
 
-        <a id="layout-megamenu-button" href="#">
-            <i class="pi pi-angle-down"/>
-            <span class="mega-menu-title">Mega Menu</span>
-        </a>
-        <h:form id="topbarProfileForm">
-            <ui:fragment rendered="#{guestPreferences.profileMode == 'topbar' ? true : false}">
-                <a id="topbar-menu-button" href="#">
-                    <p:graphicImage name="images/avatar.png" library="california-layout"/>
-                    <span>Pauline Harrell</span>
+        <!-- Right section with notifications and user profile -->
+        <div class="topbar-right">
+            <!-- Notifications with badge -->
+            <div class="topbar-notification">
+                <a href="#" class="notification-btn">
+                    <i class="pi pi-bell"></i>
+                    <span class="notification-badge">27</span>
                 </a>
+            </div>
 
-                <ul id="topbar-usermenu" class="usermenu usermenu-overlay">
-                    <li>
-                        <a href="#">
-                            <i class="pi pi-fw pi-user"/>
-                            <span class="topbar-item-name">Profile</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="pi pi-fw pi-cog"/>
-                            <span class="topbar-item-name">Settings</span>
-                            <i class="layout-menuitem-toggler pi pi-fw pi-angle-down"/>
-                        </a>
-                        <ul>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-palette"/>
-                                    <span>Change</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-star"/>
-                                    <span>Favorites</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-lock"/>
-                                    <span>Lock Screen</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-image"/>
-                                    <span>Wallpaper</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="pi pi-fw pi-envelope"/>
-                            <span class="topbar-item-name">Messages</span>
-                            <i class="layout-menuitem-toggler pi pi-fw pi-angle-down"/>
-                        </a>
-                        <ul>
-                            <li role="menuitem">
-                                <a href="#" class="topbar-message">
-                                    <p:graphicImage name="images/avatar1.png" library="california-layout" width="25"/>
-                                    <span>Give me a call</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#" class="topbar-message">
-                                    <p:graphicImage name="images/avatar2.png" library="california-layout" width="25"/>
-                                    <span>Reports attached</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#" class="topbar-message">
-                                    <p:graphicImage name="images/avatar3.png" library="california-layout" width="25"/>
-                                    <span>About your invoice</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#" class="topbar-message">
-                                    <p:graphicImage name="images/avatar2.png" library="california-layout" width="25"/>
-                                    <span>Meeting today</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#" class="topbar-message">
-                                    <p:graphicImage name="images/avatar4.png" library="california-layout" width="25"/>
-                                    <span>Out of office</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="pi pi-fw pi-bell"/>
-                            <span class="topbar-item-name">Notifications</span>
-                            <i class="layout-menuitem-toggler pi pi-fw pi-angle-down"/>
-                        </a>
-                        <ul>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-sliders-h"/>
-                                    <span>Pending tasks</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-calendar"/>
-                                    <span>Meeting today</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-download"/>
-                                    <span>Download</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="#">
-                                    <i class="pi pi-fw pi-ticket"/>
-                                    <span>Book flight</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </ui:fragment>
-        </h:form>
-        <a id="right-sidebar-button" href="#">
-            <i class="pi pi-ellipsis-v"/>
-        </a>
+            <!-- User profile section -->
+            <h:form id="topbarProfileForm">
+                <div class="topbar-profile">
+                    <a id="topbar-profile-button" href="#" class="profile-btn">
+                        <span class="user-info">
+                            <span class="user-name">Admin Cyiza</span>
+                            <i class="pi pi-angle-down"></i>
+                        </span>
+                        <p:graphicImage name="images/avatar.png" library="california-layout" styleClass="user-avatar"/>
+                    </a>
+
+                    <!-- Dropdown menu -->
+                    <ul id="topbar-usermenu" class="usermenu usermenu-overlay">
+                        <li>
+                            <h:commandLink action="#{profileView.getViewPath}">
+                                <i class="pi pi-fw pi-user"/>
+                                <span class="topbar-item-name">Profile</span>
+                                <f:setPropertyActionListener target="#{profileView.model}"
+                                                             value="#{dashboard.loggedinUser}"/>
+                            </h:commandLink>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="pi pi-fw pi-cog"/>
+                                <span class="topbar-item-name">Settings</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#{request.contextPath}/ServiceLogout">
+                                <i class="pi pi-fw pi-sign-out"/>
+                                <span class="topbar-item-name">Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </h:form>
+        </div>
     </div>
+
+    <style>
+        .layout-topbar {
+            background: #2563eb;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .app-title {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            text-decoration: none;
+            padding: 0.5rem;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .topbar-notification {
+            position: relative;
+        }
+
+        .notification-btn {
+            color: white;
+            font-size: 1.25rem;
+            text-decoration: none;
+            padding: 0.5rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            color: #e5e7eb;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #dc2626;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .topbar-profile {
+            position: relative;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .usermenu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+            list-style: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .topbar-profile:hover .usermenu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .usermenu li {
+            margin: 0;
+        }
+
+        .usermenu li a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .usermenu li a:hover {
+            background-color: #f3f4f6;
+            color: #2563eb;
+        }
+
+        .topbar-item-name {
+            font-weight: 500;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .layout-topbar {
+                padding: 0 1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .app-title {
+                display: none;
+            }
+
+            .topbar-right {
+                gap: 1rem;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .user-info i {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 32px;
+            }
+
+            .topbar-right {
+                gap: 0.5rem;
+            }
+
+            .notification-badge {
+                width: 18px;
+                height: 18px;
+                font-size: 0.7rem;
+            }
+
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
 
 </ui:composition>
