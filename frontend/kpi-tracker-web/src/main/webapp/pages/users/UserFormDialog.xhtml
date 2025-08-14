@@ -81,6 +81,7 @@
                                           converter="departmentConverter"
                                           layout="lineDirection">
                             <f:selectItems value="#{userFormDialog.listOfDepartments}" var="department" itemLabel="#{department.name}" itemValue="#{department}"/>
+                            <p:ajax event="change" listener="#{userFormDialog.setSelectedDepartment(department)}" />
                         </p:selectOneRadio>
                     </div>
                 </div>
