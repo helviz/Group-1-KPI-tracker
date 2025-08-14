@@ -7,6 +7,8 @@ import org.sers.webutils.model.exception.ValidationFailedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service("departmentService") // It's good practice to name the Spring bean
 @Transactional
 public class DepartmentServiceImpl extends GenericServiceImpl<Department> implements DepartmentService {
@@ -25,6 +27,16 @@ public class DepartmentServiceImpl extends GenericServiceImpl<Department> implem
     @Override
     public boolean isDeletable(Department instance) throws OperationFailedException {
         return true;
+    }
+
+    @Override
+    public List<Department> getAllDepartments() {
+        return super.getAllInstances();
+    }
+
+    @Override
+    public Department getDepartmentById(String id) {
+        return super.getInstanceByID(id);
     }
 
 
