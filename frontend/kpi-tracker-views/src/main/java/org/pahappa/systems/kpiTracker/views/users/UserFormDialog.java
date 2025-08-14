@@ -79,6 +79,10 @@ public class UserFormDialog extends DialogForm<User> {
     @Override
     public void setFormProperties() {
         super.setFormProperties();
+
+        // refresh departments every time the form is opened
+        this.listOfDepartments = departmentService.getAllDepartments();
+
         if(super.model != null)
 //            setEdit(true);
         this.userRoles = new HashSet<>(userService.getRoles(super.model, 0, 0));
