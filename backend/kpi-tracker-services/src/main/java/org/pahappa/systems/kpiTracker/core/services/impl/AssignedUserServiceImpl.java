@@ -173,13 +173,17 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
     @Override
     @Transactional(readOnly = true)
     public Department getDepartmentForUser(User user) {
-        if (user == null) {
-            return null;
-        }
+        if (user == null) return null;
 
         AssignedUser assignedUser = findAssignedUserByUser(user);
-        return assignedUser != null ? assignedUser.getDepartment() : null;
+        if (assignedUser != null && assignedUser.getDepartment() != null) {
+            // Force initialization of lazy proxy
+            assignedUser.getDepartment().getName();
+            return assignedUser.getDepartment();
+        }
+        return null;
     }
+
 
     // ---------------------------
     // Batch Operations
