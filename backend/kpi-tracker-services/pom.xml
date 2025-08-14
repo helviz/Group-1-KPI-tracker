@@ -9,7 +9,7 @@
 	<name>kpi-tracker-services</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<jackson.version>2.12.1</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
 	</properties>
 	<dependencies>	
 		<!-- Custom Web Utils Dependencies -->
