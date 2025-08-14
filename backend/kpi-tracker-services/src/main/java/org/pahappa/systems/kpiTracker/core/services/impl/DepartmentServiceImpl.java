@@ -1,9 +1,11 @@
 package org.pahappa.systems.kpiTracker.core.services.impl;
 
+import org.pahappa.systems.kpiTracker.core.dao.DepartmentDao;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.exception.ValidationFailedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Service("departmentService") // It's good practice to name the Spring bean
 @Transactional
 public class DepartmentServiceImpl extends GenericServiceImpl<Department> implements DepartmentService {
+    @Autowired
+    private DepartmentDao departmentDao;
 
 
     @Override
@@ -36,7 +40,7 @@ public class DepartmentServiceImpl extends GenericServiceImpl<Department> implem
 
     @Override
     public Department getDepartmentById(String id) {
-        return super.getInstanceByID(id);
+        return this.departmentDao.searchUniqueByPropertyEqual("id", id);
     }
 
 
