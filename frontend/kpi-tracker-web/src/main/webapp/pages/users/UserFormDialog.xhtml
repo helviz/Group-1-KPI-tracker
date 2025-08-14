@@ -74,6 +74,17 @@
                     </div>
                 </div>
 
+                <div class="ui-col-12 ui-md-12">
+                    <h5>Assign User To a Department</h5>
+                    <div>
+                        <p:selectOneRadio id="department-line" value="#{userFormDialog.selectedDepartment}"
+                                          converter="departmentConverter"
+                                          layout="lineDirection">
+                            <f:selectItems value="#{userFormDialog.listOfDepartments}" var="department" itemLabel="#{department.name}" itemValue="#{department}"/>
+                        </p:selectOneRadio>
+                    </div>
+                </div>
+
                 <hr />
 
                 <div class="ui-col-12 ui-md-6">
