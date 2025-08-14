@@ -27,9 +27,8 @@ public class Department extends BaseEntity {
     @Column(length = 100, nullable = false, unique = true) // DB constraints
     private String name;
 
-    @OneToOne
-    @JoinColumn(name = "department_lead_user_id")
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_Lead " ,referencedColumnName = "id")
     private User departmentLead;
 
     @Size(max = 255, message = "Description must not exceed 255 characters")

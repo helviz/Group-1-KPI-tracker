@@ -7,13 +7,14 @@ import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.security.UiUtils;
+import org.pahappa.systems.kpiTracker.views.dialogs.MessageComposer;
 import org.pahappa.systems.kpiTracker.views.users.UsersView;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.sers.webutils.client.views.presenters.PaginatedTableView;
 import org.sers.webutils.client.views.presenters.ViewPath;
 import org.sers.webutils.model.RecordStatus;
-import org.sers.webutils.model.exception.OperationFailedException;
+import org.sers.webutils.model.security.User;
 import org.sers.webutils.model.utils.SearchField;
 import org.sers.webutils.server.core.service.excel.reports.ExcelReport;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
@@ -23,8 +24,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @ManagedBean(name ="departmentView")
 @Getter
@@ -65,15 +65,45 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
 
     }
 
-    public void deleteSelectedDepartment(Department department) {
+    // 1. ADD THIS PROPERTY
+    private Department selectedDepartment;
+
+    // 2. MODIFY YOUR DELETE METHOD
+    // It no longer takes a parameter.
+    public void deleteSelectedDepartment() {
         try {
-            departmentService.deleteInstance(seletedDepartment);
-            UiUtils.showMessageBox("Action successful", "User has been deactivated.");
-        } catch (OperationFailedException ex) {
-            UiUtils.ComposeFailure("Action failed", ex.getLocalizedMessage());
-            Logger.getLogger(UsersView.class.getName()).log(Level.SEVERE, null, ex);
+            // It now uses the 'selectedDepartment' property that was set by the f:setPropertyActionListener
+            if (this.selectedDepartment != null) {
+                departmentService.deleteInstance(this.selectedDepartment);
+                // Display success message
+                MessageComposer.info("Success", "Department '" + this.selectedDepartment.getName() + "' has been deleted.");
+                // Reset the selection after deletion
+                this.selectedDepartment = null;
+                // Reload your data table
+                this.reloadFilterReset();
+            } else {
+                MessageComposer.error("Error", "No department was selected for deletion.");
+            }
+        } catch (Exception e) {
+            MessageComposer.error("Deletion Failed", e.getMessage());
+            // It's a good idea to log the full exception
+            e.printStackTrace();
         }
     }
+
+
+
+
+//    public void deleteSelectedDepartment(Department department) {
+//        try {
+//            departmentService.deleteInstance(seletedDepartment);
+//            UiUtils.showMessageBox("Action successful", "User has been deactivated.");
+//            reloadFilterReset();
+//        } catch (OperationFailedException ex) {
+//            UiUtils.ComposeFailure("Action failed", ex.getLocalizedMessage());
+//            Logger.getLogger(UsersView.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 
     @Override
     public List<ExcelReport> getExcelReportModels() {

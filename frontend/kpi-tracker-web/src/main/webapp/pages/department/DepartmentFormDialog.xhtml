@@ -4,47 +4,69 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/pages/californiatemplate/dialog-template.xhtml">
-    <ui:define name="head">
-        <style type="text/css">
-            .capitalized {
-                text-transform: capitalize;
-            }
-        </style>
-    </ui:define>
+
     <ui:define name="content">
-        <title>Add user</title>
-        <h:form id="userFormDialog" style="height: 450px" styleClass="card">
-            <div class="p-grid ui-fluid" style="display:flex">
-                <div class="ui-col-12 ui-md-6">
-                    <h5>First name</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputText value="#{departmentFormDialog.model.name}" required="true" />
-                    </div>
+        <title>Department Details</title>
+
+        <h:form id="departmentFormDialog">
+
+            <!-- 'formgrid' and 'grid' are from a utility CSS framework like PrimeFlex -->
+            <div class="formgrid grid">
+
+                <!-- Field 1: Department Name -->
+                <div class="field col-12">
+                    <p:outputLabel for="deptName" value="Department Name" />
+                    <p:inputText id="deptName"
+                                 value="#{departmentFormDialog.model.name}"
+                                 required="true"
+                                 placeholder="e.g. Sales"
+                                 styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
+                    <p:message for="deptName" />
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Last name</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputText value="#{departmentFormDialog.model.description}" required="true" />
-                    </div>
+                <!--
+                  NEW FIELD: Department Lead
+                  This adds the dropdown to select a user.
+                -->
+                <div class="field col-12">
+                    <p:outputLabel for="deptLead" value="Department Lead" />
+                    <p:selectOneMenu id="deptLead"
+                                     value="#{departmentFormDialog.model.departmentLead}"
+                                     converter="userConverter"
+                                     filter="true"
+                                     filterMatchMode="contains"
+                                     styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+
+                        <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{departmentFormDialog.availableUsers}" var="user"
+                                       itemLabel="#{user.fullName}" itemValue="#{user}" />
+                    </p:selectOneMenu>
+                    <p:message for="deptLead" />
+                </div>
+                <!-- End of New Field -->
+
+                <!-- Field 3: Description -->
+                <div class="field col-12">
+                    <p:outputLabel for="deptDesc" value="Description" />
+                    <p:inputTextarea id="deptDesc"
+                                     value="#{departmentFormDialog.model.description}"
+                                     rows="4"
+                                     styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
+                    <p:message for="deptDesc" />
                 </div>
 
-                <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
-                    <div class="p-grid p-justify-end">
-                        <div class="p-col-2">
-                            <p:commandButton value="Cancel"
-                                             validateClient="false"
-                                             process="@this"
-                                             action="#{departmentFormDialog.hide}"
-                                             styleClass="ui-button-outlined ui-button-help" />
-                        </div>
-                        <div class="p-col-2" >
-                            <p:commandButton value="Save"
-                                             process="@form"
-                                             actionListener="#{departmentFormDialog.save}"
-                                             update="@form" validateClient="true" />
-                        </div>
-                    </div>
+                <!-- Button Bar -->
+                <div class="field col-12 p-d-flex p-jc-end p-mt-4">
+                    <p:commandButton value="Cancel"
+                                     immediate="true"
+                                     process="@this"
+                                     actionListener="#{departmentFormDialog.hide}"
+                                     styleClass="ui-button-outlined ui-button-danger p-mr-2"/>
+
+                    <p:commandButton value="Save Department"
+                                     process="@form"
+                                     actionListener="#{departmentFormDialog.save}"
+                                     update="@form" />
                 </div>
             </div>
         </h:form>

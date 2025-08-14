@@ -57,6 +57,13 @@
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
+                                                <h:outputText value="Dpt Lead" />
+                                            </f:facet>
+                                            <!-- IMPORTANT: Check if the lead exists to avoid a NullPointerException on the page -->
+                                            <h:outputText value="#{model.departmentLead != null ? model.departmentLead.fullName : 'No DptLead assigned yet'}" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
                                                 <h:outputText value="Description" />
                                             </f:facet>
                                             <h:outputText value="#{model.description}" />
@@ -65,7 +72,7 @@
                                         <p:column headerText="Action" width="140" exportable="false"
                                                   style="text-align: center">
                                             <p:commandButton process="@this" icon="fa fa-edit"
-                                                             styleClass="ui-button-help" immediate="true" rendered="true"
+                                                              immediate="true" rendered="true"
                                                              actionListener="#{departmentFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
                                                                              target="#{departmentFormDialog.model}" />
@@ -75,10 +82,14 @@
                                             <p:commandButton icon="fa fa-trash" title="Delete"
                                                              styleClass="ui-button-danger"
                                                              style="margin-left: 5px"
-                                                             actionListener="#{departmentView.deleteSelectedDepartment(model)}"
+                                                             actionListener="#{departmentView.deleteSelectedDepartment()}"
                                                              update="departmentView">
+
+                                                <!-- THIS IS THE FIX: Set the selected department before the dialog shows -->
+                                                <f:setPropertyActionListener value="#{model}" target="#{departmentView.selectedDepartment}" />
+
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete a department. Do you wish to continue?"
+                                                           message="You are about to delete department '#{model.name}'. Are you sure?"
                                                            icon="ui-icon-alert" />
                                             </p:commandButton>
 
