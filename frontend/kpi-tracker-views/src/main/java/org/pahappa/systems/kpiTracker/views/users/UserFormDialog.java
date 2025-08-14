@@ -59,14 +59,14 @@ public class UserFormDialog extends DialogForm<User> {
     public void resetModal() {
         super.resetModal();
         super.model = new User();
-        setEdit(false);
+//        setEdit(false);
     }
 
     @Override
     public void setFormProperties() {
         super.setFormProperties();
         if(super.model != null)
-            setEdit(true);
+//            setEdit(true);
         this.userRoles = new HashSet<>(userService.getRoles(super.model, 0, 0));
     }
 }

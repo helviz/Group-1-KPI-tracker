@@ -5,6 +5,8 @@ import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "teams")
@@ -15,6 +17,7 @@ public class Team extends BaseEntity {
     private User teamLead;
     private String description;
     private Department department;
+    private Set<User> members = new HashSet<>();
 
     @Column(name = "team_name", nullable = false, unique = true)
     public String getTeamName() {
@@ -54,6 +57,21 @@ public class Team extends BaseEntity {
     public void setDepartment(Department department) {
         this.department = department;
     }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "team_members",
+            joinColumns = {@JoinColumn(name = "team_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    public Set<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<User> members) {
+        this.members = members;
+    }
+
 
     @Override
     public String toString() {
