@@ -34,4 +34,29 @@ public class Department extends BaseEntity {
     @Size(max = 255, message = "Description must not exceed 255 characters")
     private String description;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Department that = (Department) o;
+
+        // If both entities are persisted, compare IDs
+        if (!this.isNew() && !that.isNew()) {
+            return getId().equals(that.getId());
+        }
+
+        // Fallback: compare names for new (transient) entities
+        return name != null ? name.equals(that.name) : that.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        if (!isNew()) {
+            return getId().hashCode();
+        }
+        return name != null ? name.hashCode() : 0;
+    }
+
+
 }

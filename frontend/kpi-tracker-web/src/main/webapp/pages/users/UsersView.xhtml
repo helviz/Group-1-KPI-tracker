@@ -161,6 +161,13 @@
 
                                         <p:column>
                                             <f:facet name="header">
+                                                <h:outputText value="Department" />
+                                            </f:facet>
+                                            <h:outputText value="#{usersView.getUserAssignedDepartment(model.id)}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <f:facet name="header">
                                                 <h:outputText style="text-align: center" value="Created by" />
                                             </f:facet>
                                             <h:outputText value="#{model.createdBy}" />

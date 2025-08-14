@@ -3,6 +3,8 @@ package org.pahappa.systems.kpiTracker.views.users;
 import com.googlecode.genericdao.search.Search;
 import lombok.Getter;
 import lombok.Setter;
+import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
+import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.security.UiUtils;
 import org.pahappa.systems.kpiTracker.utils.GeneralSearchUtils;
@@ -56,10 +58,14 @@ public class UsersView extends PaginatedTableView<User, UsersView, UsersView> {
     private Set<Role> selectedRolesList = new HashSet<>();
     private List<SearchField> searchFields, selectedSearchFields;
 
+    private AssignedUserService assignedUserService;
+
     @PostConstruct
     public void init() {
         userService = ApplicationContextProvider.getBean(UserService.class);
         roleService = ApplicationContextProvider.getBean(RoleService.class);
+        assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
+
 
         this.rolesList = roleService.getRoles();
         this.genders = Arrays.asList(Gender.values());
@@ -114,4 +120,20 @@ public class UsersView extends PaginatedTableView<User, UsersView, UsersView> {
     public String getFileName() {
         return null;
     }
+
+    public String getUserAssignedDepartment(String userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) return "No Department Assigned";
+
+        // fetch the department eagerly
+        Department dept = assignedUserService.getDepartmentForUser(user);
+        if (dept == null) return "No Department Assigned";
+
+        // force initialization before returning
+        dept.getName(); // touch it to make sure it’s loaded
+        return dept.getName();
+    }
+
+
+
 }
