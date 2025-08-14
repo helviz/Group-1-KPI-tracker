@@ -10,226 +10,15 @@
 
     <ui:define name="head">
         <h:outputScript name="js/chart.js" library="demo"/>
-        <style>
-            .dashboard-card {
-                background: #fff;
-                border-radius: 12px;
-                padding: 1.5rem;
-                border: 1px solid #e2e8f0;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                height: 100%;
-                transition: all 0.3s ease;
-            }
-
-            .dashboard-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                transform: translateY(-2px);
-            }
-
-            .metric-value {
-                font-size: 2.5rem;
-                font-weight: 700;
-                margin: 0.5rem 0;
-                color: #1a202c;
-            }
-
-            .metric-label {
-                color: #64748b;
-                font-size: 1rem;
-                font-weight: 500;
-                margin-bottom: 0.5rem;
-            }
-
-            .metric-change {
-                font-size: 0.875rem;
-                color: #64748b;
-                display: flex;
-                align-items: center;
-                gap: 0.25rem;
-            }
-
-            .metric-change.positive {
-                color: #16a34a;
-            }
-
-            .metric-change.negative {
-                color: #dc2626;
-            }
-
-            .metric-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                color: white;
-                margin-bottom: 1rem;
-            }
-
-            .icon-goals { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-            .icon-users { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-            .icon-kpis { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-            .icon-overdue { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-            .icon-achieved { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
-            .icon-pending { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-            .icon-rewards { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
-
-            .activity-feed {
-                background: #fff;
-                border-radius: 12px;
-                border: 1px solid #e2e8f0;
-                overflow: hidden;
-            }
-
-            .activity-header {
-                padding: 1.5rem;
-                border-bottom: 1px solid #e2e8f0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .activity-item {
-                padding: 1rem 1.5rem;
-                border-bottom: 1px solid #f1f5f9;
-                display: flex;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .activity-item:last-child {
-                border-bottom: none;
-            }
-
-            .activity-dot {
-                width: 12px;
-                height: 12px;
-                background: #3b82f6;
-                border-radius: 50%;
-                flex-shrink: 0;
-                margin-top: 0.25rem;
-            }
-
-            .activity-content h6 {
-                margin: 0 0 0.25rem 0;
-                font-weight: 600;
-                color: #1a202c;
-            }
-
-            .activity-content p {
-                margin: 0;
-                color: #64748b;
-                font-size: 0.875rem;
-            }
-
-            .department-performance {
-                background: #fff;
-                border-radius: 12px;
-                border: 1px solid #e2e8f0;
-                padding: 1.5rem;
-            }
-
-            .department-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 1rem 0;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .department-item:last-child {
-                border-bottom: none;
-            }
-
-            .department-info {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-            }
-
-            .department-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                flex-shrink: 0;
-            }
-
-            .dept-tech { background: #16a34a; }
-            .dept-sales { background: #f59e0b; }
-            .dept-partnership { background: #a855f7; }
-            .dept-hr { background: #dc2626; }
-
-            .department-name {
-                font-weight: 500;
-                color: #1a202c;
-            }
-
-            .performance-info {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .progress-bar {
-                width: 100px;
-                height: 8px;
-                background: #f1f5f9;
-                border-radius: 4px;
-                overflow: hidden;
-            }
-
-            .progress-fill {
-                height: 100%;
-                border-radius: 4px;
-                transition: width 0.3s ease;
-            }
-
-            .progress-92 { width: 92%; background: #16a34a; }
-            .progress-42 { width: 42%; background: #f59e0b; }
-            .progress-95 { width: 95%; background: #a855f7; }
-            .progress-32 { width: 32%; background: #dc2626; }
-
-            .performance-percentage {
-                font-weight: 600;
-                color: #1a202c;
-                min-width: 40px;
-            }
-
-            .section-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-            }
-
-            .section-title {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: #1a202c;
-                margin: 0;
-            }
-
-            .view-all-link {
-                color: #3b82f6;
-                text-decoration: none;
-                font-weight: 500;
-            }
-
-            .view-all-link:hover {
-                color: #2563eb;
-                text-decoration: underline;
-            }
-        </style>
+        <h:outputStylesheet name="demo/css/dashboard.css"/>
     </ui:define>
 
     <ui:define name="content">
         <h:form id="dashboardForm">
-            <div class="dashboard p-4">
+            <div class="dashboard p-4" style="background-color: #f8f9fa;">
                 <!-- Metrics Cards Row -->
-                <div class="p-grid p-mb-4">
-                    <div class="p-col-12 p-md-6 p-lg-3 p-mb-3">
+                <div class="grid mb-4">
+                    <div class="col-12 md:col-6 lg:col-3 mb-3">
                         <div class="dashboard-card">
                             <div class="metric-icon icon-goals">
                                 <i class="pi pi-target"></i>
@@ -243,7 +32,7 @@
                         </div>
                     </div>
 
-                    <div class="p-col-12 p-md-6 p-lg-3 p-mb-3">
+                    <div class="col-12 md:col-6 lg:col-3 mb-3">
                         <div class="dashboard-card">
                             <div class="metric-icon icon-users">
                                 <i class="pi pi-users"></i>
@@ -257,7 +46,7 @@
                         </div>
                     </div>
 
-                    <div class="p-col-12 p-md-6 p-lg-3 p-mb-3">
+                    <div class="col-12 md:col-6 lg:col-3 mb-3">
                         <div class="dashboard-card">
                             <div class="metric-icon icon-kpis">
                                 <i class="pi pi-chart-line"></i>
@@ -271,7 +60,7 @@
                         </div>
                     </div>
 
-                    <div class="p-col-12 p-md-6 p-lg-3 p-mb-3">
+                    <div class="col-12 md:col-6 lg:col-3 mb-3">
                         <div class="dashboard-card">
                             <div class="metric-icon icon-overdue">
                                 <i class="pi pi-exclamation-triangle"></i>
