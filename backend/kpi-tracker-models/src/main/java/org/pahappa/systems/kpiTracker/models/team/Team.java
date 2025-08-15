@@ -6,6 +6,7 @@ import org.sers.webutils.model.security.User;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -29,8 +30,8 @@ public class Team extends BaseEntity {
     }
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "team_lead_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "team_lead_id")
     public User getTeamLead() {
         return teamLead;
     }
@@ -48,7 +49,7 @@ public class Team extends BaseEntity {
         this.description = description;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "department_id")
     public Department getDepartment() {
         return department;
@@ -58,7 +59,7 @@ public class Team extends BaseEntity {
         this.department = department;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "team_members",
             joinColumns = {@JoinColumn(name = "team_id")},
@@ -80,12 +81,15 @@ public class Team extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return super.getId() != null ? this.getClass().hashCode() + super.getId().hashCode() : super.hashCode();
+        // Persisted entities are identified by their ID
+        return Objects.hash(super.getId());
     }
 
     @Override
-    public boolean equals(Object object) {
-        return object instanceof Team && (super.getId() != null) ? super.getId().equals(((Team) object).getId())
-                : (object == this);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Team team = (Team) o;
+        return super.getId() != null && Objects.equals(super.getId(), team.getId());
     }
 }
