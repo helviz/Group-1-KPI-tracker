@@ -5,277 +5,107 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/pages/californiatemplate/template.xhtml">
 
-    <ui:define name="title">Team Details - #{teamView.selectedTeam.teamName}</ui:define>
-
     <ui:define name="content">
-        <h:form id="teamDetailsForm">
-            <p:growl id="growl" showDetail="true" sticky="false" life="3000"/>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <h:form id="teamsView" enctype="multipart/form-data">
 
-            <!-- Breadcrumb -->
-            <div class="breadcrumb-container" style="margin-bottom: 20px;">
-                <p:commandLink value="← Back to Teams" action="#{teamView.backToTeams}"
-                               styleClass="back-link" style="color: #666; text-decoration: none;"/>
-            </div>
+                    <ui:fragment>
+                        <div class="p-grid table-demo">
+                            <div class="p-col-12">
+                                <div class="card">
+                                    <p:dataTable id="teamsTable" var="model" value="#{teamView.dataModels}"
+                                                 widgetVar="teamsTable"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                 paginator="true" lazy="true" rows="20"
+                                                 emptyMessage="No teams found."
+                                                 paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                                 rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
 
-            <!-- Department Header -->
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <i class="ui-icon ui-icon-folder" style="margin-right: 10px; color: #4A90E2;"></i>
-                <h2 style="margin: 0; color: #4A90E2;">#{teamView.selectedTeam.department.name}</h2>
-            </div>
+                                        <f:facet name="header">
+                                            <div class="p-d-flex p-jc-between">
+                                                <div>
+                                                    <span class="table-header-text">Teams Management</span>
+                                                </div>
+                                                <div>
+                                                    <div class="p-d-flex p-flex-wrap">
+                                                        <div class="p-mr-2 p-mb-2">
+                                                            <p:commandButton value="Add Team" icon="fa fa-plus" process="@this"
+                                                                             actionListener="#{teamFormDialog.show}">
+                                                                <f:setPropertyActionListener value="#{null}"
+                                                                                             target="#{teamFormDialog.model}" />
+                                                                <p:ajax event="dialogReturn" listener="#{teamView.reloadFilterReset}" update="teamsTable" />
+                                                            </p:commandButton>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </f:facet>
 
-            <!-- Main Content Layout -->
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                                        <p:column width="30" headerText="No.">
+                                            <h:outputText value="#{row + 1}" />
+                                        </p:column>
 
-                <!-- Left Panel - Team Details -->
-                <p:panel header="Details" styleClass="team-details-panel">
-                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
-                        <h:outputText value="Lead:" style="font-weight: bold;"/>
-                        <h:outputText value="#{teamView.selectedTeam.teamLead.fullName}"/>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Team Name" />
+                                            </f:facet>
+                                            <h:outputText value="#{model.teamName}" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Department" />
+                                            </f:facet>
+                                            <h:outputText value="#{model.department.name}" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Team Lead" />
+                                            </f:facet>
+                                            <h:outputText value="#{model.teamLead != null ? model.teamLead.fullName : 'No Team Lead'}" />
+                                        </p:column>
+                                        <p:column headerText="Description">
+                                            <h:outputText value="#{model.description}" />
+                                        </p:column>
 
-                        <h:outputText value="" style="grid-column: 1 / -1; margin: 10px 0;"/>
-                        <h:outputText value="#{teamView.selectedTeam.description}"
-                                      style="grid-column: 1 / -1; line-height: 1.5;"/>
-                    </p:panelGrid>
+                                        <p:column headerText="Action" width="140" exportable="false"
+                                                  style="text-align: center">
+                                            <p:commandButton process="@this" icon="fa fa-edit"
+                                                             immediate="true" rendered="true"
+                                                             actionListener="#{teamFormDialog.show}" >
+                                                <f:setPropertyActionListener value="#{model}"
+                                                                             target="#{teamFormDialog.model}" />
+                                                <p:ajax event="dialogReturn" update="teamsTable" />
+                                            </p:commandButton>
 
-                    <p:commandButton value="Edit Details" icon="ui-icon-pencil"
-                                     styleClass="ui-button-info" style="margin-top: 15px;"
-                                     actionListener="#{teamView.openEditDialog}"
-                                     update=":editTeamForm" oncomplete="PF('editTeamDialog').show()"/>
-                </p:panel>
+                                            <p:commandButton icon="fa fa-trash" title="Delete"
+                                                             styleClass="ui-button-danger"
+                                                             style="margin-left: 5px"
+                                                             actionListener="#{teamView.deleteSelectedTeam()}"
+                                                             update="teamsView">
+                                                <f:setPropertyActionListener value="#{model}" target="#{teamView.selectedTeam}" />
+                                                <p:confirm header="Confirmation"
+                                                           message="You are about to delete team '#{model.teamName}'. Are you sure?"
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
 
-                <!-- Right Panel - Team Members and Actions -->
-                <div>
-                    <!-- Team Header with Add Team Button -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0;">Teams(#{teamView.departmentTeams.size()})</h3>
-                        <p:commandButton value="+ Add team" icon="ui-icon-plus"
-                                         styleClass="ui-button-success"
-                                         actionListener="#{teamView.openNewTeamDialog}"
-                                         update=":newTeamForm" oncomplete="PF('newTeamDialog').show()"/>
-                    </div>
+                                        </p:column>
 
-                    <!-- Teams List -->
-                    <p:dataTable id="teamsTable" var="team" value="#{teamView.departmentTeams}"
-                                 emptyMessage="No teams found." styleClass="modern-table">
-
-                        <p:column headerText="Team">
-                            <div style="display: flex; flex-direction: column;">
-                                <h:outputText value="#{team.teamName}" style="font-weight: bold; color: #4A90E2;"/>
-                                <h:outputText value="Lead: #{team.teamLead.fullName} • #{team.members.size()} Members"
-                                              style="font-size: 0.9em; color: #666;"/>
+                                    </p:dataTable>
+                                </div>
                             </div>
-                        </p:column>
+                        </div>
+                    </ui:fragment>
 
-                        <p:column headerText="Actions" style="width:120px;text-align: right">
-                            <p:commandLink value="View Details" styleClass="view-details-link"
-                                           action="#{teamView.viewTeamDetails(team)}"
-                                           style="color: #4A90E2; text-decoration: none;"/>
-                        </p:column>
-                    </p:dataTable>
-
-                    <!-- Members without team section -->
-                    <div style="margin-top: 30px;">
-                        <h3>Members without a team(#{teamView.membersWithoutTeam.size()})</h3>
-
-                        <p:dataTable id="unassignedTable" var="member" value="#{teamView.membersWithoutTeam}"
-                                     emptyMessage="All members are assigned to teams." styleClass="modern-table">
-
-                            <p:column headerText="Member">
-                                <h:outputText value="#{member.fullName}"/>
-                            </p:column>
-
-                            <p:column headerText="Actions" style="width:120px;text-align: right">
-                                <p:commandLink value="Assign team" styleClass="assign-link"
-                                               actionListener="#{teamView.openAssignDialog(member)}"
-                                               update=":assignTeamForm" oncomplete="PF('assignTeamDialog').show()"
-                                               style="color: #4A90E2; text-decoration: none;"/>
-                            </p:column>
-                        </p:dataTable>
-                    </div>
-                </div>
+                    <p:confirmDialog global="true">
+                        <p:commandButton value="Yes" type="button"
+                                         styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
+                        <p:commandButton value="No" type="button"
+                                         styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+                    </p:confirmDialog>
+                </h:form>
             </div>
-        </h:form>
-
-        <!-- Team Details Dialog -->
-        <p:dialog header="#{teamView.selectedTeamForDetails.teamName} Team Details"
-                  widgetVar="teamDetailsDialog" modal="true" width="800"
-                  showEffect="fade" hideEffect="fade" resizable="false">
-            <h:form id="teamDetailsDialogForm">
-
-                <div style="margin-bottom: 20px;">
-                    <h:outputText value="#{teamView.selectedTeamForDetails.description}"
-                                  style="display: block; margin-bottom: 15px;"/>
-                </div>
-
-                <h4>Team Members(#{teamView.selectedTeamForDetails.members.size()})</h4>
-
-                <p:dataTable id="membersTable" var="member" value="#{teamView.selectedTeamForDetails.members}"
-                             emptyMessage="No team members." styleClass="members-table">
-
-                    <p:column headerText="No">
-                        <h:outputText value="#{teamView.getMemberIndex(member)}."/>
-                    </p:column>
-
-                    <p:column headerText="Name">
-                        <h:outputText value="#{member.fullName}"/>
-                        <h:outputText value=" (Lead)" rendered="#{member eq teamView.selectedTeamForDetails.teamLead}"
-                                      style="color: #4A90E2; font-weight: bold;"/>
-                    </p:column>
-
-                    <p:column headerText="Actions" style="width:100px;text-align: center">
-                        <p:commandButton icon="ui-icon-pencil" title="Edit"
-                                         styleClass="ui-button-info ui-button-sm"/>
-                        <p:commandButton icon="ui-icon-trash" title="Remove from team"
-                                         styleClass="ui-button-danger ui-button-sm"
-                                         actionListener="#{teamView.removeMemberFromTeam(member)}"
-                                         update="membersTable :teamDetailsForm:teamsTable :teamDetailsForm:growl">
-                            <p:confirm header="Confirmation"
-                                       message="Are you sure you want to remove #{member.fullName} from this team?"
-                                       icon="ui-icon-alert"/>
-                        </p:commandButton>
-                    </p:column>
-                </p:dataTable>
-
-                <p:toolbar style="margin-top: 20px;">
-                    <p:toolbarGroup>
-                        <p:commandButton value="Delete Team" icon="ui-icon-trash"
-                                         styleClass="ui-button-danger"
-                                         actionListener="#{teamView.deleteTeam(teamView.selectedTeamForDetails)}"
-                                         update=":teamDetailsForm:teamsTable :teamDetailsForm:growl"
-                                         oncomplete="PF('teamDetailsDialog').hide()">
-                            <p:confirm header="Confirmation"
-                                       message="Are you sure you want to delete this team? This action cannot be undone."
-                                       icon="ui-icon-alert"/>
-                        </p:commandButton>
-                    </p:toolbarGroup>
-                    <p:toolbarGroup align="right">
-                        <p:commandButton value="Cancel" styleClass="ui-button-secondary"
-                                         onclick="PF('teamDetailsDialog').hide(); return false;"/>
-                        <p:commandButton value="Save Changes" styleClass="ui-button-success"
-                                         actionListener="#{teamView.saveTeamChanges}"
-                                         update=":teamDetailsForm:teamsTable :teamDetailsForm:growl"
-                                         oncomplete="if (!args.validationFailed) PF('teamDetailsDialog').hide();"/>
-                    </p:toolbarGroup>
-                </p:toolbar>
-            </h:form>
-        </p:dialog>
-
-        <!-- New Team Dialog -->
-        <p:dialog header="Add New team to #{teamView.selectedDepartment.name}"
-                  widgetVar="newTeamDialog" modal="true" width="600"
-                  showEffect="fade" hideEffect="fade" resizable="false">
-            <h:form id="newTeamForm">
-                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
-
-                    <p:outputLabel for="newTeamName" value="Team name*"/>
-                    <p:inputText id="newTeamName" value="#{teamView.newTeam.teamName}"
-                                 placeholder="e.g Sales Team A" required="true"/>
-
-                    <p:outputLabel for="newTeamLead" value="Team Lead*"/>
-                    <p:selectOneMenu id="newTeamLead" value="#{teamView.newTeam.teamLead}"
-                                     converter="#{userConverter}" required="true" filter="true"
-                                     filterMatchMode="contains" placeholder="Select a user">
-                        <f:selectItem itemLabel="Select a user" itemValue="#{null}" noSelectionOption="true"/>
-                        <f:selectItems value="#{teamView.availableUsers}" var="user"
-                                       itemLabel="#{user.fullName}" itemValue="#{user}"/>
-                    </p:selectOneMenu>
-
-                    <p:outputLabel for="selectMembers" value="Select members"/>
-                    <p:selectManyCheckbox id="selectMembers" value="#{teamView.selectedMembers}" layout="pageDirection">
-                        <f:selectItems value="#{teamView.availableUsers}" var="user"
-                                       itemLabel="#{user.fullName}" itemValue="#{user}"/>
-                    </p:selectManyCheckbox>
-
-                </p:panelGrid>
-
-                <p:toolbar style="margin-top: 20px;">
-                    <p:toolbarGroup align="right">
-                        <p:commandButton value="Cancel" styleClass="ui-button-secondary"
-                                         onclick="PF('newTeamDialog').hide(); return false;"/>
-                        <p:commandButton value="Save Team" styleClass="ui-button-success"
-                                         actionListener="#{teamView.saveNewTeam}"
-                                         update=":teamDetailsForm:teamsTable :teamDetailsForm:growl"
-                                         oncomplete="if (!args.validationFailed) PF('newTeamDialog').hide();"/>
-                    </p:toolbarGroup>
-                </p:toolbar>
-            </h:form>
-        </p:dialog>
-
-        <!-- Edit Team Dialog -->
-        <p:dialog header="Edit Team Details" widgetVar="editTeamDialog" modal="true" width="500"
-                  showEffect="fade" hideEffect="fade" resizable="false">
-            <h:form id="editTeamForm">
-                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
-
-                    <p:outputLabel for="editTeamName" value="Team Name:"/>
-                    <p:inputText id="editTeamName" value="#{teamView.selectedTeam.teamName}" required="true"/>
-
-                    <p:outputLabel for="editTeamLead" value="Team Lead:"/>
-                    <p:selectOneMenu id="editTeamLead" value="#{teamView.selectedTeam.teamLead}"
-                                     converter="#{userConverter}" required="true" filter="true" filterMatchMode="contains">
-                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>
-                        <f:selectItems value="#{teamView.users}" var="user"
-                                       itemLabel="#{user.fullName}" itemValue="#{user}"/>
-                    </p:selectOneMenu>
-
-                    <p:outputLabel for="editDescription" value="Description:"/>
-                    <p:inputTextarea id="editDescription" value="#{teamView.selectedTeam.description}"
-                                     rows="4" cols="30"/>
-
-                </p:panelGrid>
-
-                <p:toolbar style="margin-top: 20px;">
-                    <p:toolbarGroup align="right">
-                        <p:commandButton value="Cancel" styleClass="ui-button-secondary"
-                                         onclick="PF('editTeamDialog').hide(); return false;"/>
-                        <p:commandButton value="Save" styleClass="ui-button-success"
-                                         actionListener="#{teamView.updateTeam}"
-                                         update=":teamDetailsForm:teamsTable :teamDetailsForm:growl"
-                                         oncomplete="if (!args.validationFailed) PF('editTeamDialog').hide();"/>
-                    </p:toolbarGroup>
-                </p:toolbar>
-            </h:form>
-        </p:dialog>
-
-        <!-- Assign Team Dialog -->
-        <p:dialog header="Assign Team" widgetVar="assignTeamDialog" modal="true" width="400"
-                  showEffect="fade" hideEffect="fade" resizable="false">
-            <h:form id="assignTeamForm">
-                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
-
-                    <p:outputLabel for="memberName" value="Member:"/>
-                    <h:outputText id="memberName" value="#{teamView.selectedMember.fullName}"
-                                  style="font-weight: bold;"/>
-
-                    <p:outputLabel for="assignToTeam" value="Assign to Team:"/>
-                    <p:selectOneMenu id="assignToTeam" value="#{teamView.selectedTeamForAssignment}"
-                                     converter="#{teamConverter}" required="true">
-                        <f:selectItem itemLabel="Select Team" itemValue="#{null}" noSelectionOption="true"/>
-                        <f:selectItems value="#{teamView.departmentTeams}" var="team"
-                                       itemLabel="#{team.teamName}" itemValue="#{team}"/>
-                    </p:selectOneMenu>
-
-                </p:panelGrid>
-
-                <p:toolbar style="margin-top: 20px;">
-                    <p:toolbarGroup align="right">
-                        <p:commandButton value="Cancel" styleClass="ui-button-secondary"
-                                         onclick="PF('assignTeamDialog').hide(); return false;"/>
-                        <p:commandButton value="Assign" styleClass="ui-button-success"
-                                         actionListener="#{teamView.assignMemberToTeam}"
-                                         update=":teamDetailsForm:teamsTable :teamDetailsForm:unassignedTable :teamDetailsForm:growl"
-                                         oncomplete="if (!args.validationFailed) PF('assignTeamDialog').hide();"/>
-                    </p:toolbarGroup>
-                </p:toolbar>
-            </h:form>
-        </p:dialog>
-
-        <!-- Confirmation Dialog -->
-        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
-            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
-                             icon="ui-icon-close"/>
-        </p:confirmDialog>
+        </div>
 
     </ui:define>
 </ui:composition>
