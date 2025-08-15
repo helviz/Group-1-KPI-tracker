@@ -137,6 +137,8 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
         search.addSort("user.username", false, true);
 
+        search.addFetch("user");
+
         return assignedUserDao.search(search);
     }
 

@@ -1,8 +1,10 @@
 package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import com.googlecode.genericdao.search.Search;
+import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.models.user.AssignedUser;
 import org.pahappa.systems.kpiTracker.models.team.Team;
 import org.pahappa.systems.kpiTracker.utils.Validate;
 import org.sers.webutils.model.exception.OperationFailedException;
@@ -23,10 +25,16 @@ import java.util.Set;
 public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamService {
 
     private UserService userService;
+    private AssignedUserService assignedUserService;
 
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setAssignedUserService(AssignedUserService assignedUserService) {
+        this.assignedUserService = assignedUserService;
     }
 
     @Override
@@ -62,25 +70,32 @@ public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamSer
 
     @Override
     public List<User> getUsersWithoutTeamInDepartment(Department department) throws ValidationFailedException, OperationFailedException {
-        Validate.notNull(department, "Department cannot be null"); // Throws ValidationFailedException
+        Validate.notNull(department, "Department cannot be null");
 
-        // A more performant approach would be to get users by department if that's possible.
-        // For now, we work with what we have.
-        List<User> allUsers = userService.getUsers();
+        // Get users belonging to the specified department using AssignedUserService
+        List<User> usersInDepartment = new ArrayList<User>();
+        List<AssignedUser> assignedUsers = assignedUserService.getAssignedUsersByDepartment(department);
+        for (AssignedUser assignedUser : assignedUsers) {
+            usersInDepartment.add(assignedUser.getUser());
+        }
 
         Search teamSearch = new Search();
         teamSearch.addFilterEqual("department", department);
         List<Team> teamsInDepartment = getInstances(teamSearch, 0, 0);
 
-        Set<String> memberIdsInDepartmentTeams = new HashSet<>();
+        // Collect all user IDs of members who are already in a team in this department
+        Set<String> memberIdsInDepartmentTeams = new HashSet<String>();
         for (Team team : teamsInDepartment) {
-            for (User member : team.getMembers()) {
-                memberIdsInDepartmentTeams.add(member.getId());
+            if (team.getMembers() != null) {
+                for (User member : team.getMembers()) {
+                    memberIdsInDepartmentTeams.add(member.getId());
+                }
             }
         }
 
-        List<User> usersWithoutTeam = new ArrayList<>();
-        for (User user : allUsers) {
+        // Filter the department's users to find those not in any team
+        List<User> usersWithoutTeam = new ArrayList<User>();
+        for (User user : usersInDepartment) {
             if (!memberIdsInDepartmentTeams.contains(user.getId())) {
                 usersWithoutTeam.add(user);
             }

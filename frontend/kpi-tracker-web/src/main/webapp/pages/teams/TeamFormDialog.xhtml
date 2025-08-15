@@ -37,7 +37,9 @@
                                          filterMatchMode="contains">
                             <f:selectItem itemLabel="-- Select a Department --" itemValue="#{null}" noSelectionOption="true" />
                             <f:selectItems value="#{teamFormDialog.availableDepartments}" var="dept"
-                                           itemLabel="#{dept.name}" itemValue="#{dept}" />
+                                           itemLabel="#{dept.name}" itemValue="#{dept}"/>
+                            <p:ajax event="change" listener="#{teamFormDialog.onDepartmentChange}"
+                                    update="teamLead membersPanel"/>
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -46,12 +48,13 @@
                     <h5>Team Lead</h5>
                     <div class="ui-inputgroup">
                         <p:selectOneMenu id="teamLead"
+                                         style="text-transform: capitalize"
                                          value="#{teamFormDialog.model.teamLead}"
                                          converter="userConverter"
                                          filter="true"
                                          filterMatchMode="contains">
                             <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="#{teamFormDialog.availableUsers}" var="user"
+                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
                                            itemLabel="#{user.fullName}" itemValue="#{user}" />
                         </p:selectOneMenu>
                     </div>
@@ -67,18 +70,20 @@
                 </div>
                 <hr style="width: 100%"/>
 
-                <div class="ui-col-12 ui-md-12">
+                <p:outputPanel id="membersPanel" styleClass="ui-col-12 ui-md-12">
                     <h5>Select Members</h5>
                     <div class="ui-inputgroup">
-                        <p:selectManyCheckbox id="members"
+                        <p:selectManyCheckbox id="membersCheckbox"
                                               value="#{teamFormDialog.selectedMembers}"
-                                              converter="#{userConverter}"
-                                              layout="grid" columns="3">
-                            <f:selectItems value="#{teamFormDialog.availableUsers}" var="user"
-                                           itemLabel="#{user.fullName}" itemValue="#{user}" />
+                                              layout="pageDirection"
+                                              converter="userConverter">
+                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}"
+                                           var="user"
+                                           itemLabel="#{user.fullName}"
+                                           itemValue="#{user}"/>
                         </p:selectManyCheckbox>
                     </div>
-                </div>
+                </p:outputPanel>
 
                 <hr style="width: 100%"/>
 
