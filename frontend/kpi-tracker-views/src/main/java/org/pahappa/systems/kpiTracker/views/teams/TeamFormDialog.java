@@ -2,10 +2,12 @@ package org.pahappa.systems.kpiTracker.views.teams;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.team.Team;
+import org.pahappa.systems.kpiTracker.models.user.AssignedUser;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.sers.webutils.client.views.presenters.ViewPath;
@@ -18,10 +20,10 @@ import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ManagedBean(name = "teamFormDialog", eager = true)
 @Getter
@@ -34,9 +36,12 @@ public class TeamFormDialog extends DialogForm<Team> {
     private TeamService teamService;
     private DepartmentService departmentService;
     private UserService userService;
+    private AssignedUserService assignedUserService;
+
     private List<Department> availableDepartments;
-    private List<User> availableUsers;
     private List<User> selectedMembers = new ArrayList<>();
+    private List<User> availableUsersForSelect = new ArrayList<>();
+
     private boolean edit;
 
     @PostConstruct
@@ -45,9 +50,9 @@ public class TeamFormDialog extends DialogForm<Team> {
             this.teamService = ApplicationContextProvider.getBean(TeamService.class);
             this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
             this.userService = ApplicationContextProvider.getBean(UserService.class);
+            this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
 
             this.availableDepartments = this.departmentService.getAllInstances();
-            this.availableUsers = this.userService.getUsers();
             resetModal();
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,8 +65,8 @@ public class TeamFormDialog extends DialogForm<Team> {
 
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
-        // Set members to the team model before persisting
-        super.model.setMembers(new HashSet<>(selectedMembers));
+        // Set members to the team model from the selectedMembers list
+        super.model.setMembers(new HashSet<>(this.selectedMembers));
         this.teamService.saveInstance(super.model);
     }
 
@@ -70,6 +75,7 @@ public class TeamFormDialog extends DialogForm<Team> {
         super.resetModal();
         super.model = new Team();
         this.selectedMembers = new ArrayList<>();
+        this.availableUsersForSelect = new ArrayList<>();
         setEdit(false);
     }
 
@@ -78,15 +84,33 @@ public class TeamFormDialog extends DialogForm<Team> {
         super.setFormProperties();
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
-            // Initialize selected members from the model for editing
             this.selectedMembers = new ArrayList<>(super.model.getMembers());
+            onDepartmentChange();
         } else {
             if (super.model == null) {
                 super.model = new Team();
             }
             setEdit(false);
             this.selectedMembers = new ArrayList<>();
+            this.availableUsersForSelect = new ArrayList<>();
         }
     }
 
+    public void onDepartmentChange() {
+        // Check if a department is selected
+        if (super.getModel().getDepartment() != null) {
+            try {
+                List<AssignedUser> assignedUsersInDepartment = assignedUserService.getAssignedUsersByDepartment(super.getModel().getDepartment());
+                this.availableUsersForSelect = assignedUsersInDepartment.stream()
+                        .map(AssignedUser::getUser)
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                System.err.println("An error occurred while fetching users for department.");
+                e.printStackTrace();
+                this.availableUsersForSelect = new ArrayList<>();
+            }
+        } else {
+            this.availableUsersForSelect = new ArrayList<>();
+        }
+    }
 }
