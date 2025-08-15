@@ -33,7 +33,7 @@ public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamSer
     public Team saveInstance(Team team) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(team, "Team details cannot be null");
         Validate.hasText(team.getTeamName(), "Team name is required");
-        Validate.notNull(team.getTeamLead(), "Team must have a team lead");
+        //Validate.notNull(team.getTeamLead(), "Team must have a team lead");
         Validate.notNull(team.getDepartment(), "Department is required");
 
         if (isDuplicate(team, "teamName", team.getTeamName())) {
