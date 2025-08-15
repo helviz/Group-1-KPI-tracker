@@ -33,21 +33,50 @@
             <h:form id="menuform">
                 <pc:menu widgetVar="CaliforniaMenuWidget">
                     <p:menuitem id="dashboard" value="Dashboard"
-                                icon="pi pi-fw pi-home" outcome="/pages/dashboard/Dashboard"/>
+                                icon="pi pi-fw pi-microsoft" outcome="/pages/dashboard/Dashboard"/>
+                    <p:menuitem id="goals" value="Goals and Objectives"
+                                icon="pi pi-fw pi-bullseye" outcome="/pages/goals/Goals"/>
+
                     <p:menuitem id="department" value="Department"
-                                icon="pi pi-fw pi-home" outcome="/pages/department/DepartmentView"/>
+                                icon="pi pi-fw pi-sitemap" outcome="/pages/department/DepartmentView"/>
+
                     <p:menuitem id="teams" value="Teams" icon="pi pi-fw pi-sitemap"
                                 outcome="/pages/teams/TeamsView"/>
-                    <p:submenu id="settings" label="Settings" icon="pi pi-fw pi-cog">
-                        <p:menuitem id="users" value="Users" icon="pi pi-fw pi-users"
+
+                    <p:submenu id="usersandroles" label="UsersandRoles" icon="pi pi-fw pi-users">
+
+                        <p:menuitem id="users" value="Users Management" icon="pi pi-fw pi-user"
                                     outcome="/pages/users/UsersView" />
-                        <p:menuitem id="roles" value="Roles" icon="fa fa-wrench"
+
+                        <p:menuitem id="roles" value="Roles &amp; Permissions" icon="fa fa-key"
                                     outcome="/pages/users/RolesView"/>
+
+
                         <p:menuitem id="demo" value="Demo" icon="fa fa-wrench"
                                     outcome="/pages/registerUser/RegisterUser"/>
                     </p:submenu>
+
+                    <p:menuitem id="performancetracking" value="Performance Tracking" icon="pi pi-fw pi-wave-pulse"
+                                outcome="/pages/performancetracking/PerformanceTracking" />
+
+                    <p:menuitem id="rewards" value="Rewards &amp; PIPs" icon="fa fa-trophy"
+                                outcome="/pages/rewards/Rewards" />
+
+                    <p:menuitem id="organisationFitSuvery" value="organisationFitSuvery" icon="fa fa-thumbs-up"
+                                outcome="/pages/organisationalFitSuvery/OrganisationFitSuvery" />
+
+                    <p:menuitem id="approvals" value="Notification &amp; Approvals" icon="fa fa-bell"
+                                outcome="/pages/approvals/Approvals" />
+
+                    <p:menuitem id="reports" value="Reports  &amp; Analytics" icon="fa fa-area-chart"
+                                outcome="/pages/reports/Reports" />
+
+                    <p:menuitem id="settings" value="System Settings" icon="fa fa-cog"
+                                outcome="/pages/sys-settings/Settings" />
+
                     <p:menuitem id="logout" value="Logout" icon="fa fa-fw fa-sign-out"
                                 url="#{request.contextPath}/ServiceLogout"/>
+                    
                 </pc:menu>
             </h:form>
         </div>
