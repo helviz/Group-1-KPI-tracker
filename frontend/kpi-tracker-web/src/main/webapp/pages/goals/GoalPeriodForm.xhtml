@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                template="/pages/californiatemplate/dialog-template.xhtml">
+
+    <ui:define name="content">
+        <title>Period Details</title>
+        <h:form id="periodForm">
+
+            <div class="card">
+                <!-- FORM HEADER -->
+                <div class="p-4">
+                    <h4 style="margin: 0;">Period Details</h4>
+                    <p style="margin: 0; color: var(--text-color-secondary);">Fill in the information for the new period.</p>
+                </div>
+
+                <hr class="ui-separator" />
+
+                <!-- MODERNIZED FORM GRID (PrimeFlex 3) -->
+                <div class="formgrid grid p-4">
+
+                    <!-- Period Name Field -->
+                    <!-- ADDED mb-3 for spacing below -->
+                    <div class="field col-12 mb-10">
+                        <p:outputLabel for="@next">Period Name</p:outputLabel>
+                        <p:inputText id="periodName" value="#{goalPeriodForm.model.periodName}"
+                                     placeholder="e.g., Q1 2025" required="true"
+                                     requiredMessage="Period name is required."/>
+                        <p:message for="periodName" />
+                    </div>
+
+                    <!-- Start Date Field -->
+                    <!-- ADDED mb-3 for spacing below on small screens -->
+                    <div class="field col-12 md:col-6 mb-10">
+                        <p:outputLabel for="@next">Start Date</p:outputLabel>
+                        <p:datePicker id="startDate" value="#{goalPeriodForm.model.startDate}"
+                                      monthNavigator="true" yearNavigator="true" showIcon="true"
+                                      required="true" requiredMessage="Start date is required."
+                                      pattern="dd/MM/yyyy"/>
+                        <p:message for="startDate" />
+                    </div>
+
+                    <!-- End Date Field -->
+                    <!-- ADDED mb-3 for spacing below on small screens -->
+                    <div class="field col-12 md:col-6 mb-10">
+                        <p:outputLabel for="@next">End Date</p:outputLabel>
+                        <p:datePicker id="endDate" value="#{goalPeriodForm.model.endDate}"
+                                      monthNavigator="true" yearNavigator="true" showIcon="true"
+                                      required="true" requiredMessage="End date is required."
+                                      pattern="dd/MM/yyyy"/>
+                        <p:message for="endDate" />
+                    </div>
+                </div>
+
+                <!-- FORM FOOTER with Action Buttons -->
+                <div class="field col-12 flex justify-content-end gap-2 p-4" style="border-top: 1px solid var(--surface-d);">
+                    <p:commandButton value="Cancel"
+                                     icon="pi pi-times"
+                                     immediate="true"
+                                     process="@this"
+                                     actionListener="#{goalPeriodForm.hide}"
+                                     styleClass="ui-button-outlined ui-button-danger"/>
+
+                    <p:commandButton value="Save"
+                                     icon="pi pi-check"
+                                     process="@form"
+                                     actionListener="#{goalPeriodForm.save}"
+                                     update="@form" />
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

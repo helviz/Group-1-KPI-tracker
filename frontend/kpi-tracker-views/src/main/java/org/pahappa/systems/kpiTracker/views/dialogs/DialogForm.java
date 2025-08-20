@@ -6,7 +6,7 @@ import org.sers.webutils.model.BaseEntity;
 import javax.faces.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
-
+//T  is the mode  for which you want to create a form for
 public abstract class DialogForm<T extends BaseEntity> extends FormPresenter<T> {
 
 	private static final long serialVersionUID = 1L;
