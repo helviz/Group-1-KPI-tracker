@@ -47,6 +47,8 @@
         <mapping class="org.pahappa.systems.kpiTracker.models.department.Department" />
         <mapping class="org.pahappa.systems.kpiTracker.models.team.Team" />
 		<mapping class="org.pahappa.systems.kpiTracker.models.user.AssignedUser" />
+		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyCategory" />
+		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyQuestion" />
 		
 	</session-factory>
 </hibernate-configuration>
