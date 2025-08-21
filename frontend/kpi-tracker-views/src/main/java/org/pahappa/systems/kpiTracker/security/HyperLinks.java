@@ -19,4 +19,6 @@ public class HyperLinks {
     public static  final String DEPARTMENT_FORM_DIALOG = "/pages/department/DepartmentFormDialog.xhtml";
     public static final String TEAMS_VIEW = "/pages/teams/TeamsView.xhtml?faces-redirect=true";
     public static final String TEAM_FORM_DIALOG = "/pages/teams/TeamFormDialog.xhtml?faces-redirect=true";
+    public static final String KPIS_VIEW = "/pages/kpis/KpisView.xhtml?faces-redirect=true";
+    public static final String KPI_FORM_DIALOG = "/pages/kpis/KpiFormDialog.xhtml?faces-redirect=true";
 }
