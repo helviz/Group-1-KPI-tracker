@@ -16,13 +16,14 @@ public class HyperLinks {
 
     public static final String NAME_DIALOG = "/pages/registerUser/DemoDialog.xhtml";
     public static final String DEPARTMENT_VIEW = "/pages/department/DepartmentView.xhtml?faces-redirect=true";
-    public static  final String DEPARTMENT_FORM_DIALOG = "/pages/department/DepartmentFormDialog.xhtml";
+    public static final String DEPARTMENT_FORM_DIALOG = "/pages/department/DepartmentFormDialog.xhtml";
     public static final String TEAMS_VIEW = "/pages/teams/TeamsView.xhtml?faces-redirect=true";
     public static final String TEAM_FORM_DIALOG = "/pages/teams/TeamFormDialog.xhtml?faces-redirect=true";
     public static final String GOAL_PERIOD_VIEW = "/pages/goals/goalPeriod/GoalPeriodView.xhtml?faces-redirect=true";
-    public static final String GOAL_PERIOD_FORM ="/pages/goals/goalPeriod/GoalPeriodForm.xhtml?faces-redirect=true";
+    public static final String GOAL_PERIOD_FORM = "/pages/goals/goalPeriod/GoalPeriodForm.xhtml?faces-redirect=true";
     public static final String GOAL_LEVEL_VIEW = "/pages/goals/goalLevel/GoalLevelView.xhtml?faces-redirect=true";
-    public static final String GOAL_LEVEL_FORM_DIALOG ="/pages/goals/goalLevel/GoalLevelFormDialog.xhtml?faces-redirect=true";
-
+    public static final String GOAL_LEVEL_FORM_DIALOG = "/pages/goals/goalLevel/GoalLevelFormDialog.xhtml?faces-redirect=true";
+    public static final String GOAL_FORM = "/pages/goals/GoalForm.xhtml";
+    public static final String GOAL_VIEW = "/pages/goals/GoalsView.xhtml?faces-redirect=true";
 
 }

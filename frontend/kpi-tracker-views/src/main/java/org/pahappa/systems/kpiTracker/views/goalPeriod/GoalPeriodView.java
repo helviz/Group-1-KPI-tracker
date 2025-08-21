@@ -1,7 +1,6 @@
-package org.pahappa.systems.kpiTracker.views.goalMgt;
+package org.pahappa.systems.kpiTracker.views.goalPeriod;
 
 import com.googlecode.genericdao.search.Search;
-import javafx.scene.control.Hyperlink;
 import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.GoalPeriodService;
