@@ -79,17 +79,14 @@
                                                 <p:ajax event="dialogReturn" update="departmentTable" />
                                             </p:commandButton>
 
+
+                                            <!-- DELETE BUTTON -->
                                             <p:commandButton icon="fa fa-trash" title="Delete"
-                                                             styleClass="ui-button-danger"
-                                                             style="margin-left: 5px"
-                                                             actionListener="#{departmentView.deleteSelectedDepartment()}"
-                                                             update="departmentView">
-
-                                                <!-- THIS IS THE FIX: Set the selected department before the dialog shows -->
-                                                <f:setPropertyActionListener value="#{model}" target="#{departmentView.selectedDepartment}" />
-
+                                                             styleClass="ui-button-danger" style="margin-left: 5px"
+                                                             actionListener="#{departmentView.deleteSelectedDepartment(model)}"
+                                                             update=":goalPeriodView:periodTable">
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete department '#{model.name}'. Are you sure?"
+                                                           message="You are about to delete period '#{model.name}'. Are you sure?"
                                                            icon="ui-icon-alert" />
                                             </p:commandButton>
 

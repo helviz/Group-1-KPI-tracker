@@ -1,0 +1,195 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <!-- Goals Completed -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="p-3 border-round-lg shadow-2 h-full bg-green-50">
+                    <div class="flex align-items-center">
+                        <i class="pi pi-check-circle text-green-500 text-4xl mr-4"></i>
+                        <div>
+                            <span class="text-gray-700">Goals Completed</span>
+                            <div class="text-3xl font-bold text-gray-800">12</div>
+                            <span class="text-sm text-gray-600">Great achievement this quarter</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goals At Risk -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="p-3 border-round-lg shadow-2 h-full bg-yellow-50">
+                    <div class="flex align-items-center">
+                        <i class="pi pi-exclamation-triangle text-yellow-500 text-4xl mr-4"></i>
+                        <div>
+                            <span class="text-gray-700">Goals At Risk</span>
+                            <div class="text-3xl font-bold text-gray-800">2</div>
+                            <span class="text-sm text-gray-600">Review and take action</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPIs On Track -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="p-3 border-round-lg shadow-2 h-full surface-100">
+                    <div class="flex align-items-center">
+                        <i class="pi pi-chart-line text-blue-500 text-4xl mr-4"></i>
+                        <div>
+                            <span class="text-gray-700">KPIs On Track</span>
+                            <div class="text-3xl font-bold text-gray-800">7</div>
+                            <span class="text-sm text-gray-600">KPIs meeting target</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPIs Behind -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="p-3 border-round-lg shadow-2 h-full bg-red-50">
+                    <div class="flex align-items-center">
+                        <i class="pi pi-times-circle text-red-500 text-4xl mr-4"></i>
+                        <div>
+                            <span class="text-gray-700">KPIs Behind</span>
+                            <div class="text-3xl font-bold text-gray-800">3</div>
+                            <span class="text-sm text-gray-600">Immediate action needed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!--        the tabs -->
+        <div class="card">
+            <p:tabView>
+                <p:tab title="My Goals">
+                    <!-- Filter Bar -->
+                    <div class="flex justify-content-between align-items-center mb-4">
+                        <div class="flex align-items-center">
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
+                                <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025"/>
+                                <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025"/>
+                                <f:selectItem itemLabel="Monthly" itemValue="Monthly"/>
+                                <f:selectItem itemLabel="Quarterly" itemValue="Quarterly"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
+                                <f:selectItem itemLabel="On Track" itemValue="ONTRACK"/>
+                                <f:selectItem itemLabel="At Risk" itemValue="ATRISK"/>
+                                <f:selectItem itemLabel="Pending" itemValue="PENDING"/>
+                                <f:selectItem itemLabel="Completed" itemValue="COMPLETED"/>
+                            </p:selectOneMenu>
+
+                            <span class="p-input-icon-left">
+<!--                            <i class="pi pi-search"></i>-->
+                            <p:inputText placeholder="Search goal/KPI"/>
+                        </span>
+                        </div>
+
+                        <div>
+                            <p:commandButton value="Add New Goal" icon="pi pi-plus" styleClass="ui-button-info"/>
+                        </div>
+                    </div>
+
+                    <!-- Goal cards will be added here later -->
+                    <p>Goal cards will go here.</p>
+
+                </p:tab>
+                <p:tab title="My Team">
+                    <!-- Filter Bar -->
+                    <div class="flex justify-content-between align-items-center mb-4">
+                        <div class="flex align-items-center">
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
+                                <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025"/>
+                                <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025"/>
+                                <f:selectItem itemLabel="Monthly" itemValue="Monthly"/>
+                                <f:selectItem itemLabel="Quarterly" itemValue="Quarterly"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
+                                <f:selectItem itemLabel="On Track" itemValue="ONTRACK"/>
+                                <f:selectItem itemLabel="At Risk" itemValue="ATRISK"/>
+                                <f:selectItem itemLabel="Pending" itemValue="PENDING"/>
+                                <f:selectItem itemLabel="Completed" itemValue="COMPLETED"/>
+                            </p:selectOneMenu>
+
+                            <span class="p-input-icon-left">
+<!--                            <i class="pi pi-search"></i>-->
+                                <p:inputText placeholder="Search goal/KPI"/>
+                        </span>
+                        </div>
+
+                    </div>
+                    <p class="m-0">
+
+                        Content for My Team goes here.
+                    </p>
+                </p:tab>
+                <p:tab title="My Department">
+                    <!-- Filter Bar -->
+                    <div class="flex justify-content-between align-items-center mb-4">
+                        <div class="flex align-items-center">
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
+                                <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025"/>
+                                <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025"/>
+                                <f:selectItem itemLabel="Monthly" itemValue="Monthly"/>
+                                <f:selectItem itemLabel="Quarterly" itemValue="Quarterly"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
+                                <f:selectItem itemLabel="On Track" itemValue="ONTRACK"/>
+                                <f:selectItem itemLabel="At Risk" itemValue="ATRISK"/>
+                                <f:selectItem itemLabel="Pending" itemValue="PENDING"/>
+                                <f:selectItem itemLabel="Completed" itemValue="COMPLETED"/>
+                            </p:selectOneMenu>
+
+                            <span class="p-input-icon-left">
+<!--                            <i class="pi pi-search"></i>-->
+                                <p:inputText placeholder="Search goal/KPI"/>
+                        </span>
+                        </div>
+
+                    </div>                    <p class="m-0">
+                        Content for My Department goes here.
+                    </p>
+                </p:tab>
+                <p:tab title="Organization">
+                    <!-- Filter Bar -->
+                    <div class="flex justify-content-between align-items-center mb-4">
+                        <div class="flex align-items-center">
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
+                                <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025"/>
+                                <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025"/>
+                                <f:selectItem itemLabel="Monthly" itemValue="Monthly"/>
+                                <f:selectItem itemLabel="Quarterly" itemValue="Quarterly"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
+                                <f:selectItem itemLabel="On Track" itemValue="ONTRACK"/>
+                                <f:selectItem itemLabel="At Risk" itemValue="ATRISK"/>
+                                <f:selectItem itemLabel="Pending" itemValue="PENDING"/>
+                                <f:selectItem itemLabel="Completed" itemValue="COMPLETED"/>
+                            </p:selectOneMenu>
+
+                            <span class="p-input-icon-left">
+<!--                            <i class="pi pi-search"></i>-->
+                                <p:inputText placeholder="Search goal/KPI"/>
+                        </span>
+                        </div>
+
+                    </div>
+                    <p class="m-0">
+                        Content for Organization goes here.
+                    </p>
+                </p:tab>
+            </p:tabView>
+        </div>
+
+    </ui:define>
+
+</ui:composition>
