@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                template="/pages/californiatemplate/dialog-template.xhtml">
+
+    <ui:define name="content">
+        <title>Goallevel Details</title>
+        <p style="margin: 0; color: var(--text-color-secondary);">Fill in the information for the GoalLevel</p>
+        <h:form id="levelForm">
+                <div class="formgrid grid p-4">
+                    <div class="field col mb-10">
+                        <p:outputLabel for="@next">GoalLevel Name</p:outputLabel>
+                        <p:inputText id="levelName" value="#{goalLevelForm.model.name}"
+                                    required="true"
+                                     requiredMessage="Goal level Nameis required ."/>
+                        <p:message for="levelName" />
+                    </div>
+<!--                   for the description  -->
+
+                <div class="field col mb-10">
+                    <p:outputLabel for="@next">GoalLevel Description</p:outputLabel>
+                    <p:inputTextarea id="levelDesc"
+                                     value="#{goalLevelForm.model.description}"
+                                     rows="4"
+                                     styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
+
+                    <p:message for="levelDesc" />
+                </div>
+
+                <div class="field col-12 flex justify-content-end gap-2 p-4" style="border-top: 1px solid var(--surface-d);">
+                    <p:commandButton value="Cancel"
+                                     icon="pi pi-times"
+                                     immediate="true"
+                                     process="@this"
+                                     actionListener="#{goalLevelForm.hide}"
+                                     styleClass="ui-button-outlined ui-button-danger"/>
+
+                    <p:commandButton value="Save"
+                                     icon="pi pi-check"
+                                     process="@form"
+                                     actionListener="#{goalLevelForm.save}"
+                                     update="@form" />
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
