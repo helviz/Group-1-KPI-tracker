@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.security.UiUtils;
 import org.pahappa.systems.kpiTracker.views.dialogs.MessageComposer;
@@ -33,7 +34,7 @@ import java.util.Map;
 @ViewPath(path = HyperLinks. DEPARTMENT_VIEW)
 public class DepartmentView extends PaginatedTableView<Department, DepartmentService,DepartmentService> {
     public DepartmentService departmentService;
-    private Department seletedDepartment;
+    private Department selectedDepartment;
     private List<SearchField> searchFields, selectedSearchFields;
 
     @PostConstruct
@@ -64,47 +65,27 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
         }
 
     }
-
-    // 1. ADD THIS PROPERTY
-    private Department selectedDepartment;
-
-    // 2. MODIFY YOUR DELETE METHOD
-    // It no longer takes a parameter.
-    public void deleteSelectedDepartment() {
+    /**
+     * Deletes the specific GoalPeriod passed from the UI.
+     * @param selectedDepartment The record selected by the user in the data table.
+     */
+    public void deleteSelectedDepartment(Department selectedDepartment) {
         try {
-            // It now uses the 'selectedDepartment' property that was set by the f:setPropertyActionListener
-            if (this.selectedDepartment != null) {
-                departmentService.deleteInstance(this.selectedDepartment);
-                // Display success message
-                MessageComposer.info("Success", "Department '" + this.selectedDepartment.getName() + "' has been deleted.");
-                // Reset the selection after deletion
-                this.selectedDepartment = null;
-                // Reload your data table
-                this.reloadFilterReset();
+            // We check the parameter directly. It's much safer.
+            if (selectedDepartment != null) {
+                departmentService.deleteInstance(selectedDepartment);
+                MessageComposer.info("Success",
+                        "Period '" + selectedDepartment.getName() + "' has been deleted.");
+                // The table refresh will be handled by the 'update' attribute on the button.
             } else {
-                MessageComposer.error("Error", "No department was selected for deletion.");
+                // This is a safeguard. It should not happen if the UI is correct.
+                MessageComposer.error("Error", "System Error: The record to delete was not provided.");
             }
         } catch (Exception e) {
             MessageComposer.error("Deletion Failed", e.getMessage());
-            // It's a good idea to log the full exception
             e.printStackTrace();
         }
     }
-
-
-
-
-//    public void deleteSelectedDepartment(Department department) {
-//        try {
-//            departmentService.deleteInstance(seletedDepartment);
-//            UiUtils.showMessageBox("Action successful", "User has been deactivated.");
-//            reloadFilterReset();
-//        } catch (OperationFailedException ex) {
-//            UiUtils.ComposeFailure("Action failed", ex.getLocalizedMessage());
-//            Logger.getLogger(UsersView.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
     @Override
     public List<ExcelReport> getExcelReportModels() {
         return null;

@@ -14,6 +14,7 @@ import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
 @Setter
 @Getter
 @ManagedBean(name = "goalPeriodForm")
-@ViewScoped // Use @ViewScoped for forms to avoid state issues across browser tabs
+@SessionScoped
 @ViewPath(path = HyperLinks.GOAL_PERIOD_FORM)
 public class GoalPeriodForm extends DialogForm<GoalPeriod> implements Serializable {
 
@@ -38,7 +39,6 @@ public class GoalPeriodForm extends DialogForm<GoalPeriod> implements Serializab
 
     @PostConstruct
     public void init() {
-        // FIX: Initialize the service to prevent NullPointerException
         this.goalPeriodService = ApplicationContextProvider.getBean(GoalPeriodService.class);
 
         super.model = new GoalPeriod();
