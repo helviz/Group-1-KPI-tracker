@@ -47,7 +47,7 @@ public class SurveyCategory extends BaseEntity {
             mappedBy = "category",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     public List<SurveyQuestion> getSurveyQuestions() {
         return surveyQuestions;

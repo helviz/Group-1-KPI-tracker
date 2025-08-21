@@ -56,14 +56,18 @@
                                     outcome="/pages/registerUser/RegisterUser"/>
                     </p:submenu>
 
-                    <p:menuitem id="performancetracking" value="Performance Tracking" icon="pi pi-fw pi-wave-pulse"
+                   <p:menuitem id="performancetracking" value="Performance Tracking" icon="pi pi-fw pi-wave-pulse"
                                 outcome="/pages/performancetracking/PerformanceTracking" />
 
                     <p:menuitem id="rewards" value="Rewards &amp; PIPs" icon="fa fa-trophy"
                                 outcome="/pages/rewards/Rewards" />
 
-                    <p:menuitem id="organisationFitSuvery" value="organisationFitSuvery" icon="fa fa-thumbs-up"
-                                outcome="/pages/organisationalFitSuvery/OrganisationFitSuvery" />
+                    <p:submenu id="OrganisationFit" label="Organisation Fit Surveys" icon="fa fa-thumbs-up">
+                        <p:menuitem id="SurveySetup" value="SurveySetup" icon="fa fa-cog "
+                                    outcome="/pages/OrganisationFit/SurveyCategoryView" />
+                        <p:menuitem id="SurveySetup" value="SurveySetup" icon="fa fa-cog "
+                                    outcome="/pages/OrganisationFit/SurveyCategoryView" />
+                    </p:submenu>
 
                     <p:menuitem id="approvals" value="Notification &amp; Approvals" icon="fa fa-bell"
                                 outcome="/pages/approvals/Approvals" />

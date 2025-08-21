@@ -19,4 +19,8 @@ public class HyperLinks {
     public static  final String DEPARTMENT_FORM_DIALOG = "/pages/department/DepartmentFormDialog.xhtml";
     public static final String TEAMS_VIEW = "/pages/teams/TeamsView.xhtml?faces-redirect=true";
     public static final String TEAM_FORM_DIALOG = "/pages/teams/TeamFormDialog.xhtml?faces-redirect=true";
+    public static final String SURVEY_CATEGORY_FORM_DIALOG = "/pages/OrganisationFit/SurveyCategoryFormDialog.xhtml";
+    public static final String SURVEY_CATEGORY_VIEW = "/pages/OrganisationFit/SurveyCategoryView.xhtml?faces-redirect=true";
+    public static final String SURVEY_QUESTION_FORM_DIALOG = "/pages/OrganisationFit/SurveyQuestionFormDialog.xhtml";
+
 }
