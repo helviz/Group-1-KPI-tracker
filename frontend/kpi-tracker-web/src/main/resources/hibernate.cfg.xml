@@ -47,9 +47,14 @@
         <mapping class="org.pahappa.systems.kpiTracker.models.department.Department" />
         <mapping class="org.pahappa.systems.kpiTracker.models.team.Team" />
 		<mapping class="org.pahappa.systems.kpiTracker.models.user.AssignedUser" />
+
+		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyCategory" />
+		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyQuestion" />
+
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.Goal"/>
+
 
 		
 	</session-factory>

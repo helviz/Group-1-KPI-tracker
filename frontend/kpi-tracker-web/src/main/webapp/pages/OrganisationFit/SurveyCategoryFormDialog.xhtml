@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/dialog-template.xhtml">
+
+    <ui:define name="content">
+
+        <!-- Title -->
+        <h2 style="text-align:center; font-size:26px; font-weight:bold; margin-top:20px; margin-bottom:30px; color:#007ad9; letter-spacing:1px;">
+            Create New Category
+        </h2>
+
+        <h:form id="categoryForm"
+                style="display:flex; justify-content:center; align-items:center; height:calc(100vh - 100px); width:100%;">
+
+            <div style="background:#fff; padding:40px; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,0.1); width:100%; max-width:600px; display:flex; flex-direction:column; gap:20px;">
+
+                <!-- Category Name -->
+                <div style="display:flex; flex-direction:column;">
+                    <p:outputLabel value="Category Name" for="name"
+                                   style="font-weight:bold; margin-bottom:6px; color:#333;" />
+                    <p:inputText id="name"
+                                 value="#{surveyCategoryFormDialog.model.name}"
+                                 required="true"
+                                 style="padding:12px; border:1px solid #ccc; border-radius:8px; font-size:15px;" />
+                </div>
+
+                <!-- Weight -->
+                <div style="display:flex; flex-direction:column;">
+                    <p:outputLabel value="Weight %" for="weight"
+                                   style="font-weight:bold; margin-bottom:6px; color:#333;" />
+                    <p:inputNumber id="weight"
+                                   value="#{surveyCategoryFormDialog.model.weight}"
+                                   required="true"
+                                   suffix=" %" minValue="0" maxValue="100"
+                                   style="padding:12px; border:1px solid #ccc; border-radius:8px; font-size:15px; width:100%;" />
+                </div>
+
+                <!-- Description -->
+                <div style="display:flex; flex-direction:column;">
+                    <p:outputLabel value="Description" for="desc"
+                                   style="font-weight:bold; margin-bottom:6px; color:#333;" />
+                    <p:inputTextarea id="desc"
+                                     value="#{surveyCategoryFormDialog.model.description}"
+                                     rows="4"
+                                     style="padding:12px; border:1px solid #ccc; border-radius:8px; font-size:15px; resize:none;" />
+                </div>
+
+                <!-- Buttons -->
+                <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+                    <p:commandButton value="Cancel"
+                                     style="background:#e74c3c; color:#fff; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s;"
+                                     actionListener="#{surveyCategoryFormDialog.hide}"
+                                     process="@this" />
+                    <p:commandButton value="Save Category"
+                                     style="background:#275aa5; color:#fff; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s;"
+                                     actionListener="#{surveyCategoryFormDialog.save}"
+                                     update="@form"
+                                     process="@form" />
+                </div>
+
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/dialog-template.xhtml">
+
+    <ui:define name="content">
+
+        <h:form id="questionForm"
+                style="max-width:700px; margin:30px auto; background:#f9f9f9; padding:30px;
+                       border-radius:16px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center;">
+
+            <!-- Page Title -->
+            <h2 style="margin-bottom:15px; color:#275aa5; font-weight:700; font-size:26px; text-transform:uppercase;">
+                Manage Items
+            </h2>
+
+            <!-- Category name -->
+            <h3 style="margin-bottom:25px; color:#6dbe46; font-weight:600; font-size:20px;">
+                Category: #{surveyQuestionFormDialog.selectedCategory.name}
+            </h3>
+
+            <!-- Messages -->
+            <p:messages id="msgs"
+                        showDetail="true"
+                        closable="true"
+                        style="margin-bottom:25px; font-size:14px;" />
+
+            <!-- Questions list -->
+            <ui:repeat value="#{surveyQuestionFormDialog.questions}" var="q">
+                <h:panelGroup layout="block"
+                              style="background:#275aa5; padding:15px 20px; margin:12px 0;
+                                     border-radius:12px; display:flex; justify-content:space-between;
+                                     align-items:center; box-shadow:0 3px 8px rgba(0,0,0,0.15);">
+
+                    <!-- Question text -->
+                    <h:outputText value="#{q.question}"
+                                  style="font-size:17px; color:white; font-weight:500; text-align:left;" />
+
+                    <!-- Remove button -->
+                    <p:commandButton actionListener="#{surveyQuestionFormDialog.removeQuestion(q)}"
+                                     update="questionForm"
+                                     process="@this"
+                                     icon="pi pi-trash"
+                                     style="background:#e74c3c; border:none; color:#fff;
+                                            padding:8px 14px; border-radius:8px; cursor:pointer; font-size:14px;" />
+                </h:panelGroup>
+            </ui:repeat>
+
+            <!-- Divider -->
+            <hr style="margin:30px 0; border:none; border-top:1px solid #ddd;" />
+
+            <!-- Input + Buttons -->
+            <div style="display:flex; flex-direction:column; gap:15px; align-items:center;">
+
+                <!-- Input field -->
+                <p:inputText id="newQuestion"
+                             value="#{surveyQuestionFormDialog.model.question}"
+                             placeholder="Enter a new question"
+                             required="true"
+                             requiredMessage="Please Enter a Question"
+                             style="width:100%; padding:14px; border-radius:10px;
+                                    border:1px solid #ccc; font-size:15px;" />
+
+                <!-- Buttons container -->
+                <div style="display:flex; gap:15px; justify-content:center; margin-top:10px;">
+
+                    <!-- Add button -->
+                    <p:commandButton value="Add Items"
+                                     actionListener="#{surveyQuestionFormDialog.persistQuestion(surveyQuestionFormDialog.model.question)}"
+                                     update="questionForm"
+                                     icon="pi pi-plus"
+                                     style="background:#275aa5; border:none; color:#fff;
+                                            padding:12px 22px; font-weight:600; border-radius:10px; cursor:pointer;" />
+
+                    <!-- Cancel button -->
+                    <p:commandButton value="Cancel"
+                                     style="background:#bdc3c7; border:none; color:#2c3e50;
+                                            padding:12px 22px; font-weight:600; border-radius:10px; cursor:pointer;"
+                                     actionListener="#{surveyQuestionFormDialog.hide}"
+                                     process="@this" />
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>
