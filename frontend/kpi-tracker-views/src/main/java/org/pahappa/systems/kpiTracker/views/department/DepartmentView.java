@@ -41,7 +41,7 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
     public void init() {
         departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
 
-        this.reloadFilterReset();
+           this.reloadFilterReset();
     }
 
 
@@ -76,6 +76,7 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
                 departmentService.deleteInstance(selectedDepartment);
                 MessageComposer.info("Success",
                         "Period '" + selectedDepartment.getName() + "' has been deleted.");
+                this.reloadFilterReset();
                 // The table refresh will be handled by the 'update' attribute on the button.
             } else {
                 // This is a safeguard. It should not happen if the UI is correct.

@@ -2,6 +2,7 @@ package org.pahappa.systems.kpiTracker.models.department;
 
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
 
@@ -9,6 +10,7 @@ import org.sers.webutils.model.security.User;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 
 @Setter
@@ -35,6 +37,8 @@ public class Department extends BaseEntity {
     public String getName() {
         return name;
     }
+
+
 
     @ManyToOne
     @JoinColumn(name = "department_lead " )

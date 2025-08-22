@@ -19,16 +19,17 @@
                     <p:selectOneMenu id="goalLevel" value="#{goalForm.model.goalLevelId}" converter="goalLevelConverter"
                         styleClass="w-full">
                         <f:selectItem itemLabel="-- Select goal level --" itemValue="#{null}" />
-                        <f:selectItems value="#{goalForm.goalLevels}" var="lvl" itemLabel="#{lvl.name}"
-                            itemValue="#{lvl}" />
+                        <f:selectItems value="#{goalForm.goalLevels}" var="goalLevel" itemLabel="#{goalLevel.name}"
+                            itemValue="#{goalLevel}" />
                     </p:selectOneMenu>
                     <p:message for="goalLevel" />
                 </div>
 
                 <div class="field col-12">
                     <p:outputLabel for="owner" value="Owner" />
-                    <p:selectOneMenu id="owner" value="#{goalForm.model.ownerId}" styleClass="w-full">
-                        <f:selectItems value="#{goalForm.users}" var="u" itemLabel="#{u.fullName}" itemValue="#{u}" />
+                    <p:selectOneMenu id="owner" value="#{goalForm.model.ownerId}" styleClass="w-full" converter="userConverter">
+                        <f:selectItem itemLabel="-- Select  --" itemValue="#{null}" />
+                        <f:selectItems value="#{goalForm.users}" var="users" itemLabel="#{users.fullName}" itemValue="#{users}" />
                     </p:selectOneMenu>
                     <p:message for="owner" />
                 </div>
@@ -43,27 +44,20 @@
                     </p:selectOneMenu>
                     <p:message for="period" />
                 </div>
-
-                <div class="field col-12 md:col-6">
-                    <p:outputLabel value="Due Date" />
-                    <h:panelGroup>
-                        <h:outputText
-                            value="#{goalForm.model.goalPeriod != null ? goalForm.model.goalPeriod.endDate : null}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" />
-                        </h:outputText>
-                    </h:panelGroup>
-                </div>
-
                 <div class="field col-12">
-                    <p:outputLabel for="department" value="Department" />
-                    <p:selectOneMenu id="department" value="#{goalForm.model.departmentId}">
+                    <p:outputLabel for="departments" value="Departments" />
+                    <p:selectManyMenu id="departments" value="#{goalForm.model.departments}" converter="departmentConverter"
+                                      showCheckbox="true" styleClass="w-full">
+                        <f:selectItem itemLabel="-- Select department --" itemValue="#{null}" />
                         <f:selectItems value="#{goalForm.departments}" var="d" itemLabel="#{d.name}" itemValue="#{d}" />
-                    </p:selectOneMenu>
+                    </p:selectManyMenu>
                 </div>
+
 
                 <div class="field col-12">
                     <p:outputLabel for="status" value="Status" />
                     <p:selectOneMenu id="status" value="#{goalForm.model.goalStatus}">
+                        <f:selectItem itemLabel="-- select status  --" itemValue="#{null}" />
                         <f:selectItems value="#{goalForm.statuses}" />
                     </p:selectOneMenu>
                 </div>

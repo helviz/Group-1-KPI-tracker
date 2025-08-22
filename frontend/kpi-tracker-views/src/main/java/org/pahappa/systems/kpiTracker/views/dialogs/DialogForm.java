@@ -1,3 +1,4 @@
+
 package org.pahappa.systems.kpiTracker.views.dialogs;
 
 import org.primefaces.PrimeFaces;
@@ -6,7 +7,7 @@ import org.sers.webutils.model.BaseEntity;
 import javax.faces.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
-//T  is the mode  for which you want to create a form for
+
 public abstract class DialogForm<T extends BaseEntity> extends FormPresenter<T> {
 
 	private static final long serialVersionUID = 1L;
@@ -40,7 +41,7 @@ public abstract class DialogForm<T extends BaseEntity> extends FormPresenter<T> 
 		options.put("widgetVar", this.name);
 		options.put("id", this.name);
 		this.closeMap.put("widgetVar", this.name);
-		this.closeMap.put("id", this.name);		
+		this.closeMap.put("id", this.name);
 		PrimeFaces.current().dialog().openDynamic(name, options, null);
 	}
 

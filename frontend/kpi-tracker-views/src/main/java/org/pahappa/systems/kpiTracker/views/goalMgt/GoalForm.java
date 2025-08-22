@@ -14,6 +14,7 @@ import org.pahappa.systems.kpiTracker.constants.GoalStatus;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.sers.webutils.client.views.presenters.ViewPath;
+import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
@@ -42,7 +43,7 @@ public class GoalForm extends DialogForm<Goal> {
     // Dropdown data
     private List<GoalLevel> goalLevels;
     private List<GoalPeriod> goalPeriods;
-    private List<Department> departments;
+    private List<Department> department;
     private List<User> users;
     private List<GoalStatus> statuses;
 
@@ -58,7 +59,7 @@ public class GoalForm extends DialogForm<Goal> {
             // Preload choices
             this.goalLevels = goalLevelService.getAllInstances();
             this.goalPeriods = goalPeriodService.getAllInstances();
-            this.departments = departmentService.getAllInstances();
+            this.department = departmentService.getAllInstances();
             this.users = userService.getUsers();
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,6 +85,14 @@ public class GoalForm extends DialogForm<Goal> {
     @Override
     public void setFormProperties() {
         super.setFormProperties();
+        this.goalLevels = goalLevelService.getAllInstances();
+        this.goalPeriods = goalPeriodService.getAllInstances();
+        this.department = departmentService.getAllInstances();
+        try {
+            this.users = userService.getUsers();
+        } catch (OperationFailedException e) {
+            throw new RuntimeException(e);
+        }
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
         } else {

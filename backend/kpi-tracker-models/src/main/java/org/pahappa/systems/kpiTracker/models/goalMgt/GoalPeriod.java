@@ -31,6 +31,20 @@ public class GoalPeriod extends BaseEntity {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GoalPeriod that = (GoalPeriod) o;
+        // Two GoalPeriods are equal only if their IDs are equal
+        return getId() != null ? getId().equals(that.getId()) : that.getId() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        // The hashcode should be based on the ID
+        return getId() != null ? getId().hashCode() : 0;
+    }
 
 
 }

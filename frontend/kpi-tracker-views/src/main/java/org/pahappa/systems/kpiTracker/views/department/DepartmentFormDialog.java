@@ -58,6 +58,7 @@ public class DepartmentFormDialog  extends DialogForm<Department> {
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
         this.departmentService.saveInstance(super.model);
+
     }
 
     @Override
@@ -74,8 +75,13 @@ public class DepartmentFormDialog  extends DialogForm<Department> {
      * setting the edit flag if it does.
      */
     @Override
-    public void setFormProperties() {
+    public void setFormProperties()  {
         super.setFormProperties();
+        try {
+            this.availableUsers = this.userService.getUsers();
+        } catch (OperationFailedException e) {
+            throw new RuntimeException(e);
+        }
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
         } else {

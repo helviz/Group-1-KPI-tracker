@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
         <h:form id="goalsView" enctype="multipart/form-data">
@@ -70,14 +70,14 @@
                         <div class="flex justify-content-between align-items-center mb-4">
                             <div class="flex align-items-center">
                                 <p:selectOneMenu value="#{goalView.selectedPeriod}" styleClass="mr-2"
-                                    placeholder="All Periods">
+                                                 placeholder="All Periods">
                                     <f:selectItem itemLabel="All Periods" itemValue="#{null}" />
                                     <f:selectItems value="#{goalView.availablePeriods}" var="per"
-                                        itemLabel="#{per.periodName}" itemValue="#{per}" />
+                                                   itemLabel="#{per.periodName}" itemValue="#{per}" />
                                 </p:selectOneMenu>
 
                                 <p:selectOneMenu value="#{goalView.selectedStatus}" styleClass="mr-2"
-                                    placeholder="All Statuses">
+                                                 placeholder="All Statuses">
                                     <f:selectItem itemLabel="All Statuses" itemValue="#{null}" />
                                     <f:selectItems value="#{goalView.availableStatuses}" />
                                 </p:selectOneMenu>
@@ -89,28 +89,28 @@
 
                             <div>
                                 <p:commandButton value="Add New Goal" icon="pi pi-plus" styleClass="ui-button-info"
-                                    process="@this" update=":goalDialog" actionListener="#{goalForm.show}">
+                                                 process="@this" actionListener="#{goalForm.show}">
                                     <f:setPropertyActionListener value="#{null}" target="#{goalForm.model}" />
                                 </p:commandButton>
                             </div>
                         </div>
 
                         <!-- Cards / Grid -->
-                        <p:dataView id="goalsGrid" var="g" value="#{goalView.dataModels}" paginator="true" rows="12"
-                            lazy="true" layout="grid" widgetVar="goalsGridWv" styleClass="p-mt-3">
+                        <p:dataView id="goalsGrid" var="g" value="#{goalView.dataModels}" paginator="true"
+                                    paginatorPosition="bottom"> rows="12" lazy="true" layout="grid" widgetVar="goalsGridWv" styleClass="p-mt-3">
                             <p:dataViewGridItem>
-                                <div class="card p-3" style="min-height: 180px;">
+                                <div class="card p-3 border-1 surface-border border-round shadow-2" style="min-height: 180px;">
                                     <div class="flex justify-content-between align-items-center">
                                         <div class="text-xl font-semibold">#{g.goalTitle}</div>
                                         <span
-                                            class="text-sm #{g.goalStatus eq 'ON_TRACK' ? 'text-green-600' : g.goalStatus eq 'AT_RISK' ? 'text-yellow-600' : g.goalStatus eq 'BEHIND' ? 'text-red-600' : 'text-600'}">
+                                                class="text-sm #{g.goalStatus eq 'ON_TRACK' ? 'text-green-600' : g.goalStatus eq 'AT_RISK' ? 'text-yellow-600' : g.goalStatus eq 'BEHIND' ? 'text-red-600' : 'text-600'}">
                                             #{g.goalStatus}
                                         </span>
                                     </div>
                                     <div class="mt-2 text-600">#{g.description}</div>
                                     <div class="mt-3">
                                         <p:progressBar value="#{g.progress != null ? g.progress : 0}"
-                                            style="height:8px" />
+                                                       style="height:8px" />
                                         <div class="flex justify-content-between text-600 mt-1">
                                             <span>Due: <h:outputText
                                                     value="#{g.goalPeriod != null ? g.goalPeriod.endDate : null}">
@@ -120,7 +120,7 @@
                                     </div>
                                     <div class="flex justify-content-end gap-2 mt-3">
                                         <p:commandButton icon="pi pi-pencil" title="Edit" process="@this"
-                                            actionListener="#{goalForm.show}">
+                                                         actionListener="#{goalForm.show}">
                                             <f:setPropertyActionListener value="#{g}" target="#{goalForm.model}" />
                                         </p:commandButton>
                                     </div>
@@ -148,14 +148,12 @@
                                 </p:selectOneMenu>
 
                                 <span class="p-input-icon-left">
-                                    <!--                            <i class="pi pi-search"></i>-->
                                     <p:inputText placeholder="Search goal/KPI" />
                                 </span>
                             </div>
 
                         </div>
                         <p class="m-0">
-
                             Content for My Team goes here.
                         </p>
                     </p:tab>
@@ -178,7 +176,6 @@
                                 </p:selectOneMenu>
 
                                 <span class="p-input-icon-left">
-                                    <!--                            <i class="pi pi-search"></i>-->
                                     <p:inputText placeholder="Search goal/KPI" />
                                 </span>
                             </div>
@@ -207,7 +204,6 @@
                                 </p:selectOneMenu>
 
                                 <span class="p-input-icon-left">
-                                    <!--                            <i class="pi pi-search"></i>-->
                                     <p:inputText placeholder="Search goal/KPI" />
                                 </span>
                             </div>

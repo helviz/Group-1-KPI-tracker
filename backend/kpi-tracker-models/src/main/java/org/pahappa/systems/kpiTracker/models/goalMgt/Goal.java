@@ -6,6 +6,8 @@ import org.pahappa.systems.kpiTracker.constants.GoalStatus;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
+import java.util.List; // Make sure to import List
+import java.util.ArrayList; // And ArrayList
 
 import javax.persistence.*;
 
@@ -23,6 +25,7 @@ public class Goal extends BaseEntity {
     private  User approveByUserId;
     private Department departmentId;
     private  Double goalEvaluationWeight;
+    private Double progress = 0.0;
 
 
     @Column(name = "goal_title", nullable = false)
@@ -77,4 +80,10 @@ public class Goal extends BaseEntity {
     public Double getGoalEvaluationWeight() {
         return goalEvaluationWeight;
     }
+
+    @Column(name = "goal_progress" )
+   public Double getProgress( ){
+     return progress;
+    }// Initialize to 0 by default
+
 }
