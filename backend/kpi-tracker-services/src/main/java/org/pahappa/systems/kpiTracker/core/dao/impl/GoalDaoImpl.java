@@ -1,7 +1,7 @@
 package org.pahappa.systems.kpiTracker.core.dao.impl;
 
 import org.pahappa.systems.kpiTracker.core.dao.GoalDao;
-import org.pahappa.systems.kpiTracker.models.goal.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.springframework.stereotype.Repository;
 
 @Repository("goalDao")

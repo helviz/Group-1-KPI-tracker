@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
+
 @Entity
 @Setter
 @Table(name = "goal_periods")
@@ -16,7 +17,7 @@ public class GoalPeriod extends BaseEntity {
     private Date endDate;
 
     @Column(name = "name", nullable = false)
-    public String getperiodName() {
+    public String getPeriodName() {
         return periodName;
     }
 
@@ -30,11 +31,12 @@ public class GoalPeriod extends BaseEntity {
         return startDate;
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         GoalPeriod that = (GoalPeriod) o;
         // Two GoalPeriods are equal only if their IDs are equal
         return getId() != null ? getId().equals(that.getId()) : that.getId() == null;
@@ -45,6 +47,5 @@ public class GoalPeriod extends BaseEntity {
         // The hashcode should be based on the ID
         return getId() != null ? getId().hashCode() : 0;
     }
-
 
 }

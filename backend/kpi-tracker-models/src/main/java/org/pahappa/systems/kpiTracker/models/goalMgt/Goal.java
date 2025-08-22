@@ -23,7 +23,7 @@ public class Goal extends BaseEntity {
     private GoalLevel goalLevelId;//table
     private Approvals approvalStatus; //enum
     private  User approveByUserId;
-    private Department departmentId;
+    private Department department;
     private  Double goalEvaluationWeight;
     private Double progress = 0.0;
 
@@ -73,9 +73,11 @@ public class Goal extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY) // Many goals can belong to one department
     @JoinColumn(name = "department_id")
-    public Department getDepartmentId() {
-        return departmentId;
+    public Department getDepartment() {
+        return department;
     }
+
+
     @Column(name = "goal_evaluation_weight")
     public Double getGoalEvaluationWeight() {
         return goalEvaluationWeight;

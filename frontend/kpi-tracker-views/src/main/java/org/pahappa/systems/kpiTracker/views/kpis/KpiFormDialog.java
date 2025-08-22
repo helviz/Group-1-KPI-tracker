@@ -3,7 +3,7 @@ package org.pahappa.systems.kpiTracker.views.kpis;
 import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.KpiService;
-import org.pahappa.systems.kpiTracker.models.goal.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 import org.pahappa.systems.kpiTracker.models.kpi.KpiType;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;

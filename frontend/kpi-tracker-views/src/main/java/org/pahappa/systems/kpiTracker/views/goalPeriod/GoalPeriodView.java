@@ -81,7 +81,7 @@ public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodSer
             if (periodToDelete != null) {
                 goalPeriodService.deleteInstance(periodToDelete);
                 MessageComposer.info("Success",
-                        "Period '" + periodToDelete.getperiodName() + "' has been deleted.");
+                        "Period '" + periodToDelete.getPeriodName() + "' has been deleted.");
                 // The table refresh will be handled by the 'update' attribute on the button.
             } else {
                 // This is a safeguard. It should not happen if the UI is correct.
