@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="content">
+        <style>
+
+            .page-title {
+                color: #275aa5;           /* Primary blue */
+                font-size: 28px;           /* Larger than normal h2 */
+                font-weight: 600;          /* Slightly bold */
+                margin-bottom: 25px;       /* Space below the title */
+                text-align: center;         /* Centered on the page */
+                text-transform: uppercase;  /* Optional: all caps for emphasis */
+                letter-spacing: 1px;        /* Subtle spacing between letters */
+            }
+            /* Main container card */
+            .card {
+                background-color: #ffffff;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            /* Inner category cards */
+            .category-card {
+                background-color: #f9f9f9;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 15px;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            /* Hover effect */
+            .category-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+
+            /* Buttons inside cards */
+            .category-card p:has(.ui-button) {
+                margin-top: 10px;
+            }
+
+            /* Headings */
+            .card h2 {
+                margin-bottom: 20px;
+                color: #275aa5;
+            }
+            .card h3 {
+                margin-bottom: 10px;
+                color: #333;
+            }
+            .category-card h4 {
+                margin-bottom: 10px;
+                color: #275aa5;
+            }
+
+            /* Grid spacing */
+            .p-grid > div {
+                padding: 5px;
+            }
+
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #e0e0e0; /* subtle divider */
+            }
+
+            .section-header h3 {
+                font-size: 20px;
+                font-weight: 600;
+                color: #333;
+                margin: 0;
+            }
+
+            .add-category-btn {
+                background-color: #275aa5;
+                border: none;
+                color: white;
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-weight: 500;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+
+            .add-category-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            }
+
+            .add-category-btn .pi {
+                margin-right: 5px; /* spacing between icon and text */
+            }
+
+        </style>
+
+
+        <h:form id="surveyCategoryForm">
+
+            <div class="card">
+                <h2 class="page-title">Organizational Fit Survey SetUp</h2>
+
+                <div class="section-header">
+                    <h3>Categories (#{surveyCategoryView.totalRecords})</h3>
+                    <p:commandButton value="Add Category"
+                                     icon="pi pi-plus"
+                                     style="background-color:#275aa5; border:none; color:white;"
+                                     update="surveyCategoryForm"
+                                     actionListener="#{surveyCategoryFormDialog.show}">
+                        <f:setPropertyActionListener value="#{null}" target="#{surveyCategoryFormDialog.model}" />
+                        <p:ajax event="dialogReturn" listener="#{surveyCategoryView.reloadFilterReset}" update="surveyCategoryForm" />
+                    </p:commandButton>
+                </div>
+
+
+                <div class="p-grid">
+                    <ui:repeat value="#{surveyCategoryView.dataModels}" var="cat" varStatus="status">
+                        <div class="ui-g-3">
+                            <div class="category-card mb-3">
+                                <h4>#{cat.name}</h4>
+                                <p style="min-height:40px;">#{cat.description}</p>
+                                <p><b>Weight:</b> #{cat.weight}% | <b>Items: </b> #{cat.surveyQuestionsCount}</p>
+
+                                <p:commandButton value="Edit"
+                                                 style="background-color:#275aa5; border:none; color:white;"
+                                                 styleClass="mr-2"
+                                                 immediate="true"
+                                                 actionListener="#{surveyCategoryFormDialog.show}">
+                                    <f:setPropertyActionListener value="#{cat}"
+                                                                 target="#{surveyCategoryFormDialog.model}" />
+                                    <p:ajax event="dialogReturn"
+                                            listener="#{surveyCategoryView.reloadFilterReset}"
+                                            update="surveyCategoryForm" />
+                                </p:commandButton>
+
+                                <p:commandButton value="Manage Items"
+                                                 style="background-color:#6dbe46; border:none; color:white;"
+                                                 styleClass="mr-2"
+                                                 update="@form"
+                                                 process="@this"
+                                                 actionListener="#{surveyQuestionFormDialog.showForCategory}">
+                                    <f:setPropertyActionListener value="#{cat}"
+                                                                 target="#{surveyQuestionFormDialog.selectedCategory}" />
+                                    <p:ajax event="dialogReturn"
+                                            listener="#{surveyCategoryView.reloadFilterReset}"
+                                            update="@form" />
+                                </p:commandButton>
+
+                                <p:commandButton value="Delete"
+                                                 style="background-color:#d9534f; border:none; color:white;"
+                                                 actionListener="#{surveyCategoryView.setSelectedCategory(cat)}"
+                                                 oncomplete="PF('confirmDelete').show()" />
+                            </div>
+                        </div>
+                    </ui:repeat>
+
+
+                </div>
+            </div>
+
+            <!-- Confirm Delete -->
+            <p:confirmDialog widgetVar="confirmDelete" header="Confirmation"
+                             message="You are about to delete this category. Do you wish to continue?"
+                             showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{surveyCategoryView.deleteSelectedCategory}"
+                                 oncomplete="PF('confirmDelete').hide()"
+                                 update="surveyCategoryForm" />
+                <p:commandButton value="No" icon="pi pi-times"
+                                 onclick="PF('confirmDelete').hide()" type="button" />
+            </p:confirmDialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
