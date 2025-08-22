@@ -1,3 +1,4 @@
+
 package org.pahappa.systems.kpiTracker.views.dialogs;
 
 import org.primefaces.PrimeFaces;
@@ -40,7 +41,7 @@ public abstract class DialogForm<T extends BaseEntity> extends FormPresenter<T> 
 		options.put("widgetVar", this.name);
 		options.put("id", this.name);
 		this.closeMap.put("widgetVar", this.name);
-		this.closeMap.put("id", this.name);		
+		this.closeMap.put("id", this.name);
 		PrimeFaces.current().dialog().openDynamic(name, options, null);
 	}
 

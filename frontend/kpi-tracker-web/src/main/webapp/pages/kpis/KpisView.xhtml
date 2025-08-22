@@ -8,39 +8,36 @@
     <ui:define name="content">
         <div class="ui-g ui-fluid">
             <div class="ui-g-12">
-                <h:form id="departmentView" enctype="multipart/form-data">
+                <h:form id="kpisView" enctype="multipart/form-data">
 
                     <ui:fragment>
                         <div class="p-grid table-demo">
                             <div class="p-col-12">
                                 <div class="card">
-                                    <p:dataTable id="departmentTable" var="model" value="#{departmentView.dataModels}"
-                                                 widgetVar="departmentTable"
+                                    <p:dataTable id="kpisTable" var="model" value="#{kpiView.dataModels}"
+                                                 widgetVar="teamsTable"
                                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                                  paginator="true" lazy="true" rows="20"
-                                                 emptyMessage="#{departmentView.dataEmptyMessage}"
+                                                 emptyMessage="No teams found."
                                                  paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                  rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
 
                                         <f:facet name="header">
                                             <div class="p-d-flex p-jc-between">
                                                 <div>
-                                                    <span class="table-header-text">Department Management</span>
-
+                                                    <span class="table-header-text">Key Perfomance Indicators</span>
                                                 </div>
-
                                                 <div>
                                                     <div class="p-d-flex p-flex-wrap">
                                                         <div class="p-mr-2 p-mb-2">
-                                                            <p:commandButton value="Add Department" icon="fa fa-plus" process="@this"
-                                                                             actionListener="#{departmentFormDialog.show}">
+                                                            <p:commandButton value="Add KPI" icon="fa fa-plus" process="@this"
+                                                                             actionListener="#{kpiFormDialog.show}">
                                                                 <f:setPropertyActionListener value="#{null}"
-                                                                                             target="#{departmentFormDialog.model}" />
-
-                                                                <p:ajax event="dialogReturn" listener="#{departmentView.reloadFilterReset}" update="departmentTable" />
-                                                            </p:commandButton>                                                  </div>
+                                                                                             target="#{kpiFormDialog.model}" />
+                                                                <p:ajax event="dialogReturn" listener="#{kpiView.reloadFilterReset}" update="kpisTable" />
+                                                            </p:commandButton>
+                                                        </div>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </f:facet>
@@ -51,21 +48,23 @@
 
                                         <p:column>
                                             <f:facet name="header">
-                                                <h:outputText value="Department" />
+                                                <h:outputText value="Kpi Name" />
                                             </f:facet>
-                                            <h:outputText value="#{model.name}" />
+                                            <h:outputText value="#{model.kpiName}" />
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
-                                                <h:outputText value="Dpt Lead" />
+                                                <h:outputText value="Department Attached To" />
                                             </f:facet>
-                                            <!-- IMPORTANT: Check if the lead exists to avoid a NullPointerException on the page -->
-                                            <h:outputText value="#{model.departmentLead != null ? model.departmentLead.fullName : 'No DptLead assigned yet'}" />
+                                            <h:outputText value="#{model.department.name}" />
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
-                                                <h:outputText value="Description" />
+                                                <h:outputText value="Goal Attached To" />
                                             </f:facet>
+                                            <h:outputText value="#{model.goal.name}" />
+                                        </p:column>
+                                        <p:column headerText="Description">
                                             <h:outputText value="#{model.description}" />
                                         </p:column>
 
@@ -73,46 +72,40 @@
                                                   style="text-align: center">
                                             <p:commandButton process="@this" icon="fa fa-edit"
                                                              immediate="true" rendered="true"
-                                                             actionListener="#{departmentFormDialog.show}">
+                                                             actionListener="#{kpiFormDialog.show}" >
                                                 <f:setPropertyActionListener value="#{model}"
-                                                                             target="#{departmentFormDialog.model}" />
-                                                <p:ajax event="dialogReturn" update="departmentTable" />
+                                                                             target="#{kpiFormDialog.model}" />
+                                                <p:ajax event="dialogReturn" update="kpisTable" />
                                             </p:commandButton>
 
                                             <p:commandButton icon="fa fa-trash" title="Delete"
                                                              styleClass="ui-button-danger"
                                                              style="margin-left: 5px"
-                                                             actionListener="#{departmentView.deleteSelectedDepartment(model)}"
-                                                             update="departmentView">
-
-                                                <!-- THIS IS THE FIX: Set the selected department before the dialog shows -->
-                                                <f:setPropertyActionListener value="#{model}" target="#{departmentView.selectedDepartment}" />
-
+                                                             actionListener="#{kpiView.deleteKpi()}"
+                                                             update="teamsView">
+                                                <f:setPropertyActionListener value="#{model}" target="#{kpiView.selectedKpi}" />
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete department '#{model.name}'. Are you sure?"
+                                                           message="You are about to delete KPI '#{model.kpiName}'. Are you sure?"
                                                            icon="ui-icon-alert" />
                                             </p:commandButton>
 
                                         </p:column>
 
                                     </p:dataTable>
-
                                 </div>
                             </div>
                         </div>
                     </ui:fragment>
-                    <!--                    <p:blockUI block="departmentView">-->
-                    <!--                        <p:graphicImage value="/resources/images/workingicon.png" />-->
-                    <!--                    </p:blockUI>-->
+
                     <p:confirmDialog global="true">
                         <p:commandButton value="Yes" type="button"
                                          styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
                         <p:commandButton value="No" type="button"
                                          styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
                     </p:confirmDialog>
-
                 </h:form>
             </div>
         </div>
+
     </ui:define>
 </ui:composition>

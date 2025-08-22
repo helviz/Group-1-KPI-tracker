@@ -36,33 +36,29 @@ public class DepartmentFormDialog  extends DialogForm<Department> {
     private boolean edit;
 
     @PostConstruct
-    public void init() { // <-- REMOVED 'throws OperationFailedException'
+    public void init() {
         try {
-            // Initialize BOTH services here
-            this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
-            this.userService = ApplicationContextProvider.getBean(UserService.class); // <-- ADDED THIS LINE
 
-            // This will now work because userService is no longer null
+            this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
+            this.userService = ApplicationContextProvider.getBean(UserService.class);
             this.availableUsers = this.userService.getUsers();
 
         } catch (Exception e) {
-            // Always log the error so you can debug it!
             e.printStackTrace();
         }
     }
     /**
-     * THIS IS THE FIX.
      * The constructor now initializes the model object immediately,
      * ensuring it is never null when the JSF page is rendered.
      */
     public DepartmentFormDialog() {
         super(HyperLinks.DEPARTMENT_FORM_DIALOG, 700, 450);
-      //  super.model = new Department(); // Initialize the model here!
     }
 
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
         this.departmentService.saveInstance(super.model);
+
     }
 
     @Override
@@ -79,8 +75,13 @@ public class DepartmentFormDialog  extends DialogForm<Department> {
      * setting the edit flag if it does.
      */
     @Override
-    public void setFormProperties() {
+    public void setFormProperties()  {
         super.setFormProperties();
+        try {
+            this.availableUsers = this.userService.getUsers();
+        } catch (OperationFailedException e) {
+            throw new RuntimeException(e);
+        }
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
         } else {
