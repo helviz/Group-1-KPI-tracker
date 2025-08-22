@@ -2,7 +2,7 @@ package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import com.googlecode.genericdao.search.Search;
 import org.pahappa.systems.kpiTracker.core.services.KpiService;
-import org.pahappa.systems.kpiTracker.models.goal.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 import org.pahappa.systems.kpiTracker.models.kpi.KpiType;
 import org.pahappa.systems.kpiTracker.utils.Validate;

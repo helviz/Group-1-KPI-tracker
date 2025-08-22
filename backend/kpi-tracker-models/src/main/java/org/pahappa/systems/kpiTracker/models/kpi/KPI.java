@@ -1,6 +1,6 @@
 package org.pahappa.systems.kpiTracker.models.kpi;
 
-import org.pahappa.systems.kpiTracker.models.goal.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
 

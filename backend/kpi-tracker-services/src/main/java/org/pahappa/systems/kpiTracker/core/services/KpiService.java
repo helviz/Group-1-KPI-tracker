@@ -1,6 +1,6 @@
 package org.pahappa.systems.kpiTracker.core.services;
 
-import org.pahappa.systems.kpiTracker.models.goal.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 
 import java.util.List;

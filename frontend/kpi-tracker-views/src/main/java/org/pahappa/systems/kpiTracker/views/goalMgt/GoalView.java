@@ -103,12 +103,6 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
     private Search composeSearch() {
         Search search = new Search()
                 .addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-
-        // ====================================================================================
-        // === THIS IS THE FIX: Eagerly fetch the goalPeriod to avoid
-        // LazyInitializationException
-        // on the JSF page when accessing g.goalPeriod.endDate.
-        // ====================================================================================
         search.addFetch("goalPeriod");
 
         if (selectedStatus != null) {
