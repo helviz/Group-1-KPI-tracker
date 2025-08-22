@@ -6,12 +6,12 @@ import org.sers.webutils.model.BaseEntity;
 
 /**
  * Defines methods to be used by both {@link DialogForm} and {@link WebForm}
- * 
+ *
  * @param <T>
  */
 abstract class FormPresenter<T extends BaseEntity> extends WebAppExceptionHandler {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ abstract class FormPresenter<T extends BaseEntity> extends WebAppExceptionHandle
 	/**
 	 * Method that performs the appropriate server call to persist the entity
 	 * into the database.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public abstract void persist() throws Exception;
@@ -29,9 +29,9 @@ abstract class FormPresenter<T extends BaseEntity> extends WebAppExceptionHandle
 	/**
 	 * Method that calls the persist function and performs appropriate cleaning
 	 * of the User Interface and redirections after saving, if any.
-	 * 
+	 *
 	 * To be overridden by {@link DialogForm} and {@link WebForm}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public abstract void save() throws Exception;
@@ -59,7 +59,7 @@ abstract class FormPresenter<T extends BaseEntity> extends WebAppExceptionHandle
 	 * Method that sets the Model used by this {@link FormPresenter}. In case
 	 * the model is null, its set by a call to resetModel that provides a new
 	 * instance.
-	 * 
+	 *
 	 * @param model
 	 */
 	public void setModel(T model) {

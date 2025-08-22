@@ -72,21 +72,24 @@
                                         <p:column headerText="Action" width="140" exportable="false"
                                                   style="text-align: center">
                                             <p:commandButton process="@this" icon="fa fa-edit"
-                                                              immediate="true" rendered="true"
+                                                             immediate="true" rendered="true"
                                                              actionListener="#{departmentFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
                                                                              target="#{departmentFormDialog.model}" />
                                                 <p:ajax event="dialogReturn" update="departmentTable" />
                                             </p:commandButton>
 
-
-                                            <!-- DELETE BUTTON -->
                                             <p:commandButton icon="fa fa-trash" title="Delete"
-                                                             styleClass="ui-button-danger" style="margin-left: 5px"
+                                                             styleClass="ui-button-danger"
+                                                             style="margin-left: 5px"
                                                              actionListener="#{departmentView.deleteSelectedDepartment(model)}"
-                                                             update=":goalPeriodView:periodTable">
+                                                             update="departmentView">
+
+                                                <!-- THIS IS THE FIX: Set the selected department before the dialog shows -->
+                                                <f:setPropertyActionListener value="#{model}" target="#{departmentView.selectedDepartment}" />
+
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete period '#{model.name}'. Are you sure?"
+                                                           message="You are about to delete department '#{model.name}'. Are you sure?"
                                                            icon="ui-icon-alert" />
                                             </p:commandButton>
 
@@ -98,9 +101,9 @@
                             </div>
                         </div>
                     </ui:fragment>
-<!--                    <p:blockUI block="departmentView">-->
-<!--                        <p:graphicImage value="/resources/images/workingicon.png" />-->
-<!--                    </p:blockUI>-->
+                    <!--                    <p:blockUI block="departmentView">-->
+                    <!--                        <p:graphicImage value="/resources/images/workingicon.png" />-->
+                    <!--                    </p:blockUI>-->
                     <p:confirmDialog global="true">
                         <p:commandButton value="Yes" type="button"
                                          styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
