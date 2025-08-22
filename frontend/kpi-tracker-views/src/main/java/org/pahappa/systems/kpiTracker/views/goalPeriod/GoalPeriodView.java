@@ -107,4 +107,6 @@ public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodSer
     public List<GoalPeriod> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
         return Collections.emptyList();
     }
+
+
 }

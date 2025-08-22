@@ -18,6 +18,7 @@ import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
+import org.sers.webutils.server.shared.SharedAppData;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -102,5 +103,9 @@ public class GoalForm extends DialogForm<Goal> {
             }
             setEdit(false);
         }
-    }
+
+        User loggedInUser = SharedAppData.getLoggedInUser();
+        super.model.setOwnerId(loggedInUser); // Set the logged-in user as the owner
+
+        setEdit(false);    }
 }

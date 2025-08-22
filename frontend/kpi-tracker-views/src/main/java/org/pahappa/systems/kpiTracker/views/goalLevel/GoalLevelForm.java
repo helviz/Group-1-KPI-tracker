@@ -68,4 +68,6 @@ public class GoalLevelForm extends DialogForm<GoalLevel> {
             setEdit(false);
         }
     }
+    private String text;
+
 }
