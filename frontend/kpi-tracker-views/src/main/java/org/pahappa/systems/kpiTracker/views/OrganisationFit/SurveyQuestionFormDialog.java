@@ -2,19 +2,16 @@ package org.pahappa.systems.kpiTracker.views.OrganisationFit;
 
 import org.pahappa.systems.kpiTracker.core.services.SurveyCategoryService;
 import org.pahappa.systems.kpiTracker.core.services.SurveyQuestionService;
-import org.pahappa.systems.kpiTracker.core.services.SurveyService;
 import org.pahappa.systems.kpiTracker.models.organisationFit.SurveyCategory;
 import org.pahappa.systems.kpiTracker.models.organisationFit.SurveyQuestion;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.sers.webutils.client.views.presenters.ViewPath;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -38,7 +35,7 @@ public class SurveyQuestionFormDialog extends DialogForm<SurveyQuestion> {
 
 
     public SurveyQuestionFormDialog() {
-        super(HyperLinks.SURVEY_QUESTION_FORM_DIALOG, 700, 450);
+        super(HyperLinks.SURVEY_QUESTION_FORM_DIALOG, 700, 600);
     }
 
     public SurveyQuestionFormDialog(String name, int width, int height) {

@@ -1,7 +1,5 @@
 package org.pahappa.systems.kpiTracker.views.OrganisationFit;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.SurveyCategoryService;
 import org.pahappa.systems.kpiTracker.models.organisationFit.SurveyCategory;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
@@ -13,7 +11,6 @@ import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 
 @ManagedBean(
         name ="surveyCategoryFormDialog", eager = true
@@ -35,7 +32,7 @@ public class SurveyCategoryFormDialog extends DialogForm<SurveyCategory> {
     }
 
     public SurveyCategoryFormDialog() {
-        super(HyperLinks.SURVEY_CATEGORY_FORM_DIALOG, 700, 450);
+        super(HyperLinks.SURVEY_CATEGORY_FORM_DIALOG, 700, 600);
     }
 
     public SurveyCategoryFormDialog(String name, int width, int height) {

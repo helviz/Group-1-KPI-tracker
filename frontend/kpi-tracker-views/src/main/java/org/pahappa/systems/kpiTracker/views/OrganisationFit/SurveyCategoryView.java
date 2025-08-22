@@ -1,8 +1,6 @@
 package org.pahappa.systems.kpiTracker.views.OrganisationFit;
 
 import com.googlecode.genericdao.search.Search;
-import lombok.Getter;
-import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.SurveyCategoryService;
 import org.pahappa.systems.kpiTracker.models.organisationFit.SurveyCategory;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
@@ -21,13 +19,12 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
-import javax.faces.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 @ManagedBean(name = "surveyCategoryView")
-@SessionScoped
+@ViewScoped
 @ViewPath(path = HyperLinks.SURVEY_CATEGORY_VIEW)
 public class SurveyCategoryView extends PaginatedTableView<SurveyCategory, SurveyCategoryService, SurveyCategoryService> {
     private SurveyCategoryService surveyCategoryService;
@@ -53,7 +50,7 @@ public class SurveyCategoryView extends PaginatedTableView<SurveyCategory, Surve
 
     @Override
     public void reloadFromDB(int i, int i1, Map<String, Object> map) throws Exception {
-        super.setDataModels(surveyCategoryService.getInstances(new Search().addFilterEqual("recordStatus", RecordStatus.ACTIVE), i, i1));
+        super.setDataModels(surveyCategoryService.getAllInstances());
         super.setTotalRecords(surveyCategoryService.countInstances(new Search().addFilterEqual("recordStatus", RecordStatus.ACTIVE)));
         System.out.println("Reloading from DB with offset=" + i + ", limit=" + i1);
 
@@ -73,6 +70,12 @@ public class SurveyCategoryView extends PaginatedTableView<SurveyCategory, Surve
     @Override
     public List<SurveyCategory> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
         return getDataModels();
+    }
+
+    @Override
+    public int getTotalRecords() {
+        super.setTotalRecords(surveyCategoryService.countInstances(new Search().addFilterEqual("recordStatus", RecordStatus.ACTIVE)));
+        return super.getTotalRecords();
     }
 
     public void deleteSelectedCategory() {
