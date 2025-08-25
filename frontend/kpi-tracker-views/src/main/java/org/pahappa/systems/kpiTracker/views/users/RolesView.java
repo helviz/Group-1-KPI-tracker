@@ -1,5 +1,6 @@
 package org.pahappa.systems.kpiTracker.views.users;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -137,5 +138,9 @@ public class RolesView extends PaginatedTableView<Role, RolesView, RolesView> {
 			this.selectedPermissionsList = new HashSet<Permission>();
 			this.selectedRole = new Role();
 		}
+	}
+
+	public String redirectToPermissionsView() throws IOException {
+		return HyperLinks.PERMISSION_VIEW;
 	}
 }

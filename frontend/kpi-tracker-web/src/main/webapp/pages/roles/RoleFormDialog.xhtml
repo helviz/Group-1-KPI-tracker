@@ -12,7 +12,7 @@
         </style>
     </ui:define>
     <ui:define name="content">
-        <title>Add user</title>
+        <title>#{roleFormDialog.model.name != null ? 'Edit Role' : 'Add Role'}</title>
         <h:form id="roleFormDialog" style="height: 450px" styleClass="card">
             <div class="p-grid ui-fluid" style="display:flex">
                 <div class="p-col-12 p-md-6">
@@ -29,30 +29,18 @@
                                      required="true" />
                     </div>
                 </div>
-                <div class="p-field p-col-12 p-md-12">
-                    <h5>Permissions</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectManyCheckbox id="permissionGrid"
-                                              value="#{roleFormDialog.selectedPermissionsList}"
-                                              converter="permissionConverter" layout="grid" columns="3"
-                                              styleClass="grid-checkbox">
-                            <f:selectItems value="#{roleFormDialog.permissionsList}"
-                                           var="permission" itemLabel="#{permission}"
-                                           itemValue="#{permission}" />
-                        </p:selectManyCheckbox>
-                    </div>
-                </div>
+
                 <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
                     <div class="p-grid p-justify-end">
                         <div class="p-col-2">
-                            <p:commandButton value="Cancel" 
+                            <p:commandButton value="Cancel"
                                              validateClient="false"
                                              process="@this"
                                              action="#{roleFormDialog.hide}"
                                              styleClass="ui-button-outlined ui-button-help" />
                         </div>
                         <div class="p-col-2" >
-                            <p:commandButton value="Save" 
+                            <p:commandButton value="Save"
                                              process="@form"
                                              actionListener="#{roleFormDialog.save}"
                                              update="@form" validateClient="true" />

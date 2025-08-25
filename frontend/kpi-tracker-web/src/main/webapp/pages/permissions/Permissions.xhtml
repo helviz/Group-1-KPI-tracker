@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewParam name="roleId" value="#{permissionView.roleId}" />
+        </f:metadata>
+
+        <h:form id="permissionsForm">
+            <div class="card">
+                <p:growl id="messages" showDetail="true" />
+
+                <div class="p-d-flex p-jc-between p-ai-center" style="margin-bottom: 20px;">
+                    <p:commandButton value="Back" icon="fa fa-arrow-left" immediate="true" action="#{permissionView.redirectToRolesView()}" />
+                    <h2 style="font-weight: bold;">Permissions for: #{permissionView.selectedRole.name}</h2>
+                    <div></div>
+                </div>
+
+                <p:accordionPanel id="permissions-panel">
+                    <c:forEach var="category" items="#{permissionView.categorizedPermissions.keySet()}">
+                        <p:tab title="#{category}">
+                            <div class="p-grid p-fluid">
+                                <p:selectManyCheckbox value="#{permissionView.selectedPermissions}" converter="permissionConverter" layout="grid" columns="2">
+                                    <f:selectItems value="#{permissionView.categorizedPermissions[category]}" var="perm"
+                                                   itemLabel="#{perm.name}" itemValue="#{perm}" />
+                                    <p:ajax listener="#{permissionView.display}" event="change" />
+                                </p:selectManyCheckbox>
+                            </div>
+                        </p:tab>
+                    </c:forEach>
+                </p:accordionPanel>
+
+                <div class="p-d-flex p-jc-end p-mt-4">
+                    <p:commandButton value="Cancel" styleClass="ui-button-secondary"
+                                     immediate="true"
+                                     onclick="window.history.back();" />
+                    <p:commandButton value="Save" icon="fa fa-save"
+                                     immediate="true"
+                                     process="@this"
+                                     actionListener="#{permissionView.persist}"
+                                     update="messages" styleClass="p-ml-2" />
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
