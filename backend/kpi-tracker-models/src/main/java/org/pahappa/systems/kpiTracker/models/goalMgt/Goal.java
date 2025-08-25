@@ -23,9 +23,10 @@ public class Goal extends BaseEntity {
     private GoalLevel goalLevelId;//table
     private Approvals approvalStatus; //enum
     private  User approveByUserId;
-    private Department department;
+//    private Department department;
     private  Double goalEvaluationWeight;
     private Double progress = 0.0;
+    private List<GoalDepartment> goalDepartments = new ArrayList<>();
 
 
     @Column(name = "goal_title", nullable = false)
@@ -71,11 +72,11 @@ public class Goal extends BaseEntity {
         return approveByUserId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many goals can belong to one department
-    @JoinColumn(name = "department_id")
-    public Department getDepartment() {
-        return department;
-    }
+//    @ManyToOne(fetch = FetchType.LAZY) // Many goals can belong to one department
+//    @JoinColumn(name = "department_id")
+//    public Department getDepartment() {
+//        return department;
+//    }
 
 
     @Column(name = "goal_evaluation_weight")
@@ -88,4 +89,14 @@ public class Goal extends BaseEntity {
      return progress;
     }// Initialize to 0 by default
 
+
+    // --- ADD THE NEW RELATIONSHIP TO THE JOIN ENTITY ---
+    @OneToMany(
+            mappedBy = "goal", // This tells Hibernate the relationship is managed by the 'goal' field in GoalDepartment
+            cascade = CascadeType.ALL, // When we save/update a Goal, also save/update its GoalDepartments
+            orphanRemoval = true // If we remove a GoalDepartment from this list, delete it from the DB
+    )
+    public List<GoalDepartment> getGoalDepartments(){
+    return goalDepartments;
+}
 }
