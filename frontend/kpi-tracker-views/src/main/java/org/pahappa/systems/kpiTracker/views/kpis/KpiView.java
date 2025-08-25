@@ -88,6 +88,7 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
     public void addKpi() {
         if (this.selectedGoal != null) {
             this.kpiDialog.reset(this.selectedGoal);
+            this.kpiDialog.show(null);
         } else {
             MessageComposer.error("Error", "Please select a goal first.");
         }

@@ -13,47 +13,28 @@
     </ui:define>
     <ui:define name="content">
         <title>#{roleFormDialog.model.name != null ? 'Edit KPI' : 'Add KPI'}</title>
-        <h:form id="kpiFormDialog" style="height: 450px" styleClass="card">
+        <h:form id="kpiForm" style="height: 450px" styleClass="card">
             <div class="p-grid ui-fluid" style="display:flex">
 
                 <div class="ui-col-12 ui-md-6">
                     <h5>KPI Name</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText id="kpiName"
-                                     value="#{kpiFormDialog.model.kpiName}"
+                        <p:inputText id="kpiTitleInput"
+                                     value="#{kpiFormDialog.model.title}"
                                      required="true"/>
                     </div>
                 </div>
 
                 <div class="ui-col-12 ui-md-6">
-                    <h5>Department</h5>
+                    <h5>Tracking Method</h5>
                     <div class="ui-inputgroup">
-                        <p:selectOneMenu id="department"
-                                         value="#{kpiFormDialog.model.department}"
-                                         converter="departmentConverter"
-                                         required="true"
-                                         filter="true"
-                                         filterMatchMode="contains">
-                            <f:selectItem itemLabel="-- Select a Department --" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="#{teamFormDialog.availableDepartments}" var="dept"
-                                           itemLabel="#{dept.name}" itemValue="#{dept}"/>
-                            <p:ajax event="change" listener="#{kpiFormDialog.onDepartmentChange}"/>
-                        </p:selectOneMenu>
-                    </div>
-                </div>
-
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Team Lead</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectOneMenu id="teamLead"
-                                         style="text-transform: capitalize"
-                                         value="#{teamFormDialog.model.teamLead}"
-                                         converter="userConverter"
-                                         filter="true"
-                                         filterMatchMode="contains">
-                            <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
-                                           itemLabel="#{user.fullName}" itemValue="#{user}" />
+                        <p:selectOneMenu id="kpiTypeSelect"
+                                         value="#{kpiFormDialog.model.kpiType}"
+                                         styleClass="capitalized"
+                                         required="true">
+                            <f:selectItem itemLabel="-- Select Tracking Method --" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{kpiFormDialog.kpiTypes}" var="kpiType" itemLabel="#{kpiType.name()}" itemValue="#{kpiType}" />
+                            <p:ajax update="kpiFields" process="@this" />
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -61,28 +42,76 @@
                 <div class="ui-col-12 ui-md-12">
                     <h5>Description</h5>
                     <div class="ui-inputgroup">
-                        <p:inputTextarea id="description"
-                                         value="#{kpi/FormDialog.model.description}"
+                        <p:inputTextarea id="descriptionInput"
+                                         value="#{kpiFormDialog.model.description}"
                                          rows="4" autoResize="false"/>
                     </div>
                 </div>
 
+                <p:outputPanel id="kpiFields">
+                    <p:outputPanel rendered="#{kpiFormDialog.model.kpiType == 'NUMERICAL'}">
+                        <div class="p-grid ui-fluid">
+                            <div class="ui-col-12 ui-md-6">
+                                <h5>Start Value</h5>
+                                <div class="ui-inputgroup">
+                                    <p:inputNumber id="startValueInput"
+                                                   value="#{kpiFormDialog.model.startValue}"
+                                                   decimalPlaces="2"/>
+                                </div>
+                            </div>
+                            <div class="ui-col-12 ui-md-6">
+                                <h5>Target Value</h5>
+                                <div class="ui-inputgroup">
+                                    <p:inputNumber id="targetValueInput"
+                                                   value="#{kpiFormDialog.model.targetValue}"
+                                                   decimalPlaces="2"/>
+                                </div>
+                            </div>
+                            <div class="ui-col-12 ui-md-6">
+                                <h5>Current Value</h5>
+                                <div class="ui-inputgroup">
+                                    <p:inputNumber id="currentValueInput"
+                                                   value="#{kpiFormDialog.model.currentValue}"
+                                                   decimalPlaces="2"/>
+                                </div>
+                            </div>
+                            <div class="ui-col-12 ui-md-6">
+                                <h5>Unit of Measure</h5>
+                                <div class="ui-inputgroup">
+                                    <p:inputText id="unitOfMeasureInput"
+                                                 value="#{kpiFormDialog.model.unitOfMeasure}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
 
-                <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
-                    <div class="p-grid p-justify-end">
-                        <div class="p-col-2">
-                            <p:commandButton value="Cancel"
-                                             immediate="true"
-                                             process="@this"
-                                             actionListener="#{teamFormDialog.hide}"
-                                             styleClass="ui-button-outlined ui-button-help"/>
+                    <p:outputPanel rendered="#{kpiFormDialog.model.kpiType == 'BINARY'}">
+                        <div class="p-grid ui-fluid">
+                            <div class="ui-col-12 ui-md-12">
+                                <h5>Is Complete</h5>
+                                <div class="ui-inputgroup">
+                                    <p:selectBooleanCheckbox id="isCompleteCheckbox"
+                                                             value="#{kpiFormDialog.model.isComplete}"/>
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-col-2">
-                            <p:commandButton value="Save Team"
-                                             process="@form"
-                                             actionListener="#{teamFormDialog.save}"
-                                             update="@form" validateClient="true" />
-                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+            </div>
+
+            <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
+                <div class="p-grid p-justify-end">
+                    <div class="p-col-2">
+                        <p:commandButton id="cancelButton" value="Cancel"
+                                         process="@this"
+                                         actionListener="#{kpiFormDialog.hide}"
+                                         styleClass="ui-button-outlined ui-button-help"/>
+                    </div>
+                    <div class="p-col-2">
+                        <p:commandButton id="saveButton" value="Save KPI"
+                                         process="@form"
+                                         actionListener="#{kpiFormDialog.save}"
+                                         update="@form" validateClient="true" />
                     </div>
                 </div>
             </div>
