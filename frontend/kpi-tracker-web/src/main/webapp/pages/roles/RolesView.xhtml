@@ -51,7 +51,7 @@
                                     </div>
                                     <div>
                                         <p:commandButton value="Add Role" process="@this"
-                                                         styleClass="ui-button-help" immediate="true"
+                                                         styleClass="ui-button-help"
                                                          actionListener="#{roleFormDialog.show}">
                                             <f:setPropertyActionListener value="#{null}"
                                                                          target="#{roleFormDialog.model}" />
@@ -81,8 +81,19 @@
                                 </f:facet>
                                 <h:outputText value="#{model.permissions.size()}" />
                             </p:column>
+                            <p:column style="text-align: center">
+                                <f:facet name="header">
+                                    <h:outputText value="Assign Permissions" />
+                                </f:facet>
+                                <p:commandLink id="viewpermissions" action="#{rolesView.redirectToPermissionsView()}"
+                                               value="View Permissions">
+                                    <f:setPropertyActionListener value="#{model}"
+                                                                 target="#{permissionView.selectedRole}" />
+                                </p:commandLink>
+                            </p:column>
                             <p:column headerText="Action" exportable="false" width="150"
                                       style="text-align: center">
+
                                 <p:commandButton icon="fa fa-edit" title="Edit role"
                                                  styleClass="ui-button-help" immediate="true"
                                                  actionListener="#{roleFormDialog.show}">
