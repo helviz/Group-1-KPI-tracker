@@ -45,8 +45,6 @@ public class DepartmentConverter implements Converter {
         }
 
         if (modelValue instanceof Department) {
-            // THE FIX: The Long ID from the object MUST be converted to a String before returning.
-            // This fixes the compilation error.
             return String.valueOf(((Department) modelValue).getId());
         } else {
             // Throw an exception if we get an unexpected type.

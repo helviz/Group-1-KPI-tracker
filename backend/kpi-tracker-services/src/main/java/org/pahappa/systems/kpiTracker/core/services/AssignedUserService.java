@@ -21,6 +21,7 @@ public interface AssignedUserService extends GenericService<AssignedUser> {
 
     AssignedUser clearUserTeams(AssignedUser assignedUser);
 
+    AssignedUser findAssignedUserByUser(User user);
     // ---------------------------
     // Retrieval Queries
     // ---------------------------

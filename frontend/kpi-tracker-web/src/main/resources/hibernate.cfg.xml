@@ -55,6 +55,9 @@
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.Goal"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalDepartment"/>
+		<mapping class="org.pahappa.systems.kpiTracker.models.kpi.KPI"/>
+		<mapping class="org.pahappa.systems.kpiTracker.models.kpi.KpiType"/>
+		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.Activity"/>
 
 
 		

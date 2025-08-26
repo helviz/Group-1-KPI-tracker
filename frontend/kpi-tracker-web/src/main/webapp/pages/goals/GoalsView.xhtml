@@ -1,220 +1,160 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+    template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
-        <h:form id="goalsView" enctype="multipart/form-data">
-            <div class="grid">
-                <!-- Goals Completed -->
-                <div class="col-12 md:col-6 lg:col-3">
-                    <div class="p-3 border-round-lg shadow-2 h-full bg-green-50">
-                        <div class="flex align-items-center">
-                            <i class="pi pi-check-circle text-green-500 text-4xl mr-4"></i>
-                            <div>
-                                <span class="text-gray-700">Goals Completed</span>
-                                <div class="text-3xl font-bold text-gray-800">#{goalView.totalCompleted}</div>
-                                <span class="text-sm text-gray-600">Great achievement this quarter</span>
+        <div class="card">
+            <h:form id="goalsForm">
+                <div class="p-grid">
+                    <div class="p-col-12">
+                        <div class="card">
+                            <h5>Goal Management</h5>
+
+                            <!-- Tabbed Interface for Goal Contexts -->
+                            <p:tabView id="goalTabs" activeIndex="0">
+                                <p:ajax event="tabChange" listener="#{goalView.handleTabChange}" />
+                                <p:tab title="My Goals" id="myGoalsTab">
+                                    <p:dataTable value="#{goalView.dataModels}" var="goal" paginator="true" paginatorPosition="buttom" rows="10"
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,20,50" emptyMessage="No goals found"
+                                        styleClass="p-datatable-sm">
+
+                                        <p:column headerText="Goal Name" sortBy="#{goal.goalTitle}">
+                                            <h:outputText value="#{goal.goalTitle}" />
+                                        </p:column>
+
+                                        <p:column headerText="Level" sortBy="#{goal.goalLevel.name}">
+                                            <h:outputText value="#{goal.goalLevel.name}" />
+                                        </p:column>
+
+                                        <p:column headerText="Owner" sortBy="#{goal.owner.username}">
+                                            <h:outputText value="#{goal.owner.username}" />
+                                        </p:column>
+
+                                        <p:column headerText="Progress">
+                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
+                                                labelTemplate="{value}%" styleClass="progress-bar-sm" />
+                                        </p:column>
+
+                                        <p:column headerText="Status" sortBy="#{goal.goalStatus}">
+                                            <h:outputText value="#{goal.goalStatus}"
+                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                                        </p:column>
+
+                                        <p:column headerText="Actions" style="width: 200px;">
+                                            <p:commandButton value="Edit" icon="pi pi-pencil"
+                                                action="#{goalView.editGoal(goal)}"
+                                                styleClass="ui-button-sm ui-button-outlined" />
+
+                                            <p:commandButton value="Update Progress" icon="pi pi-chart-line"
+                                                action="#{goalView.updateProgress(goal)}"
+                                                styleClass="ui-button-sm ui-button-success"
+                                                rendered="#{goal.goalLevel.name.equalsIgnoreCase('Individual')}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+
+                                <p:tab title="My Team" id="myTeamTab">
+                                    <p:dataTable value="#{goalView.teamGoals}" var="goal" paginator="true" rows="10"
+                                        emptyMessage="No team goals found" styleClass="p-datatable-sm">
+
+                                        <p:column headerText="Goal Name">
+                                            <h:outputText value="#{goal.goalTitle}" />
+                                        </p:column>
+
+                                        <p:column headerText="Owner">
+                                            <h:outputText value="#{goal.owner.username}" />
+                                        </p:column>
+
+                                        <p:column headerText="Progress">
+                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
+                                                labelTemplate="{value}%" />
+                                        </p:column>
+
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{goal.goalStatus}"
+                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                                        </p:column>
+
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton value="Edit" icon="pi pi-pencil"
+                                                action="#{goalView.editGoal(goal)}"
+                                                styleClass="ui-button-sm ui-button-outlined" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+
+                                <p:tab title="My Department" id="myDepartmentTab">
+                                    <p:dataTable value="#{goalView.departmentGoals}" var="goal" paginator="true"
+                                        rows="10" emptyMessage="No department goals found" styleClass="p-datatable-sm">
+
+                                        <p:column headerText="Goal Name">
+                                            <h:outputText value="#{goal.goalTitle}" />
+                                        </p:column>
+
+                                        <p:column headerText="Owner">
+                                            <h:outputText value="#{goal.owner.username}" />
+                                        </p:column>
+
+                                        <p:column headerText="Progress">
+                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
+                                                labelTemplate="{value}%" />
+                                        </p:column>
+
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{goal.goalStatus}"
+                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                                        </p:column>
+
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton value="Edit" icon="pi pi-pencil"
+                                                action="#{goalView.editGoal(goal)}"
+                                                styleClass="ui-button-sm ui-button-outlined" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+
+                                <p:tab title="Organization" id="organizationTab">
+                                    <p:dataTable value="#{goalView.organizationGoals}" var="goal" paginator="true"
+                                        rows="10" emptyMessage="No organization goals found"
+                                        styleClass="p-datatable-sm">
+
+                                        <p:column headerText="Goal Name">
+                                            <h:outputText value="#{goal.goalTitle}" />
+                                        </p:column>
+
+                                        <p:column headerText="Owner">
+                                            <h:outputText value="#{goal.owner.username}" />
+                                        </p:column>
+
+                                        <p:column headerText="Progress">
+                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
+                                                labelTemplate="{value}%" />
+                                        </p:column>
+
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{goal.goalStatus}"
+                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                                        </p:column>
+
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton value="Edit" icon="pi pi-pencil"
+                                                action="#{goalView.editGoal(goal)}"
+                                                styleClass="ui-button-sm ui-button-outlined" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+                            </p:tabView>
+
+                            <!-- Action Buttons -->
+                            <div class="p-d-flex p-jc-end p-mt-3">
+                                <p:commandButton value="Add New Goal" icon="pi pi-plus" actionListener="#{goalForm.show}"
+                                    styleClass="ui-button-success" />
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Goals At Risk -->
-                <div class="col-12 md:col-6 lg:col-3">
-                    <div class="p-3 border-round-lg shadow-2 h-full bg-yellow-50">
-                        <div class="flex align-items-center">
-                            <i class="pi pi-exclamation-triangle text-yellow-500 text-4xl mr-4"></i>
-                            <div>
-                                <span class="text-gray-700">Goals At Risk</span>
-                                <div class="text-3xl font-bold text-gray-800">#{goalView.totalAtRisk}</div>
-                                <span class="text-sm text-gray-600">Review and take action</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPIs On Track -->
-                <div class="col-12 md:col-6 lg:col-3">
-                    <div class="p-3 border-round-lg shadow-2 h-full surface-100">
-                        <div class="flex align-items-center">
-                            <i class="pi pi-chart-line text-blue-500 text-4xl mr-4"></i>
-                            <div>
-                                <span class="text-gray-700">KPIs On Track</span>
-                                <div class="text-3xl font-bold text-gray-800">#{goalView.totalOnTrack}</div>
-                                <span class="text-sm text-gray-600">KPIs meeting target</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPIs Behind -->
-                <div class="col-12 md:col-6 lg:col-3">
-                    <div class="p-3 border-round-lg shadow-2 h-full bg-red-50">
-                        <div class="flex align-items-center">
-                            <i class="pi pi-times-circle text-red-500 text-4xl mr-4"></i>
-                            <div>
-                                <span class="text-gray-700">KPIs Behind</span>
-                                <div class="text-3xl font-bold text-gray-800">#{goalView.totalBehind}</div>
-                                <span class="text-sm text-gray-600">Immediate action needed</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!--        the tabs -->
-            <div class="card">
-                <p:tabView>
-                    <p:tab title="My Goals">
-                        <!-- Filter Bar -->
-                        <div class="flex justify-content-between align-items-center mb-4">
-                            <div class="flex align-items-center">
-                                <p:selectOneMenu value="#{goalView.selectedPeriod}" styleClass="mr-2"
-                                                 placeholder="All Periods">
-                                    <f:selectItem itemLabel="All Periods" itemValue="#{null}" />
-                                    <f:selectItems value="#{goalView.availablePeriods}" var="per"
-                                                   itemLabel="#{per.periodName}" itemValue="#{per}" />
-                                </p:selectOneMenu>
-
-                                <p:selectOneMenu value="#{goalView.selectedStatus}" styleClass="mr-2"
-                                                 placeholder="All Statuses">
-                                    <f:selectItem itemLabel="All Statuses" itemValue="#{null}" />
-                                    <f:selectItems value="#{goalView.availableStatuses}" />
-                                </p:selectOneMenu>
-
-                                <span class="p-input-icon-left">
-                                    <p:inputText value="#{goalView.searchTerm}" placeholder="Search goal/KPI" />
-                                </span>
-                            </div>
-
-                            <div>
-                                <p:commandButton value="Add New Goal" icon="pi pi-plus" styleClass="ui-button-info"
-                                                 process="@this" actionListener="#{goalForm.show}">
-                                    <f:setPropertyActionListener value="#{null}" target="#{goalForm.model}" />
-                                </p:commandButton>
-                            </div>
-                        </div>
-
-                        <!-- Cards / Grid -->
-                        <p:dataView id="goalsGrid" var="g" value="#{goalView.dataModels}" paginator="true" rows="12" lazy="true" layout="grid" widgetVar="goalsGridWv" styleClass="p-mt-3">
-                            <p:dataViewGridItem>
-                                <div class="card p-3 border-1 surface-border border-round shadow-2" style="min-height: 180px;">
-                                    <div class="flex justify-content-between align-items-center">
-                                        <div class="text-xl font-semibold">#{g.goalTitle}</div>
-                                        <span
-                                                class="text-sm #{g.goalStatus eq 'ON_TRACK' ? 'text-green-600' : g.goalStatus eq 'AT_RISK' ? 'text-yellow-600' : g.goalStatus eq 'BEHIND' ? 'text-red-600' : 'text-600'}">
-                                            #{g.goalStatus}
-                                        </span>
-                                    </div>
-                                    <div class="mt-2 text-600">#{g.description}</div>
-                                    <div class="mt-3">
-                                        <p:progressBar value="#{g.progress != null ? g.progress : 0}"
-                                                       style="height:8px" />
-                                        <div class="flex justify-content-between text-600 mt-1">
-                                            <span>Due: <h:outputText
-                                                    value="#{g.goalPeriod != null ? g.goalPeriod.endDate : null}">
-                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
-                                                </h:outputText></span>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-content-end gap-2 mt-3">
-                                        <p:commandButton icon="pi pi-pencil" title="Edit" process="@this"
-                                                         actionListener="#{goalForm.show}">
-                                            <f:setPropertyActionListener value="#{g}" target="#{goalForm.model}" />
-                                        </p:commandButton>
-                                    </div>
-                                </div>
-                            </p:dataViewGridItem>
-                        </p:dataView>
-
-                    </p:tab>
-                    <p:tab title="My Team">
-                        <!-- Filter Bar -->
-                        <div class="flex justify-content-between align-items-center mb-4">
-                            <div class="flex align-items-center">
-                                <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
-                                    <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025" />
-                                    <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025" />
-                                    <f:selectItem itemLabel="Monthly" itemValue="Monthly" />
-                                    <f:selectItem itemLabel="Quarterly" itemValue="Quarterly" />
-                                </p:selectOneMenu>
-
-                                <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
-                                    <f:selectItem itemLabel="On Track" itemValue="ONTRACK" />
-                                    <f:selectItem itemLabel="At Risk" itemValue="ATRISK" />
-                                    <f:selectItem itemLabel="Pending" itemValue="PENDING" />
-                                    <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
-                                </p:selectOneMenu>
-
-                                <span class="p-input-icon-left">
-                                    <p:inputText placeholder="Search goal/KPI" />
-                                </span>
-                            </div>
-
-                        </div>
-                        <p class="m-0">
-                            Content for My Team goes here.
-                        </p>
-                    </p:tab>
-                    <p:tab title="My Department">
-                        <!-- Filter Bar -->
-                        <div class="flex justify-content-between align-items-center mb-4">
-                            <div class="flex align-items-center">
-                                <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
-                                    <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025" />
-                                    <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025" />
-                                    <f:selectItem itemLabel="Monthly" itemValue="Monthly" />
-                                    <f:selectItem itemLabel="Quarterly" itemValue="Quarterly" />
-                                </p:selectOneMenu>
-
-                                <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
-                                    <f:selectItem itemLabel="On Track" itemValue="ONTRACK" />
-                                    <f:selectItem itemLabel="At Risk" itemValue="ATRISK" />
-                                    <f:selectItem itemLabel="Pending" itemValue="PENDING" />
-                                    <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
-                                </p:selectOneMenu>
-
-                                <span class="p-input-icon-left">
-                                    <p:inputText placeholder="Search goal/KPI" />
-                                </span>
-                            </div>
-
-                        </div>
-                        <p class="m-0">
-                            Content for My Department goes here.
-                        </p>
-                    </p:tab>
-                    <p:tab title="Organization">
-                        <!-- Filter Bar -->
-                        <div class="flex justify-content-between align-items-center mb-4">
-                            <div class="flex align-items-center">
-                                <p:selectOneMenu styleClass="mr-2" placeholder="All Periods">
-                                    <f:selectItem itemLabel="Q4 2025" itemValue="Q4_2025" />
-                                    <f:selectItem itemLabel="Q3 2025" itemValue="Q3_2025" />
-                                    <f:selectItem itemLabel="Monthly" itemValue="Monthly" />
-                                    <f:selectItem itemLabel="Quarterly" itemValue="Quarterly" />
-                                </p:selectOneMenu>
-
-                                <p:selectOneMenu styleClass="mr-2" placeholder="All Statuses">
-                                    <f:selectItem itemLabel="On Track" itemValue="ONTRACK" />
-                                    <f:selectItem itemLabel="At Risk" itemValue="ATRISK" />
-                                    <f:selectItem itemLabel="Pending" itemValue="PENDING" />
-                                    <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
-                                </p:selectOneMenu>
-
-                                <span class="p-input-icon-left">
-                                    <p:inputText placeholder="Search goal/KPI" />
-                                </span>
-                            </div>
-
-                        </div>
-                        <p class="m-0">
-                            Content for Organization goes here.
-                        </p>
-                    </p:tab>
-                </p:tabView>
-            </div>
-        </h:form>
+            </h:form>
+        </div>
     </ui:define>
-
 </ui:composition>

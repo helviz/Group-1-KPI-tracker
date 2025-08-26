@@ -18,6 +18,7 @@ import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
+import org.sers.webutils.server.shared.SharedAppData;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -46,6 +47,7 @@ public class GoalForm extends DialogForm<Goal> {
     private List<Department> department;
     private List<User> users;
     private List<GoalStatus> statuses;
+    private List<Goal> availableParentGoals;
 
     @PostConstruct
     public void init() {
@@ -56,6 +58,7 @@ public class GoalForm extends DialogForm<Goal> {
             this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
             this.userService = ApplicationContextProvider.getBean(UserService.class);
             this.statuses = Arrays.asList(GoalStatus.values());
+
             // Preload choices
             this.goalLevels = goalLevelService.getAllInstances();
             this.goalPeriods = goalPeriodService.getAllInstances();
@@ -72,6 +75,21 @@ public class GoalForm extends DialogForm<Goal> {
 
     @Override
     public void persist() throws Exception {
+        // Set the current user as owner if not already set
+        if (super.model.getOwner() == null) {
+            User currentUser = SharedAppData.getLoggedInUser();
+            if (currentUser != null) {
+                super.model.setOwner(currentUser);
+            }
+        }
+
+        // Validate that non-Organization goals have a parent
+        if (super.model.getGoalLevel() != null &&
+                !"Organization".equalsIgnoreCase(super.model.getGoalLevel().getName()) &&
+                super.model.getParentGoal() == null) {
+            throw new Exception("Parent goal is required for non-Organization goals");
+        }
+
         this.goalService.saveInstance(super.model);
     }
 
@@ -80,6 +98,7 @@ public class GoalForm extends DialogForm<Goal> {
         super.resetModal();
         super.model = new Goal();
         setEdit(false);
+        this.availableParentGoals = null;
     }
 
     @Override
@@ -93,14 +112,63 @@ public class GoalForm extends DialogForm<Goal> {
         } catch (OperationFailedException e) {
             throw new RuntimeException(e);
         }
+
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
         } else {
-            // If for some reason the model is null, ensure a new one is created.
             if (super.model == null) {
                 super.model = new Goal();
             }
             setEdit(false);
         }
+    }
+
+    /**
+     * Load available parent goals when goal level changes
+     */
+    public void loadAvailableParentGoals() {
+        if (super.model != null && super.model.getGoalLevel() != null) {
+            User currentUser = SharedAppData.getLoggedInUser();
+            if (currentUser != null) {
+                try {
+                    this.availableParentGoals = goalService.getAvailableParentGoals(
+                            super.model.getGoalLevel().getName(),
+                            currentUser.getId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if the current user can create goals at the selected level
+     */
+    public boolean canCreateGoalAtLevel(String levelName) {
+        User currentUser = SharedAppData.getLoggedInUser();
+        if (currentUser == null) {
+            return false;
+        }
+
+        // Managers can create Organization, Department, and Team goals
+        if (isManager(currentUser)) {
+            return "Organization".equalsIgnoreCase(levelName) ||
+                    "Department".equalsIgnoreCase(levelName) ||
+                    "Team".equalsIgnoreCase(levelName);
+        }
+
+        // Employees can only create Individual goals
+        return "Individual".equalsIgnoreCase(levelName);
+    }
+
+    /**
+     * Check if the current user is a manager
+     */
+    private boolean isManager(User user) {
+        // This is a simplified check - you should implement proper role checking
+        // based on your application's role system
+        return user.getRoles() != null && user.getRoles().stream()
+                .anyMatch(role -> role.getName().toLowerCase().contains("manager") ||
+                        role.getName().toLowerCase().contains("admin"));
     }
 }

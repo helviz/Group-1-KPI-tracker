@@ -29,6 +29,16 @@
             .form-buttons .ui-button {
                 margin-left: 0.5rem;
             }
+
+            .hierarchy-info {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                font-size: 0.875rem;
+                color: #374151;
+            }
         </style>
     </ui:define>
 
@@ -37,70 +47,97 @@
             <h:form id="goalForm">
                 <p:messages id="messages" closable="true" showSummary="true" showDetail="false" />
 
+                <!-- Hierarchy Information -->
+                <div class="hierarchy-info">
+                    <strong>Goal Hierarchy:</strong> Organization → Department → Team → Individual
+                    <br />
+                    <small>Goals must have a parent goal at the level directly above (except Organization
+                        goals).</small>
+                </div>
+
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-6">
                         <p:outputLabel for="goalTitle" styleClass="field-label required">Goal Name</p:outputLabel>
                         <p:inputText id="goalTitle" value="#{goalForm.model.goalTitle}" required="true"
-                            requiredMessage="Goal name is required." placeholder="e.g., Increase sales" />
+                            requiredMessage="Goal name is required." placeholder="e.g., Increase Q4 Revenue" />
                         <p:message for="goalTitle" />
                     </div>
 
                     <div class="field col-12 md:col-6">
-                        <p:outputLabel for="goalLevel" styleClass="field-label">Goal Level</p:outputLabel>
-                        <p:selectOneMenu id="goalLevel" value="#{goalForm.model.goalLevelId}"
+                        <p:outputLabel for="goalLevel" styleClass="field-label required">Goal Level</p:outputLabel>
+                        <p:selectOneMenu id="goalLevel" value="#{goalForm.model.goalLevel}"
                             converter="goalLevelConverter" filter="true" filterMatchMode="contains">
                             <f:selectItem itemLabel="Click to select goal level" itemValue="#{null}" />
                             <f:selectItems value="#{goalForm.goalLevels}" var="goalLevel" itemLabel="#{goalLevel.name}"
                                 itemValue="#{goalLevel}" />
+                            <p:ajax update="parentGoalSection" process="@this"
+                                action="#{goalForm.loadAvailableParentGoals}" />
                         </p:selectOneMenu>
                         <p:message for="goalLevel" />
                     </div>
                 </div>
 
+                <!-- Parent Goal Selection (only for non-Organization goals) -->
+                <p:outputPanel id="parentGoalSection">
+                    <div class="formgrid grid"
+                        rendered="#{goalForm.model.goalLevel != null and !goalForm.model.goalLevel.name.equalsIgnoreCase('Organization')}">
+                        <div class="field col-12">
+                            <p:outputLabel for="parentGoal" styleClass="field-label required">Parent Goal
+                            </p:outputLabel>
+                            <p:selectOneMenu id="parentGoal" value="#{goalForm.model.parentGoal}"
+                                converter="goalConverter" filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="Click to select parent goal" itemValue="#{null}" />
+                                <f:selectItems value="#{goalForm.availableParentGoals}" var="parentGoal"
+                                    itemLabel="#{parentGoal.goalTitle}" itemValue="#{parentGoal}" />
+                            </p:selectOneMenu>
+                            <p:message for="parentGoal" />
+                        </div>
+                    </div>
+                </p:outputPanel>
+
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <p:outputLabel for="owner" styleClass="field-label">Owner</p:outputLabel>
-                        <p:selectOneMenu id="owner" value="#{goalForm.model.ownerId}" converter="userConverter"
+                        <p:outputLabel for="owner" styleClass="field-label required">Goal Owner</p:outputLabel>
+                        <p:selectOneMenu id="owner" value="#{goalForm.model.owner}" converter="userConverter"
                             filter="true" filterMatchMode="contains">
-                            <f:selectItem itemLabel="Select or type goal owner" itemValue="#{null}" />
-                            <f:selectItems value="#{goalForm.users}" var="users" itemLabel="#{users.fullName}"
-                                itemValue="#{users}" />
+                            <f:selectItem itemLabel="Click to select owner" itemValue="#{null}" />
+                            <f:selectItems value="#{goalForm.users}" var="user" itemLabel="#{user.username}"
+                                itemValue="#{user}" />
                         </p:selectOneMenu>
                         <p:message for="owner" />
                     </div>
 
                     <div class="field col-12 md:col-6">
-                        <p:outputLabel for="period" styleClass="field-label required">Period</p:outputLabel>
-                        <p:selectOneMenu id="period" value="#{goalForm.model.goalPeriod}"
-                            converter="goalPeriodConverter" required="true" filter="true" filterMatchMode="contains"
-                            requiredMessage="Period is required.">
-                            <f:selectItem itemLabel="Select Period" itemValue="#{null}" />
-                            <f:selectItems value="#{goalForm.goalPeriods}" var="p1" itemLabel="#{p1.periodName}"
-                                itemValue="#{p1}" />
+                        <p:outputLabel for="goalPeriod" styleClass="field-label required">Goal Period</p:outputLabel>
+                        <p:selectOneMenu id="goalPeriod" value="#{goalForm.model.goalPeriod}"
+                            converter="goalPeriodConverter" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Click to select goal period" itemValue="#{null}" />
+                            <f:selectItems value="#{goalForm.goalPeriods}" var="period" itemLabel="#{period.periodName}"
+                                itemValue="#{period}" />
                         </p:selectOneMenu>
-                        <p:message for="period" />
+                        <p:message for="goalPeriod" />
                     </div>
                 </div>
 
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <p:outputLabel for="departments" styleClass="field-label">Department</p:outputLabel>
-                        <p:selectOneMenu id="departments" value="#{goalForm.model.department}"
-                            converter="departmentConverter" filter="true" filterMatchMode="contains">
-                            <f:selectItem itemLabel="Select department" itemValue="#{null}" />
-                            <f:selectItems value="#{goalForm.department}" var="d" itemLabel="#{d.name}"
-                                itemValue="#{d}" />
-                        </p:selectOneMenu>
-                        <p:message for="departments" />
+                        <p:outputLabel for="goalEvaluationWeight" styleClass="field-label">Evaluation Weight (%)
+                        </p:outputLabel>
+                        <p:inputNumber id="goalEvaluationWeight" value="#{goalForm.model.goalEvaluationWeight}"
+                            minValue="0" maxValue="100" decimalPlaces="2" placeholder="e.g., 40.0" />
+                        <p:message for="goalEvaluationWeight" />
+                        <small>Weight this goal contributes to its parent's progress (0-100%)</small>
                     </div>
 
                     <div class="field col-12 md:col-6">
-                        <p:outputLabel for="status" styleClass="field-label">Status</p:outputLabel>
-                        <p:selectOneMenu id="status" value="#{goalForm.model.goalStatus}">
-                            <f:selectItem itemLabel="Select status" itemValue="#{null}" />
-                            <f:selectItems value="#{goalForm.statuses}" />
-                        </p:selectOneMenu>
-                        <p:message for="status" />
+                        <p:outputLabel for="departments" styleClass="field-label">Departments</p:outputLabel>
+                        <p:selectManyMenu id="departments" value="#{goalForm.model.goalDepartments}"
+                            converter="departmentConverter" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Select departments" itemValue="#{null}" />
+                            <f:selectItems value="#{goalForm.department}" var="d" itemLabel="#{d.name}"
+                                itemValue="#{d}" />
+                        </p:selectManyMenu>
+                        <p:message for="departments" />
                     </div>
                 </div>
 
@@ -108,7 +145,7 @@
                     <div class="field col-12">
                         <p:outputLabel for="description" styleClass="field-label">Description</p:outputLabel>
                         <p:inputTextarea id="description" value="#{goalForm.model.description}" rows="4"
-                            placeholder="Optional details about the goal" />
+                            placeholder="Detailed explanation of the goal" />
                         <p:message for="description" />
                     </div>
                 </div>
