@@ -1,159 +1,167 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
-    template="/pages/californiatemplate/template.xhtml">
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
+        <!--
+            This first form is intentionally left outside the main content card.
+            It only contains the dialog, preventing any nested form issues.
+        -->
+        <h:form id="goalsForm">
+            <ui:include src="/pages/goals/GoalForm.xhtml" />
+        </h:form>
+
         <div class="card">
-            <h:form id="goalsForm">
-                <div class="p-grid">
-                    <div class="p-col-12">
-                        <div class="card">
-                            <h5>Goal Management</h5>
+            <h:form id="goalsTableForm">
+                <h5>Goal Management</h5>
 
-                            <!-- Tabbed Interface for Goal Contexts -->
-                            <p:tabView id="goalTabs" activeIndex="0">
-                                <p:ajax event="tabChange" listener="#{goalView.handleTabChange}" />
-                                <p:tab title="My Goals" id="myGoalsTab">
-                                    <p:dataTable value="#{goalView.dataModels}" var="goal" paginator="true" paginatorPosition="buttom" rows="10"
-                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                        rowsPerPageTemplate="5,10,20,50" emptyMessage="No goals found"
-                                        styleClass="p-datatable-sm">
+                <!-- Tabbed Interface for Goal Contexts -->
+                <p:tabView id="goalTabs" activeIndex="0">
+                    <p:ajax event="tabChange" listener="#{goalView.handleTabChange}"
+                        update=":goalsTableForm:goalTabs" />
 
-                                        <p:column headerText="Goal Name" sortBy="#{goal.goalTitle}">
-                                            <h:outputText value="#{goal.goalTitle}" />
-                                        </p:column>
+                    <!-- My Goals Tab -->
+                    <p:tab title="My Goals" id="myGoalsTab">
+                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,20,50" emptyMessage="No goals found" styleClass="p-datatable-sm">
 
-                                        <p:column headerText="Level" sortBy="#{goal.goalLevel.name}">
-                                            <h:outputText value="#{goal.goalLevel.name}" />
-                                        </p:column>
+                            <p:column headerText="Goal Name" sortBy="#{goal.goalTitle}">
+                                <h:outputText value="#{goal.goalTitle}" />
+                            </p:column>
+                            <p:column headerText="Level" sortBy="#{goal.goalLevel.name}">
+                                <h:outputText value="#{goal.goalLevel != null ? goal.goalLevel.name : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Owner" sortBy="#{goal.owner.username}">
+                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Progress">
+                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%"
+                                    styleClass="progress-bar-sm" />
+                            </p:column>
+                            <p:column headerText="Status" sortBy="#{goal.goalStatus}">
+                                <h:outputText value="#{goal.goalStatus}"
+                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                            </p:column>
 
-                                        <p:column headerText="Owner" sortBy="#{goal.owner.username}">
-                                            <h:outputText value="#{goal.owner.username}" />
-                                        </p:column>
+                            <p:column headerText="Actions" style="width: 250px;">
+                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
+                                    styleClass="ui-button-sm ui-button-outlined">
+                                    <f:attribute name="entity" value="#{goal}" />
+                                </p:commandButton>
+                                <p:commandButton value="Update Progress" icon="ui-icon-signal"
+                                    action="#{goalView.updateProgress(goal)}"
+                                    styleClass="ui-button-sm ui-button-success" rendered="#{goal.isIndividualGoal()}" />
+                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
+                                    actionListener="#{goalForm.prepareNewChildGoal}"
+                                    styleClass="ui-button-sm ui-button-info" rendered="#{not goal.isIndividualGoal()}">
+                                    <f:attribute name="parentGoal" value="#{goal}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
 
-                                        <p:column headerText="Progress">
-                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
-                                                labelTemplate="{value}%" styleClass="progress-bar-sm" />
-                                        </p:column>
+                    <!-- My Team Tab -->
+                    <p:tab title="My Team" id="myTeamTab">
+                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
+                            emptyMessage="No team goals found" styleClass="p-datatable-sm">
+                            <p:column headerText="Goal Name">
+                                <h:outputText value="#{goal.goalTitle}" />
+                            </p:column>
+                            <p:column headerText="Owner">
+                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Progress">
+                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText value="#{goal.goalStatus}"
+                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;">
+                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
+                                    styleClass="ui-button-sm ui-button-outlined">
+                                    <f:attribute name="entity" value="#{goal}" />
+                                </p:commandButton>
+                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
+                                    actionListener="#{goalForm.prepareNewChildGoal}"
+                                    styleClass="ui-button-sm ui-button-info" rendered="#{not goal.isIndividualGoal()}">
+                                    <f:attribute name="parentGoal" value="#{goal}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
 
-                                        <p:column headerText="Status" sortBy="#{goal.goalStatus}">
-                                            <h:outputText value="#{goal.goalStatus}"
-                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
-                                        </p:column>
+                    <!-- My Department Tab -->
+                    <p:tab title="My Department" id="myDepartmentTab">
+                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
+                            emptyMessage="No department goals found" styleClass="p-datatable-sm">
+                            <p:column headerText="Goal Name">
+                                <h:outputText value="#{goal.goalTitle}" />
+                            </p:column>
+                            <p:column headerText="Owner">
+                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Progress">
+                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText value="#{goal.goalStatus}"
+                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;">
+                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
+                                    styleClass="ui-button-sm ui-button-outlined">
+                                    <f:attribute name="entity" value="#{goal}" />
+                                </p:commandButton>
+                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
+                                    actionListener="#{goalForm.prepareNewChildGoal}"
+                                    styleClass="ui-button-sm ui-button-info" rendered="#{not goal.isIndividualGoal()}">
+                                    <f:attribute name="parentGoal" value="#{goal}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
 
-                                        <p:column headerText="Actions" style="width: 200px;">
-                                            <p:commandButton value="Edit" icon="pi pi-pencil"
-                                                action="#{goalView.editGoal(goal)}"
-                                                styleClass="ui-button-sm ui-button-outlined" />
-
-                                            <p:commandButton value="Update Progress" icon="pi pi-chart-line"
-                                                action="#{goalView.updateProgress(goal)}"
-                                                styleClass="ui-button-sm ui-button-success"
-                                                rendered="#{goal.goalLevel.name.equalsIgnoreCase('Individual')}" />
-                                        </p:column>
-                                    </p:dataTable>
-                                </p:tab>
-
-                                <p:tab title="My Team" id="myTeamTab">
-                                    <p:dataTable value="#{goalView.teamGoals}" var="goal" paginator="true" rows="10"
-                                        emptyMessage="No team goals found" styleClass="p-datatable-sm">
-
-                                        <p:column headerText="Goal Name">
-                                            <h:outputText value="#{goal.goalTitle}" />
-                                        </p:column>
-
-                                        <p:column headerText="Owner">
-                                            <h:outputText value="#{goal.owner.username}" />
-                                        </p:column>
-
-                                        <p:column headerText="Progress">
-                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
-                                                labelTemplate="{value}%" />
-                                        </p:column>
-
-                                        <p:column headerText="Status">
-                                            <h:outputText value="#{goal.goalStatus}"
-                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
-                                        </p:column>
-
-                                        <p:column headerText="Actions" style="width: 150px;">
-                                            <p:commandButton value="Edit" icon="pi pi-pencil"
-                                                action="#{goalView.editGoal(goal)}"
-                                                styleClass="ui-button-sm ui-button-outlined" />
-                                        </p:column>
-                                    </p:dataTable>
-                                </p:tab>
-
-                                <p:tab title="My Department" id="myDepartmentTab">
-                                    <p:dataTable value="#{goalView.departmentGoals}" var="goal" paginator="true"
-                                        rows="10" emptyMessage="No department goals found" styleClass="p-datatable-sm">
-
-                                        <p:column headerText="Goal Name">
-                                            <h:outputText value="#{goal.goalTitle}" />
-                                        </p:column>
-
-                                        <p:column headerText="Owner">
-                                            <h:outputText value="#{goal.owner.username}" />
-                                        </p:column>
-
-                                        <p:column headerText="Progress">
-                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
-                                                labelTemplate="{value}%" />
-                                        </p:column>
-
-                                        <p:column headerText="Status">
-                                            <h:outputText value="#{goal.goalStatus}"
-                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
-                                        </p:column>
-
-                                        <p:column headerText="Actions" style="width: 150px;">
-                                            <p:commandButton value="Edit" icon="pi pi-pencil"
-                                                action="#{goalView.editGoal(goal)}"
-                                                styleClass="ui-button-sm ui-button-outlined" />
-                                        </p:column>
-                                    </p:dataTable>
-                                </p:tab>
-
-                                <p:tab title="Organization" id="organizationTab">
-                                    <p:dataTable value="#{goalView.organizationGoals}" var="goal" paginator="true"
-                                        rows="10" emptyMessage="No organization goals found"
-                                        styleClass="p-datatable-sm">
-
-                                        <p:column headerText="Goal Name">
-                                            <h:outputText value="#{goal.goalTitle}" />
-                                        </p:column>
-
-                                        <p:column headerText="Owner">
-                                            <h:outputText value="#{goal.owner.username}" />
-                                        </p:column>
-
-                                        <p:column headerText="Progress">
-                                            <p:progressBar value="#{goal.progress}" displayOnly="true"
-                                                labelTemplate="{value}%" />
-                                        </p:column>
-
-                                        <p:column headerText="Status">
-                                            <h:outputText value="#{goal.goalStatus}"
-                                                styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
-                                        </p:column>
-
-                                        <p:column headerText="Actions" style="width: 150px;">
-                                            <p:commandButton value="Edit" icon="pi pi-pencil"
-                                                action="#{goalView.editGoal(goal)}"
-                                                styleClass="ui-button-sm ui-button-outlined" />
-                                        </p:column>
-                                    </p:dataTable>
-                                </p:tab>
-                            </p:tabView>
-
-                            <!-- Action Buttons -->
-                            <div class="p-d-flex p-jc-end p-mt-3">
-                                <p:commandButton value="Add New Goal" icon="pi pi-plus" actionListener="#{goalForm.show}"
-                                    styleClass="ui-button-success" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <!-- Organization Tab -->
+                    <p:tab title="Organization" id="organizationTab">
+                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
+                            emptyMessage="No organization goals found" styleClass="p-datatable-sm">
+                            <f:facet name="header">
+                                <!-- PrimeFaces 7 layout for right-aligning a button -->
+                                <p:panelGrid columns="1" style="width:100%;" styleClass="ui-panelgrid-blank">
+                                    <p:commandButton value="Add Organization Goal" icon="ui-icon-plus"
+                                        actionListener="#{goalForm.prepareNewOrganizationalGoal}" style="float:right;"
+                                        styleClass="ui-button-success" />
+                                </p:panelGrid>
+                            </f:facet>
+                            <p:column headerText="Goal Name">
+                                <h:outputText value="#{goal.goalTitle}" />
+                            </p:column>
+                            <p:column headerText="Owner">
+                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Progress">
+                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText value="#{goal.goalStatus}"
+                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;">
+                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
+                                    styleClass="ui-button-sm ui-button-outlined">
+                                    <f:attribute name="entity" value="#{goal}" />
+                                </p:commandButton>
+                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
+                                    actionListener="#{goalForm.prepareNewChildGoal}"
+                                    styleClass="ui-button-sm ui-button-info">
+                                    <f:attribute name="parentGoal" value="#{goal}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
             </h:form>
         </div>
     </ui:define>

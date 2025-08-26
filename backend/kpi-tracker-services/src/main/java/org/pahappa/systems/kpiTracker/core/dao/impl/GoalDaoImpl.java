@@ -92,8 +92,8 @@ public class GoalDaoImpl extends BaseDAOImpl<Goal> implements GoalDao {
             return Collections.emptyList();
         }
 
-        String jpql = "SELECT g FROM Goal g JOIN g.goalLevel gl " +
-                "WHERE gl.name = :parentLevelName AND g.recordStatus = :recordStatus " +
+        String jpql = "SELECT g FROM Goal g JOIN FETCH g.goalLevel JOIN FETCH g.owner " +
+                "WHERE g.goalLevel.name = :parentLevelName AND g.recordStatus = :recordStatus " +
                 "ORDER BY g.goalTitle";
 
         return this.entityManager.createQuery(jpql, Goal.class)
@@ -109,11 +109,11 @@ public class GoalDaoImpl extends BaseDAOImpl<Goal> implements GoalDao {
     private String buildContextQuery(String context) {
         switch (context.toUpperCase()) {
             case "MY_GOALS":
-                return "SELECT g FROM Goal g WHERE g.owner.id = :userId AND g.recordStatus = :recordStatus ORDER BY g.goalTitle";
+                return "SELECT g FROM Goal g JOIN FETCH g.goalLevel JOIN FETCH g.owner WHERE g.owner.id = :userId AND g.recordStatus = :recordStatus ORDER BY g.goalTitle";
 
             // CORRECTED LOGIC FOR MY_TEAM USING THE NEW 'team' FIELD in Goal.java
             case "MY_TEAM":
-                return "SELECT g FROM Goal g " +
+                return "SELECT g FROM Goal g JOIN FETCH g.goalLevel JOIN FETCH g.owner " +
                         "WHERE g.goalLevel.name = 'Team' AND g.recordStatus = :recordStatus " +
                         "AND g.team IN " +
                         "(SELECT t FROM AssignedUser au JOIN au.assignedTeams t WHERE au.user.id = :userId) " +
@@ -121,19 +121,19 @@ public class GoalDaoImpl extends BaseDAOImpl<Goal> implements GoalDao {
 
             case "MY_DEPARTMENT":
                 // This query is correct and working.
-                return "SELECT g FROM Goal g JOIN g.goalDepartments gd " +
+                return "SELECT g FROM Goal g JOIN FETCH g.goalLevel JOIN FETCH g.owner JOIN g.goalDepartments gd " +
                         "WHERE g.goalLevel.name = 'Department' AND g.recordStatus = :recordStatus " +
                         "AND gd.department IN " +
                         "(SELECT au.department FROM AssignedUser au WHERE au.user.id = :userId) " +
                         "ORDER BY g.goalTitle";
 
             case "ORGANIZATION":
-                return "SELECT g FROM Goal g JOIN g.goalLevel gl " +
-                        "WHERE gl.name = 'Organization' AND g.recordStatus = :recordStatus " +
+                return "SELECT g FROM Goal g JOIN FETCH g.goalLevel JOIN FETCH g.owner " +
+                        "WHERE g.goalLevel.name = 'Organization' AND g.recordStatus = :recordStatus " +
                         "ORDER BY g.goalTitle";
 
             default:
-                return "SELECT g FROM Goal g WHERE g.recordStatus = :recordStatus ORDER BY g.goalTitle";
+                return "SELECT g FROM Goal g JOIN FETCH g.goalLevel JOIN FETCH g.owner WHERE g.recordStatus = :recordStatus ORDER BY g.goalTitle";
         }
     }
 
