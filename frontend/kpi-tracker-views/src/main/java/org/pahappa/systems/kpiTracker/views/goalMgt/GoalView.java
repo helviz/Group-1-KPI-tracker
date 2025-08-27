@@ -34,7 +34,8 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
     private User loggedInUser;
     private String activeTabFilter = "MY_GOALS";
 
-    // GoalForm is no longer needed in this bean, but we'll leave it in case of other uses.
+    // GoalForm is no longer needed in this bean, but we'll leave it in case of
+    // other uses.
     // @ManagedProperty(value = "#{goalForm}")
     // private GoalForm goalForm;
 
@@ -55,7 +56,8 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
             super.setDataModels(Collections.emptyList());
             return;
         }
-        List<Goal> goals = goalService.getGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId(), first, pageSize);
+        List<Goal> goals = goalService.getGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId(), first,
+                pageSize);
         super.setDataModels(goals);
     }
 
@@ -72,10 +74,18 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
     public void handleTabChange(TabChangeEvent event) throws Exception {
         String tabTitle = event.getTab().getTitle();
         switch (tabTitle) {
-            case "My Goals": this.activeTabFilter = "MY_GOALS"; break;
-            case "My Team": this.activeTabFilter = "MY_TEAM"; break;
-            case "My Department": this.activeTabFilter = "MY_DEPARTMENT"; break;
-            case "Organization": this.activeTabFilter = "ORGANIZATION"; break;
+            case "My Goals":
+                this.activeTabFilter = "MY_GOALS";
+                break;
+            case "My Team":
+                this.activeTabFilter = "MY_TEAM";
+                break;
+            case "My Department":
+                this.activeTabFilter = "MY_DEPARTMENT";
+                break;
+            case "Organization":
+                this.activeTabFilter = "ORGANIZATION";
+                break;
         }
         reloadFilterReset();
     }
@@ -87,12 +97,19 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
         return null;
     }
 
-    // --- The prepare... methods have been removed as they are now called directly from the UI ---
+    // --- The prepare... methods have been removed as they are now called directly
+    // from the UI ---
 
     @Override
-    public List<ExcelReport> getExcelReportModels() { return Collections.emptyList(); }
+    public List<ExcelReport> getExcelReportModels() {
+        return Collections.emptyList();
+    }
+
     @Override
-    public String getFileName() { return ""; }
+    public String getFileName() {
+        return "";
+    }
+
     @Override
     public List<Goal> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
         return super.getDataModels(); // Correct implementation for PrimeFaces lazy loading

@@ -1,71 +1,257 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
 
 <h:head>
     <f:facet name="first">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
     </f:facet>
-    <title>Name MIS</title>
+    <title>Pahappa Goals Bucket - Sign In</title>
+
+    <style type="text/css">
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            display: flex;
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        .branding-section {
+            flex: 1;
+            background: linear-gradient(135deg, #2C67B1 0%, #1e4a8a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            color: white;
+        }
+
+        .branding-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><line x1="75" y1="25" x2="50" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(%23arrowhead)"/><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.2)"/></marker></defs></svg>') no-repeat center;
+            opacity: 0.8;
+        }
+
+        .welcome-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .app-name {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            max-width: 300px;
+        }
+
+        .form-section {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 50px;
+        }
+
+        .signin-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2C67B1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 103, 177, 0.1);
+        }
+
+        .signin-button {
+            width: 30%;
+            padding: 10px;
+            background: #2C67B1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .signin-button:hover {
+            background: #1e4a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 103, 177, 0.3);
+        }
+
+        .forgot-password {
+            text-align: right;
+
+        }
+
+        .forgot-password a {
+            color: #2C67B1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .help-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .help-link a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .help-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                flex-direction: column;
+                max-width: 400px;
+            }
+
+            .branding-section {
+                padding: 30px 20px;
+            }
+
+            .form-section {
+                padding: 40px 30px;
+            }
+
+            .welcome-text {
+                font-size: 2rem;
+            }
+
+            .app-name {
+                font-size: 2.5rem;
+            }
+
+            .signin-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </h:head>
 
-<div class="login-topbar">
-    <h:link outcome="/dashboard" styleClass="logo">
-        <p:graphicImage name="images/logo.png" library="california-layout"/>
-    </h:link>
-</div>
-<p:graphicImage styleClass="login-image" name="images/image-login.png" library="california-layout"/>
+<h:body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Left Section - Branding -->
+            <div class="branding-section">
+                <div class="welcome-text">Welcome !!</div>
+                <div class="app-name">Pahappa<br />Goals Bucket</div>
+                <div class="tagline">Align goals, track performance with the platform.</div>
+            </div>
 
-<h:body styleClass="login-body #{guestPreferences.inputStyleClass}">
-    <h:form id="loginForm" prependId="false">
-        <div class="login-panel ui-fluid">
-            <div class="p-grid">
-                <div class="p-col-12 p-lg-12 p-md-12 logo-container">
-                    <span class="login-summary">Sign in to KPI Tracker System</span>
-                    <div class="login-detail">
-                        <span>Welcome, please use the form to sign-in network.</span>
+            <!-- Right Section - Sign In Form -->
+            <div class="form-section">
+                <h:form id="loginForm" prependId="false">
+                    <div class="signin-title">Sign In</div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <p:inputText id="j_username" required="true" placeholder="e.g cyiza@pahappa.com"
+                            styleClass="form-input">
+                        </p:inputText>
                     </div>
-                </div>
-                <div class="p-col-12 p-lg-12 p-md-12">
-                    <h:outputText value="Username"/>
-                    <p:inputText id="j_username" required="true"
-                                 placeholder="Enter username">
-                        <p:ajax update="j_username"/>
-                    </p:inputText>
-                </div>
-                <div class="p-col-12 p-lg-12 p-md-12">
-                    <h:outputText value="Password"/>
-                    <p:inputText id="j_password" required="true"
-                                 placeholder=" Enter Password" type="password">
-                        <p:ajax update="j_password"/>
-                    </p:inputText>
-                </div>
-                <div class="p-col-12 p-lg-12 p-md-12 chkbox-container">
-                    <p:selectBooleanCheckbox id="remember-me"/>
-                    <p:outputLabel for="remember-me" value="Remember Me"/>
-                    <a href="#">Reset Password</a>
-                </div>
-                <div class="p-col-12 p-lg-12 p-md-12 button-container" style="text-align: right">
-                    <p:commandButton id="login" value="Login" ajax="false"
-                                     styleClass="ui-button-raised ui-button-info"
-                                     validateClient="true" update="loginForm"
-                                     action="#{loginController.doLogin}"/>
-                </div>
-                <div class="p-col-12 p-lg-12 p-md-12 button-container" style="text-align: center">
-                </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <p:password id="j_password" required="true" placeholder="Enter your password"
+                            styleClass="form-input">
+                        </p:password>
+                    </div>
+
+                    <p:commandButton id="login" value="Sign In" ajax="false" styleClass="signin-button"
+                        validateClient="true" update="loginForm" action="#{loginController.doLogin}" />
+
+                    <div class="forgot-password">
+                        <a href="#">Forgot Password?</a>
+                    </div>
+
+                    <div class="help-link">
+                        <a href="#">Need special assistance, contact help?</a>
+                    </div>
+                </h:form>
             </div>
         </div>
+    </div>
 
-    </h:form>
-    <h:outputStylesheet name="css/primeicons.css" library="california-layout"/>
-    <h:outputStylesheet name="css/primeflex.min.css" library="california-layout"/>
-    <h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="california-layout"/>
+    <h:outputStylesheet name="css/primeicons.css" library="california-layout" />
+    <h:outputStylesheet name="css/primeflex.min.css" library="california-layout" />
+    <h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="california-layout" />
 </h:body>
 
 </html>
