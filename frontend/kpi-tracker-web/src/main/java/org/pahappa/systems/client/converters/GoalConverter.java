@@ -1,22 +1,18 @@
 package org.pahappa.systems.client.converters;
 
-import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
-import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.core.services.GoalService;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
 import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
 
-@FacesConverter("departmentConverter")
-public class DepartmentConverter implements Converter {
+@FacesConverter("goalConverter")
+public class GoalConverter implements Converter {
 
-    /**
-     * Converts the submitted String ID from the form back into a full Department object.
-     * This is correct for your service layer, which expects a String.
-     */
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
         if (submittedValue == null || submittedValue.trim().isEmpty()) {
@@ -24,10 +20,8 @@ public class DepartmentConverter implements Converter {
         }
 
         try {
-            DepartmentService service = ApplicationContextProvider.getBean(DepartmentService.class);
-
-            // CORRECT: We pass the String directly, as your service expects.
-            return service.getDepartmentById(submittedValue);
+            GoalService goalService = ApplicationContextProvider.getBean(GoalService.class);
+            return goalService.getInstanceByID(submittedValue);
 
         } catch (Exception e) {
             // Added error handling for robustness.
@@ -44,11 +38,13 @@ public class DepartmentConverter implements Converter {
             return "";
         }
 
-        if (modelValue instanceof Department) {
-            return String.valueOf(((Department) modelValue).getId());
+        if (modelValue instanceof Goal) {
+            return String.valueOf(((Goal) modelValue).getId());
         } else {
             // Throw an exception if we get an unexpected type.
-            throw new ConverterException("The value is not a valid Department instance.");
+            throw new ConverterException("The value is not a valid Goal instance.");
         }
     }
 }
+
+

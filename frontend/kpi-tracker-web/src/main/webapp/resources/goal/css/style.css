@@ -1,0 +1,31 @@
+/* Base style for all status tags */
+.goal-status {
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    color: #ffffff;
+    display: inline-block;
+}
+
+/* Color definitions */
+.status-success {
+    background-color: #28a745; /* Green */
+}
+
+.status-warn {
+    background-color: #ffc107; /* Yellow/Orange */
+    color: #212529; /* Darker text for better contrast on yellow */
+}
+
+.status-danger {
+    background-color: #dc3545; /* Red */
+}
+
+.status-info {
+    background-color: #17a2b8; /* Blue */
+}

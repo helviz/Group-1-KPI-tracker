@@ -14,6 +14,10 @@ public class GoalDepartment  extends BaseEntity {
     private Department department;
     private Double percentageWeight;
 
+    public GoalDepartment() {
+
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id", nullable = false)
     public Goal getGoal(){
@@ -22,13 +26,19 @@ public class GoalDepartment  extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
-    private Department getDepartment() {
+    public Department getDepartment() {
     return department;
     }
 
     @Column(name = "percentage_weight")
-    private Double getPercentageWeight(){
+    public Double getPercentageWeight(){
         return percentageWeight; // e.g., 20 for 20%
 }
 
+
+    public GoalDepartment(Goal goal, Department department, Double percentageWeight) {
+        this.goal = goal;
+        this.department = department;
+        this.percentageWeight = percentageWeight;
+    }
 }

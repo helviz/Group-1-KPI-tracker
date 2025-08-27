@@ -23,7 +23,7 @@ import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+// import java.util.stream.Collectors; // No longer needed
 
 @ManagedBean(name = "teamFormDialog", eager = true)
 @Getter
@@ -66,7 +66,7 @@ public class TeamFormDialog extends DialogForm<Team> {
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
         // Set members to the team model from the selectedMembers list
-        super.model.setMembers(new HashSet<>(this.selectedMembers));
+        super.model.setMembers(new HashSet<User>(this.selectedMembers));
         this.teamService.saveInstance(super.model);
     }
 
@@ -74,8 +74,8 @@ public class TeamFormDialog extends DialogForm<Team> {
     public void resetModal() {
         super.resetModal();
         super.model = new Team();
-        this.selectedMembers = new ArrayList<>();
-        this.availableUsersForSelect = new ArrayList<>();
+        this.selectedMembers = new ArrayList<User>();
+        this.availableUsersForSelect = new ArrayList<User>();
         setEdit(false);
     }
 
@@ -84,33 +84,43 @@ public class TeamFormDialog extends DialogForm<Team> {
         super.setFormProperties();
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
-            this.selectedMembers = new ArrayList<>(super.model.getMembers());
+            this.selectedMembers = new ArrayList<User>(super.model.getMembers());
             onDepartmentChange();
         } else {
             if (super.model == null) {
                 super.model = new Team();
             }
             setEdit(false);
-            this.selectedMembers = new ArrayList<>();
-            this.availableUsersForSelect = new ArrayList<>();
+            this.selectedMembers = new ArrayList<User>();
+            this.availableUsersForSelect = new ArrayList<User>();
         }
     }
 
     public void onDepartmentChange() {
-        // Check if a department is selected
         if (super.getModel().getDepartment() != null) {
             try {
                 List<AssignedUser> assignedUsersInDepartment = assignedUserService.getAssignedUsersByDepartment(super.getModel().getDepartment());
-                this.availableUsersForSelect = assignedUsersInDepartment.stream()
-                        .map(AssignedUser::getUser)
-                        .collect(Collectors.toList());
+                    // 1. Create a new empty list to hold the results
+                List<User> users = new ArrayList<User>();
+
+                // 2. Loop through each AssignedUser in the original list
+                for (AssignedUser assignedUser : assignedUsersInDepartment) {
+                    // 3. For each one, get the User and add it to our new list
+                    users.add(assignedUser.getUser());
+                }
+
+                // 4. Assign the newly populated list
+                this.availableUsersForSelect = users;
+
+                // ===================== MODIFIED SECTION END =====================
+
             } catch (Exception e) {
                 System.err.println("An error occurred while fetching users for department.");
                 e.printStackTrace();
-                this.availableUsersForSelect = new ArrayList<>();
+                this.availableUsersForSelect = new ArrayList<User>();
             }
         } else {
-            this.availableUsersForSelect = new ArrayList<>();
+            this.availableUsersForSelect = new ArrayList<User>();
         }
     }
 }
