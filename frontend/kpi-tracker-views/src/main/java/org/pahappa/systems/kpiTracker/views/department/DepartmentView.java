@@ -26,13 +26,12 @@ import javax.faces.bean.ViewScoped;
 import java.util.List;
 import java.util.Map;
 
-
-@ManagedBean(name ="departmentView")
+@ManagedBean(name = "departmentView")
 @Getter
 @Setter
 @ViewScoped
-@ViewPath(path = HyperLinks. DEPARTMENT_VIEW)
-public class DepartmentView extends PaginatedTableView<Department, DepartmentService,DepartmentService> {
+@ViewPath(path = HyperLinks.DEPARTMENT_VIEW)
+public class DepartmentView extends PaginatedTableView<Department, DepartmentService, DepartmentService> {
     public DepartmentService departmentService;
     private Department selectedDepartment;
     private List<SearchField> searchFields, selectedSearchFields;
@@ -41,17 +40,18 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
     public void init() {
         departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
 
-           this.reloadFilterReset();
+        this.reloadFilterReset();
     }
-
 
     @Override
     public void reloadFromDB(int i, int i1, Map<String, Object> map) throws Exception {
-        super.setDataModels(departmentService.getInstances(new Search().addFilterEqual("recordStatus", RecordStatus.ACTIVE), i, i1));
+        super.setDataModels(departmentService
+                .getInstances(new Search().addFilterEqual("recordStatus", RecordStatus.ACTIVE), i, i1));
     }
 
     @Override
-    public List<Department> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+    public List<Department> load(int first, int pageSize, Map<String, SortMeta> sortBy,
+            Map<String, FilterMeta> filterBy) {
         return getDataModels();
     }
 
@@ -65,8 +65,10 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
         }
 
     }
+
     /**
      * Deletes the specific GoalPeriod passed from the UI.
+     * 
      * @param selectedDepartment The record selected by the user in the data table.
      */
     public void deleteSelectedDepartment(Department selectedDepartment) {
@@ -87,6 +89,7 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
             e.printStackTrace();
         }
     }
+
     @Override
     public List<ExcelReport> getExcelReportModels() {
         return null;
@@ -94,6 +97,23 @@ public class DepartmentView extends PaginatedTableView<Department, DepartmentSer
 
     @Override
     public String getFileName() {
+        return null;
+    }
+
+    /**
+     * Navigate to department detail view
+     * 
+     * @param department The department to view details for
+     * @return Navigation string to department detail view
+     */
+    public String navigateToDepartmentDetail(Department department) {
+        if (department != null) {
+            // Store the selected department in flash scope for the detail view
+            javax.faces.context.FacesContext.getCurrentInstance()
+                    .getExternalContext().getFlash().put("selectedDepartmentId", department.getId());
+
+            return HyperLinks.DEPARTMENT_DETAIL_VIEW + "?faces-redirect=true";
+        }
         return null;
     }
 }

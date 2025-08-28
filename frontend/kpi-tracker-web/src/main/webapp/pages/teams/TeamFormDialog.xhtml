@@ -1,9 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/pages/californiatemplate/dialog-template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
     <ui:define name="head">
         <style type="text/css">
             .capitalized {
@@ -19,27 +16,22 @@
                 <div class="ui-col-12 ui-md-6">
                     <h5>Team Name</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText id="teamName"
-                                     value="#{teamFormDialog.model.teamName}"
-                                     required="true"
-                                     placeholder="e.g. Sales Team Alpha"/>
+                        <p:inputText id="teamName" value="#{teamFormDialog.model.teamName}" required="true"
+                            placeholder="e.g. Sales Team Alpha" />
                     </div>
                 </div>
 
                 <div class="ui-col-12 ui-md-6">
                     <h5>Department</h5>
                     <div class="ui-inputgroup">
-                        <p:selectOneMenu id="department"
-                                         value="#{teamFormDialog.model.department}"
-                                         converter="departmentConverter"
-                                         required="true"
-                                         filter="true"
-                                         filterMatchMode="contains">
-                            <f:selectItem itemLabel="-- Select a Department --" itemValue="#{null}" noSelectionOption="true" />
+                        <p:selectOneMenu id="department" value="#{teamFormDialog.model.department}"
+                            converter="departmentConverter" required="true" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="-- Select a Department --" itemValue="#{null}"
+                                noSelectionOption="true" />
                             <f:selectItems value="#{teamFormDialog.availableDepartments}" var="dept"
-                                           itemLabel="#{dept.name}" itemValue="#{dept}"/>
+                                itemLabel="#{dept.name}" itemValue="#{dept}" />
                             <p:ajax event="change" listener="#{teamFormDialog.onDepartmentChange}"
-                                    update="teamLead membersPanel"/>
+                                update="teamLead membersPanel" />
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -47,15 +39,13 @@
                 <div class="ui-col-12 ui-md-6">
                     <h5>Team Lead</h5>
                     <div class="ui-inputgroup">
-                        <p:selectOneMenu id="teamLead"
-                                         style="text-transform: capitalize"
-                                         value="#{teamFormDialog.model.teamLead}"
-                                         converter="userConverter"
-                                         filter="true"
-                                         filterMatchMode="contains">
-                            <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}" noSelectionOption="true" />
+                        <p:selectOneMenu id="teamLead" style="text-transform: capitalize"
+                            value="#{teamFormDialog.model.teamLead}" converter="userConverter" filter="true"
+                            filterMatchMode="contains">
+                            <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}"
+                                noSelectionOption="true" />
                             <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
-                                           itemLabel="#{user.fullName}" itemValue="#{user}" />
+                                itemLabel="#{user.fullName}" itemValue="#{user}" />
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -63,44 +53,35 @@
                 <div class="ui-col-12 ui-md-12">
                     <h5>Description</h5>
                     <div class="ui-inputgroup">
-                        <p:inputTextarea id="description"
-                                         value="#{teamFormDialog.model.description}"
-                                         rows="4" autoResize="false"/>
+                        <p:inputTextarea id="description" value="#{teamFormDialog.model.description}" rows="4"
+                            autoResize="false" />
                     </div>
                 </div>
-                <hr style="width: 100%"/>
+                <hr style="width: 100%" />
 
                 <p:outputPanel id="membersPanel" styleClass="ui-col-12 ui-md-12">
                     <h5>Select Members</h5>
                     <div class="ui-inputgroup">
-                        <p:selectManyCheckbox id="membersCheckbox"
-                                              value="#{teamFormDialog.selectedMembers}"
-                                              layout="pageDirection"
-                                              converter="userConverter">
-                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}"
-                                           var="user"
-                                           itemLabel="#{user.fullName}"
-                                           itemValue="#{user}"/>
+                        <p:selectManyCheckbox id="membersCheckbox" value="#{teamFormDialog.selectedMembers}"
+                            layout="pageDirection" converter="userConverter">
+                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
+                                itemLabel="#{user.fullName}" itemValue="#{user}" />
                         </p:selectManyCheckbox>
                     </div>
                 </p:outputPanel>
 
-                <hr style="width: 100%"/>
+                <hr style="width: 100%" />
 
                 <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
                     <div class="p-grid p-justify-end">
                         <div class="p-col-2">
-                            <p:commandButton value="Cancel"
-                                             immediate="true"
-                                             process="@this"
-                                             actionListener="#{teamFormDialog.hide}"
-                                             styleClass="ui-button-outlined ui-button-help"/>
+                            <p:commandButton value="Cancel" immediate="true" process="@this"
+                                actionListener="#{teamFormDialog.hide}"
+                                styleClass="ui-button-outlined ui-button-help" />
                         </div>
                         <div class="p-col-2">
-                            <p:commandButton value="Save Team"
-                                             process="@form"
-                                             actionListener="#{teamFormDialog.save}"
-                                             update="@form" validateClient="true" />
+                            <p:commandButton value="Save Team" process="@form" actionListener="#{teamFormDialog.save}"
+                                update="@form" validateClient="true" />
                         </div>
                     </div>
                 </div>

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AssignedUserService extends GenericService<AssignedUser> {
 
-    /*Assignment Management*/
+    /* Assignment Management */
     AssignedUser assignUserToDepartment(User user, Department department);
 
     AssignedUser assignUserToTeams(AssignedUser assignedUser, List<Team> teams);
@@ -41,4 +41,11 @@ public interface AssignedUserService extends GenericService<AssignedUser> {
 
     void assignMultipleUsersToTeam(List<AssignedUser> assignedUsers, Team team);
 
+    /**
+     * Get users who are assigned to a department but not assigned to any team
+     * 
+     * @param departmentId The department ID
+     * @return List of unassigned users
+     */
+    List<User> getUnassignedMembersForDepartment(String departmentId);
 }

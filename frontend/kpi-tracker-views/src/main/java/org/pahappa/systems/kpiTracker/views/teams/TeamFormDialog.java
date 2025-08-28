@@ -39,6 +39,7 @@ public class TeamFormDialog extends DialogForm<Team> {
     private AssignedUserService assignedUserService;
 
     private List<Department> availableDepartments;
+    private Department selectedDepartment;
     private List<User> selectedMembers = new ArrayList<>();
     private List<User> availableUsersForSelect = new ArrayList<>();
 
@@ -67,6 +68,7 @@ public class TeamFormDialog extends DialogForm<Team> {
     public void persist() throws ValidationFailedException, OperationFailedException {
         // Set members to the team model from the selectedMembers list
         super.model.setMembers(new HashSet<User>(this.selectedMembers));
+        super.model.setDepartment(selectedDepartment);
         this.teamService.saveInstance(super.model);
     }
 
@@ -99,8 +101,9 @@ public class TeamFormDialog extends DialogForm<Team> {
     public void onDepartmentChange() {
         if (super.getModel().getDepartment() != null) {
             try {
-                List<AssignedUser> assignedUsersInDepartment = assignedUserService.getAssignedUsersByDepartment(super.getModel().getDepartment());
-                    // 1. Create a new empty list to hold the results
+                List<AssignedUser> assignedUsersInDepartment = assignedUserService
+                        .getAssignedUsersByDepartment(super.getModel().getDepartment());
+                // 1. Create a new empty list to hold the results
                 List<User> users = new ArrayList<User>();
 
                 // 2. Loop through each AssignedUser in the original list

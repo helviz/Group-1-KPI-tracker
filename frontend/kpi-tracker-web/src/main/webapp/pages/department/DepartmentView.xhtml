@@ -1,11 +1,24 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/pages/californiatemplate/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
+        <!-- CSS for clickable rows -->
+        <style>
+            .clickable-row {
+                cursor: pointer;
+            }
+
+            .clickable-row:hover {
+                background-color: #f8f9fa !important;
+            }
+
+            .department-link:hover {
+                text-decoration: underline !important;
+                color: #0056b3 !important;
+            }
+        </style>
+
         <div class="ui-g ui-fluid">
             <div class="ui-g-12">
                 <h:form id="departmentView" enctype="multipart/form-data">
@@ -15,12 +28,14 @@
                             <div class="p-col-12">
                                 <div class="card">
                                     <p:dataTable id="departmentTable" var="model" value="#{departmentView.dataModels}"
-                                                 widgetVar="departmentTable"
-                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                                 paginator="true" lazy="true" rows="20"
-                                                 emptyMessage="#{departmentView.dataEmptyMessage}"
-                                                 paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                 rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
+                                        widgetVar="departmentTable"
+                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                        paginator="true" lazy="true" rows="20"
+                                        emptyMessage="#{departmentView.dataEmptyMessage}" paginatorPosition="bottom"
+                                        paginatorAlwaysVisible="false" rowIndexVar="row" reflow="true"
+                                        styleClass="TableAlgnment" rowStyleClass="clickable-row">
+
+
 
                                         <f:facet name="header">
                                             <div class="p-d-flex p-jc-between">
@@ -32,13 +47,17 @@
                                                 <div>
                                                     <div class="p-d-flex p-flex-wrap">
                                                         <div class="p-mr-2 p-mb-2">
-                                                            <p:commandButton value="Add Department" icon="fa fa-plus" process="@this"
-                                                                             actionListener="#{departmentFormDialog.show}">
+                                                            <p:commandButton value="Add Department" icon="fa fa-plus"
+                                                                process="@this"
+                                                                actionListener="#{departmentFormDialog.show}">
                                                                 <f:setPropertyActionListener value="#{null}"
-                                                                                             target="#{departmentFormDialog.model}" />
+                                                                    target="#{departmentFormDialog.model}" />
 
-                                                                <p:ajax event="dialogReturn" listener="#{departmentView.reloadFilterReset}" update="departmentTable" />
-                                                            </p:commandButton>                                                  </div>
+                                                                <p:ajax event="dialogReturn"
+                                                                    listener="#{departmentView.reloadFilterReset}"
+                                                                    update="departmentTable" />
+                                                            </p:commandButton>
+                                                        </div>
                                                     </div>
 
                                                 </div>
@@ -53,14 +72,21 @@
                                             <f:facet name="header">
                                                 <h:outputText value="Department" />
                                             </f:facet>
-                                            <h:outputText value="#{model.name}" />
+                                            <h:commandLink value="#{model.name}"
+                                                action="#{departmentView.navigateToDepartmentDetail(model)}"
+                                                styleClass="department-link"
+                                                style="text-decoration: none; color: #007bff; cursor: pointer;">
+                                                <f:setPropertyActionListener value="#{model}"
+                                                    target="#{departmentView.selectedDepartment}" />
+                                            </h:commandLink>
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
                                                 <h:outputText value="Dpt Lead" />
                                             </f:facet>
                                             <!-- IMPORTANT: Check if the lead exists to avoid a NullPointerException on the page -->
-                                            <h:outputText value="#{model.departmentLead != null ? model.departmentLead.fullName : 'No DptLead assigned yet'}" />
+                                            <h:outputText
+                                                value="#{model.departmentLead != null ? model.departmentLead.fullName : 'No DptLead assigned yet'}" />
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
@@ -70,27 +96,26 @@
                                         </p:column>
 
                                         <p:column headerText="Action" width="140" exportable="false"
-                                                  style="text-align: center">
-                                            <p:commandButton process="@this" icon="fa fa-edit"
-                                                             immediate="true" rendered="true"
-                                                             actionListener="#{departmentFormDialog.show}">
+                                            style="text-align: center">
+                                            <p:commandButton process="@this" icon="fa fa-edit" immediate="true"
+                                                rendered="true" actionListener="#{departmentFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
-                                                                             target="#{departmentFormDialog.model}" />
+                                                    target="#{departmentFormDialog.model}" />
                                                 <p:ajax event="dialogReturn" update="departmentTable" />
                                             </p:commandButton>
 
                                             <p:commandButton icon="fa fa-trash" title="Delete"
-                                                             styleClass="ui-button-danger"
-                                                             style="margin-left: 5px"
-                                                             actionListener="#{departmentView.deleteSelectedDepartment(model)}"
-                                                             update="departmentView">
+                                                styleClass="ui-button-danger" style="margin-left: 5px"
+                                                actionListener="#{departmentView.deleteSelectedDepartment(model)}"
+                                                update="departmentView">
 
                                                 <!-- THIS IS THE FIX: Set the selected department before the dialog shows -->
-                                                <f:setPropertyActionListener value="#{model}" target="#{departmentView.selectedDepartment}" />
+                                                <f:setPropertyActionListener value="#{model}"
+                                                    target="#{departmentView.selectedDepartment}" />
 
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete department '#{model.name}'. Are you sure?"
-                                                           icon="ui-icon-alert" />
+                                                    message="You are about to delete department '#{model.name}'. Are you sure?"
+                                                    icon="ui-icon-alert" />
                                             </p:commandButton>
 
                                         </p:column>
@@ -101,14 +126,12 @@
                             </div>
                         </div>
                     </ui:fragment>
-                    <!--                    <p:blockUI block="departmentView">-->
-                    <!--                        <p:graphicImage value="/resources/images/workingicon.png" />-->
-                    <!--                    </p:blockUI>-->
+
                     <p:confirmDialog global="true">
-                        <p:commandButton value="Yes" type="button"
-                                         styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
-                        <p:commandButton value="No" type="button"
-                                         styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"
+                            icon="fa fa-thumbs-up" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                            icon="fa fa-thumbs-down" />
                     </p:confirmDialog>
 
                 </h:form>
