@@ -3,6 +3,7 @@ package org.pahappa.systems.kpiTracker.models.goalMgt;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.constants.Approvals;
 import org.pahappa.systems.kpiTracker.constants.GoalStatus;
+import org.pahappa.systems.kpiTracker.models.activity.Activity;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 import org.pahappa.systems.kpiTracker.models.team.Team;
@@ -30,6 +31,7 @@ public class Goal extends BaseEntity {
     private User approveBy;
     private Double goalEvaluationWeight;
     private Double progress = 0.0;
+    private List<Activity> activities = new ArrayList<>();
     private List<GoalDepartment> goalDepartments = new ArrayList<>();
     private Goal parentGoal;
     private Set<Goal> childGoals = new HashSet<>();
@@ -102,7 +104,24 @@ public class Goal extends BaseEntity {
         return goalDepartments;
     }
 
-    // For Hierarchical Goals (Org -> Dept -> Team -> Individual)
+    @OneToMany(
+            mappedBy = "goal", 
+            cascade = CascadeType.ALL, 
+            orphanRemoval = true 
+    )
+    public List<GoalDepartment> getGoalDepartments(){
+    return goalDepartments;
+}
+
+    @OneToMany(
+            mappedBy = "goal",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_goal_id")
     public Goal getParentGoal() {

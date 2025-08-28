@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <h:form id="activitiesView" enctype="multipart/form-data">
+
+                    <ui:fragment>
+                        <div class="p-grid table-demo">
+                            <div class="p-col-12">
+                                <div class="card">
+                                    <p:dataTable id="activitiesTable" var="model" value="#{activityView.dataModels}"
+                                                 widgetVar="teamsTable"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                 paginator="true" lazy="true" rows="20"
+                                                 emptyMessage="No Activities found."
+                                                 paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                                 rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
+
+                                        <f:facet name="header">
+                                            <div class="p-d-flex p-jc-between">
+                                                <div>
+                                                    <span class="table-header-text">Activities</span>
+                                                </div>
+                                                <div>
+                                                    <div class="p-d-flex p-flex-wrap">
+                                                        <div class="p-mr-2 p-mb-2">
+                                                            <p:commandButton value="Add Activities" icon="fa fa-plus" process="@this"
+                                                                             actionListener="#{activityFormDialog.show}">
+                                                                <f:setPropertyActionListener value="#{null}"
+                                                                                             target="#{activityFormDialog.model}" />
+                                                                <p:ajax event="dialogReturn" listener="#{activityView.reloadFilterReset}" update="activitiesTable" />
+                                                            </p:commandButton>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </f:facet>
+
+                                        <p:column width="30" headerText="No.">
+                                            <h:outputText value="#{row + 1}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="ActivityName" />
+                                            </f:facet>
+                                            <h:outputText value="#{model.name}" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Goal Attached To" />
+                                            </f:facet>
+                                            <h:outputText value="#{model.goal.goalTitle}" />
+                                        </p:column>
+                                        <p:column headerText="Description">
+                                            <h:outputText value="#{model.description}" />
+                                        </p:column>
+
+                                        <p:column headerText="Action" width="140" exportable="false"
+                                                  style="text-align: center">
+                                            <p:commandButton process="@this" icon="fa fa-edit"
+                                                             immediate="true" rendered="true"
+                                                             actionListener="#{activityFormDialog.show}" >
+                                                <f:setPropertyActionListener value="#{model}"
+                                                                             target="#{activityFormDialog.model}" />
+                                                <p:ajax event="dialogReturn" update="activitiesTable" />
+                                            </p:commandButton>
+
+                                            <p:commandButton icon="fa fa-trash" title="Delete"
+                                                             styleClass="ui-button-danger"
+                                                             style="margin-left: 5px"
+                                                             actionListener="#{activityView.deleteActivity()}"
+                                                             update="teamsView">
+                                                <p:confirm header="Confirmation"
+                                                           message="You are about to delete Activity '#{model.name}'. Are you sure?"
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
+
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:fragment>
+
+                    <p:confirmDialog global="true">
+                        <p:commandButton value="Yes" type="button"
+                                         styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
+                        <p:commandButton value="No" type="button"
+                                         styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+                    </p:confirmDialog>
+                </h:form>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>
