@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <h:form id="memberAssignmentForm">
+        <p:panel header="Assign Member to Team" styleClass="ui-panel-sm">
+            <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+                <h:outputLabel for="memberName" value="Member:" />
+                <h:outputText id="memberName" value="#{memberAssignmentDialog.selectedMember.fullName}" />
+
+                <h:outputLabel for="departmentName" value="Department:" />
+                <h:outputText id="departmentName" value="#{memberAssignmentDialog.selectedDepartment.name}" />
+
+                <h:outputLabel for="teamSelect" value="Select Team:" />
+                <p:selectOneMenu id="teamSelect" value="#{memberAssignmentDialog.selectedTeam}"
+                    styleClass="ui-selectonemenu">
+                    <f:selectItem itemLabel="Select a team" itemValue="" />
+                    <f:selectItems value="#{memberAssignmentDialog.availableTeams}" var="team"
+                        itemLabel="#{team.teamName}" itemValue="#{team}" />
+                </p:selectOneMenu>
+            </p:panelGrid>
+
+            <p:panelGrid columns="2" styleClass="ui-panelgrid-blank" style="text-align: center; margin-top: 20px;">
+                <p:commandButton value="Assign" icon="fa fa-check"
+                    actionListener="#{memberAssignmentDialog.assignMemberToTeam}" styleClass="ui-button-success" />
+                <p:commandButton value="Cancel" icon="fa fa-times" onclick="PF('memberAssignmentDialog').hide()"
+                    styleClass="ui-button-secondary" />
+            </p:panelGrid>
+        </p:panel>
+    </h:form>
+</ui:composition>

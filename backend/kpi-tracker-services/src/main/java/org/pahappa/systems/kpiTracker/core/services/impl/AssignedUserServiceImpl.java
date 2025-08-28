@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Service("assignedUserService")
 @Transactional
@@ -175,7 +177,8 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
     @Override
     @Transactional(readOnly = true)
     public Department getDepartmentForUser(User user) {
-        if (user == null) return null;
+        if (user == null)
+            return null;
 
         AssignedUser assignedUser = findAssignedUserByUser(user);
         if (assignedUser != null && assignedUser.getDepartment() != null) {
@@ -185,7 +188,6 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
         }
         return null;
     }
-
 
     // ---------------------------
     // Batch Operations
@@ -333,7 +335,8 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public AssignedUser saveInstance(AssignedUser entityInstance) throws ValidationFailedException, OperationFailedException {
+    public AssignedUser saveInstance(AssignedUser entityInstance)
+            throws ValidationFailedException, OperationFailedException {
         validateAssignedUser(entityInstance);
         return assignedUserDao.save(entityInstance);
     }
@@ -359,7 +362,8 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
         if (StringUtils.isBlank(assignedUser.getId())) {
             AssignedUser existing = findAssignedUserByUser(assignedUser.getUser());
             if (existing != null) {
-                throw new ValidationFailedException("User " + assignedUser.getUser().getUsername() + " is already assigned to a department");
+                throw new ValidationFailedException(
+                        "User " + assignedUser.getUser().getUsername() + " is already assigned to a department");
             }
         }
     }
@@ -401,5 +405,58 @@ public class AssignedUserServiceImpl extends GenericServiceImpl<AssignedUser> im
         search.addSort("user.username", false, true);
 
         return assignedUserDao.search(search);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> getUnassignedMembersForDepartment(String departmentId) {
+        if (departmentId == null || departmentId.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        try {
+            // Get the department
+            Department department = departmentDao.searchUniqueByPropertyEqual("id", departmentId);
+            if (department == null) {
+                return new ArrayList<>();
+            }
+
+            // Get all users assigned to this department
+            List<AssignedUser> assignedUsers = getAssignedUsersByDepartment(department);
+            List<User> usersInDepartment = new ArrayList<>();
+            for (AssignedUser assignedUser : assignedUsers) {
+                usersInDepartment.add(assignedUser.getUser());
+            }
+
+            // Get all teams in this department
+            Search teamSearch = new Search();
+            teamSearch.addFilterEqual("department", department);
+            teamSearch.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+            List<Team> teamsInDepartment = teamDao.search(teamSearch);
+
+            // Collect all user IDs who are already in teams
+            Set<String> memberIdsInTeams = new HashSet<>();
+            for (Team team : teamsInDepartment) {
+                if (team.getMembers() != null) {
+                    for (User member : team.getMembers()) {
+                        memberIdsInTeams.add(member.getId());
+                    }
+                }
+            }
+
+            // Filter out users who are already in teams
+            List<User> unassignedUsers = new ArrayList<>();
+            for (User user : usersInDepartment) {
+                if (!memberIdsInTeams.contains(user.getId())) {
+                    unassignedUsers.add(user);
+                }
+            }
+
+            return unassignedUsers;
+
+        } catch (Exception e) {
+            log.error("Error getting unassigned members for department: " + departmentId, e);
+            return new ArrayList<>();
+        }
     }
 }
