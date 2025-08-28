@@ -181,4 +181,6 @@ public class KPI extends BaseEntity {
         KPI kpi = (KPI) o;
         return super.getId() != null && Objects.equals(super.getId(), kpi.getId());
     }
+
+
 }

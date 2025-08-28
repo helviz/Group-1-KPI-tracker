@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewParam name="id" value="#{goalProgressBean.goalId}" required="true" />
+            <f:event type="preRenderView" listener="#{goalProgressBean.loadGoalData}" />
+        </f:metadata>
+
+        <div class="card">
+            <h:form id="progressForm">
+                <div class="p-grid">
+                    <div class="p-col-12">
+                        <div class="card">
+                            <h2>Update Progress:
+                                <h:outputText value="#{goalProgressBean.currentGoal.goalTitle}" />
+                            </h2>
+
+                            <!-- Goal Information -->
+                            <div class="p-grid p-mb-3">
+                                <div class="p-col-12 p-md-6">
+                                    <h5>Goal Details</h5>
+                                    <p><strong>Description:</strong>
+                                        <h:outputText value="#{goalProgressBean.currentGoal.description}" />
+                                    </p>
+                                    <p><strong>Level:</strong>
+                                        <h:outputText value="#{goalProgressBean.currentGoal.goalLevel.name}" />
+                                    </p>
+                                    <p><strong>Owner:</strong>
+                                        <h:outputText value="#{goalProgressBean.currentGoal.owner.username}" />
+                                    </p>
+                                    <p><strong>Period:</strong>
+                                        <h:outputText value="#{goalProgressBean.currentGoal.goalPeriod.periodName}" />
+                                    </p>
+                                </div>
+                                <div class="p-col-12 p-md-6">
+                                    <h5>Current Progress</h5>
+                                    <p:progressBar value="#{goalProgressBean.currentGoal.progress}" displayOnly="true"
+                                                   labelTemplate="{value}%" styleClass="progress-bar-lg" />
+                                    <p><strong>Status:</strong>
+                                        <h:outputText value="#{goalProgressBean.currentGoal.goalStatus}"
+                                                      styleClass="goal-status #{goalProgressBean.currentGoal.goalStatus == 'ON_TRACK' ? 'status-success' : goalProgressBean.currentGoal.goalStatus == 'AT_RISK' ? 'status-warn' : goalProgressBean.currentGoal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- KPI Progress Update Section -->
+                            <div class="p-grid">
+                                <div class="p-col-12">
+                                    <h4>Key Performance Indicators (KPIs)</h4>
+
+                                    <p:panel rendered="#{empty goalProgressBean.kpis}">
+                                        <p>No KPIs found for this goal. Please add KPIs to track progress.</p>
+                                    </p:panel>
+
+                                    <p:dataTable value="#{goalProgressBean.kpis}" var="kpi"
+                                                 rendered="#{not empty goalProgressBean.kpis}" styleClass="p-datatable-sm">
+
+                                        <p:column headerText="KPI Title" style="width: 25%;">
+                                            <h:outputText value="#{kpi.title}" />
+                                            <br />
+                                            <small class="text-muted">
+                                                <h:outputText value="#{kpi.description}" />
+                                            </small>
+                                        </p:column>
+
+                                        <p:column headerText="Type" style="width: 10%;">
+                                            <h:outputText value="#{kpi.kpiType.displayName}"
+                                                          styleClass="goal-status #{kpi.kpiType == 'NUMERICAL' ? 'status-info' : 'status-success'}" />
+                                        </p:column>
+
+                                        <p:column headerText="Current Progress" style="width: 20%;">
+                                            <!-- CORRECTED: Replaced div with h:panelGroup for conditional rendering -->
+                                            <h:panelGroup rendered="#{kpi.kpiType == 'NUMERICAL'}">
+                                                <p:inputText value="#{kpi.currentValue}"
+                                                             placeholder="Enter current value" styleClass="p-inputtext-sm">
+                                                    <f:convertNumber />
+                                                </p:inputText>
+                                                <br />
+                                                <small class="text-muted">
+                                                    Start:
+                                                    <h:outputText value="#{kpi.startValue}" />
+                                                    | Target:
+                                                    <h:outputText value="#{kpi.targetValue}" />
+                                                    <h:outputText value="#{kpi.unitOfMeasure}"
+                                                                  rendered="#{not empty kpi.unitOfMeasure}" />
+                                                </small>
+                                            </h:panelGroup>
+
+                                            <!-- CORRECTED: Replaced div with h:panelGroup for conditional rendering -->
+                                            <h:panelGroup rendered="#{kpi.kpiType == 'BINARY'}">
+                                                <p:selectBooleanCheckbox value="#{kpi.isComplete}" />
+                                                <span class="p-ml-2">Completed</span>
+                                            </h:panelGroup>
+                                        </p:column>
+
+                                        <p:column headerText="Progress" style="width: 15%;">
+                                            <p:progressBar value="#{kpi.progressPercentage}" displayOnly="true"
+                                                           labelTemplate="{value}%" />
+                                        </p:column>
+
+                                        <p:column headerText="Status" style="width: 10%;">
+                                            <h:outputText
+                                                    value="#{kpi.progressPercentage >= 100 ? 'COMPLETED' : kpi.progressPercentage >= 75 ? 'ON_TRACK' : kpi.progressPercentage >= 50 ? 'AT_RISK' : 'BEHIND'}"
+                                                    styleClass="goal-status #{kpi.progressPercentage >= 100 ? 'status-success' : kpi.progressPercentage >= 75 ? 'status-success' : kpi.progressPercentage >= 50 ? 'status-warn' : 'status-danger'}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="p-d-flex p-jc-between p-mt-4">
+                                <p:commandButton value="Back to Goals" icon="pi pi-arrow-left"
+                                                 action="goals?faces-redirect=true" styleClass="ui-button-outlined" />
+
+                                <div>
+                                    <p:commandButton value="Save Progress" icon="pi pi-save"
+                                                     action="#{goalProgressBean.saveProgress}" update="@form"
+                                                     styleClass="ui-button-success" />
+
+                                    <p:commandButton value="Add KPI" icon="pi pi-plus"
+                                                     action="#{goalProgressBean.addKpi}" styleClass="ui-button-info p-ml-2" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

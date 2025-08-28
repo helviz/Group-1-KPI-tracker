@@ -1,27 +1,23 @@
 package org.pahappa.systems.kpiTracker.views.goalMgt;
 
-import com.googlecode.genericdao.search.Search;
-import com.googlecode.genericdao.search.Filter;
 import lombok.Getter;
 import lombok.Setter;
-import org.pahappa.systems.kpiTracker.constants.GoalStatus;
 import org.pahappa.systems.kpiTracker.core.services.GoalService;
 import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
-import org.pahappa.systems.kpiTracker.security.UiUtils;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.sers.webutils.client.views.presenters.PaginatedTableView;
 import org.sers.webutils.client.views.presenters.ViewPath;
-import org.sers.webutils.model.RecordStatus;
+import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.service.excel.reports.ExcelReport;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
+import org.sers.webutils.server.shared.SharedAppData;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,93 +30,75 @@ import java.util.Map;
 public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService> {
 
     private static final long serialVersionUID = 1L;
+    private transient GoalService goalService;
+    private User loggedInUser;
+    private String activeTabFilter = "MY_GOALS";
 
-    private GoalService goalService;
-
-    // Filters/search
-    private String searchTerm;
-    private GoalStatus selectedStatus;
-    private GoalPeriod selectedPeriod; // optional UI hook
-    private List<GoalStatus> availableStatuses = Arrays.asList(GoalStatus.values());
-    private List<GoalPeriod> availablePeriods;
-
-    // KPI counters for header cards
-    private int totalCompleted;
-    private int totalAtRisk;
-    private int totalOnTrack;
-    private int totalBehind;
+    // GoalForm is no longer needed in this bean, but we'll leave it in case of
+    // other uses.
+    // @ManagedProperty(value = "#{goalForm}")
+    // private GoalForm goalForm;
 
     @PostConstruct
     public void init() {
+        this.goalService = ApplicationContextProvider.getBean(GoalService.class);
+        this.loggedInUser = SharedAppData.getLoggedInUser();
         try {
-            this.goalService = ApplicationContextProvider.getBean(GoalService.class);
-            // load periods lazily via GenericService to populate dropdown if needed
-            this.availablePeriods = ApplicationContextProvider
-                    .getBean(org.pahappa.systems.kpiTracker.core.services.GoalPeriodService.class)
-                    .getAllInstances();
-            this.reloadFilterReset();
+            reloadFilterReset();
         } catch (Exception e) {
-            UiUtils.ComposeFailure("Error", e.getLocalizedMessage());
+            // Consider logging the error
         }
     }
 
     @Override
-    public void reloadFromDB(int offset, int limit, Map<String, Object> filters) throws Exception {
-        super.setDataModels(goalService.getInstances(composeSearch(), offset, limit));
+    public void reloadFromDB(int first, int pageSize, Map<String, Object> filterBy) throws Exception {
+        if (this.loggedInUser == null) {
+            super.setDataModels(Collections.emptyList());
+            return;
+        }
+        List<Goal> goals = goalService.getGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId(), first,
+                pageSize);
+        super.setDataModels(goals);
     }
 
     @Override
-    public List<Goal> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-        return getDataModels();
+    public void reloadFilterReset() throws Exception {
+        if (this.loggedInUser == null) {
+            super.setTotalRecords(0);
+            return;
+        }
+        super.setTotalRecords(goalService.countGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId()));
+        super.reloadFilterReset();
     }
 
-    @Override
-    public void reloadFilterReset() {
-        try {
-            Search search = composeSearch();
-            super.setTotalRecords(goalService.countInstances(search));
-
-            // KPI counters
-            this.totalCompleted = goalService.countInstances(new Search()
-                    .addFilterEqual("recordStatus", RecordStatus.ACTIVE)
-                    .addFilterEqual("goalStatus", GoalStatus.COMPLETED));
-            this.totalAtRisk = goalService.countInstances(new Search()
-                    .addFilterEqual("recordStatus", RecordStatus.ACTIVE)
-                    .addFilterEqual("goalStatus", GoalStatus.AT_RISK));
-            this.totalOnTrack = goalService.countInstances(new Search()
-                    .addFilterEqual("recordStatus", RecordStatus.ACTIVE)
-                    .addFilterEqual("goalStatus", GoalStatus.ON_TRACK));
-            this.totalBehind = goalService.countInstances(new Search()
-                    .addFilterEqual("recordStatus", RecordStatus.ACTIVE)
-                    .addFilterEqual("goalStatus", GoalStatus.BEHIND));
-
-            super.reloadFilterReset();
-        } catch (Exception e) {
-            UiUtils.ComposeFailure("Error", e.getLocalizedMessage());
+    public void handleTabChange(TabChangeEvent event) throws Exception {
+        String tabTitle = event.getTab().getTitle();
+        switch (tabTitle) {
+            case "My Goals":
+                this.activeTabFilter = "MY_GOALS";
+                break;
+            case "My Team":
+                this.activeTabFilter = "MY_TEAM";
+                break;
+            case "My Department":
+                this.activeTabFilter = "MY_DEPARTMENT";
+                break;
+            case "Organization":
+                this.activeTabFilter = "ORGANIZATION";
+                break;
         }
+        reloadFilterReset();
     }
 
-    private Search composeSearch() {
-        Search search = new Search()
-                .addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addFetch("goalPeriod");
-
-        if (selectedStatus != null) {
-            search.addFilterEqual("goalStatus", selectedStatus);
+    public String updateProgress(Goal goal) {
+        if (goal.isIndividualGoal()) {
+            return "/pages/goals/UpdateProgress.xhtml?id=" + goal.getId() + "&faces-redirect=true";
         }
-
-        if (selectedPeriod != null) {
-            search.addFilterEqual("goalPeriod", selectedPeriod);
-        }
-
-        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-            search.addFilterOr(
-                    Filter.like("goalTitle", "%" + searchTerm + "%"),
-                    Filter.like("description", "%" + searchTerm + "%"));
-        }
-
-        return search;
+        return null;
     }
+
+    // --- The prepare... methods have been removed as they are now called directly
+    // from the UI ---
 
     @Override
     public List<ExcelReport> getExcelReportModels() {
@@ -129,6 +107,11 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
 
     @Override
     public String getFileName() {
-        return "goals";
+        return "";
+    }
+
+    @Override
+    public List<Goal> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
+        return super.getDataModels(); // Correct implementation for PrimeFaces lazy loading
     }
 }
