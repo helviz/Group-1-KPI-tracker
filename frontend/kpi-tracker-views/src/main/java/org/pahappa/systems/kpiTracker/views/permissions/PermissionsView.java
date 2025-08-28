@@ -124,6 +124,7 @@ public class PermissionsView implements Serializable {
         if (allPermissions != null) {
             categorizePermissions(allPermissions);
         }
+
     }
 
     private void categorizePermissions(List<Permission> permissions) {
@@ -160,5 +161,11 @@ public class PermissionsView implements Serializable {
         for (Permission permission : selectedPermissions){
             System.out.println("Permissions are: " +permission.getName());
         }
+    }
+
+    public Set<Permission> getSelectedPermissions() {
+        if (selectedRole != null)
+            selectedPermissions.addAll(selectedRole.getPermissions());
+        return selectedPermissions;
     }
 }

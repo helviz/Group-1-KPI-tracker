@@ -38,13 +38,17 @@
                     <p:submenu id="goals" label="Goals and Objectives"
                                 icon="pi pi-fw pi-megaphone" >
 
-                          <p:menuitem id="period" value="Create Goal Period"
+                        <p:menuitem id="period" value="Create Goal Period"
                                 icon="pi pi-fw pi-hourglass" outcome="/pages/goals/goalPeriod/GoalPeriodView"/>
 
                         <p:menuitem id="Level" value="Create Goal Level"
                                     icon="pi pi-fw pi-hourglass" outcome="/pages/goals/goalLevel/GoalLevelView"/>
-                    <p:menuitem id="goalsMgt" value="Manage Goals"
+                        <p:menuitem id="goalsMgt" value="Manage Goals"
                                 icon="pi pi-fw pi-eye" outcome="/pages/goals/GoalsView"/>
+                        <p:menuitem id="kpi" value="KPI Management" icon="fa fa-bar-chart"
+                                    outcome="/pages/kpis/KpisView" />
+                        <p:menuitem id="activities" value="Activities" icon="fa fa-action"
+                                    outcome="/pages/activity/ActivityView" />
 
                     </p:submenu>
                     <p:menuitem id="department" value="Department"
@@ -67,9 +71,6 @@
                                     outcome="/pages/registerUser/RegisterUser"/>
                     </p:submenu>
 
-
-                    <p:menuitem id="kpi" value="KPI Management" icon="fa fa-bar-chart"
-                                outcome="/pages/kpis/KpisView" />
 
                     <p:menuitem id="performancetracking" value="Performance Tracking" icon="pi pi-fw pi-wave-pulse"
 

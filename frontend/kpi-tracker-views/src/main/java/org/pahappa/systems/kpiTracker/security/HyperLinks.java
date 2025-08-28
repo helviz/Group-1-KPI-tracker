@@ -34,6 +34,8 @@ public class HyperLinks {
     public static final String KPIS_VIEW = "/pages/kpis/KpisView.xhtml?faces-redirect=true";
     public static final String KPI_FORM_DIALOG = "/pages/kpis/KpiFormDialog.xhtml?faces-redirect=true";
     public static final String PERMISSION_VIEW = "/pages/permissions/Permissions.xhtml?faces-redirect=true";
+    public static final String ACTIVITY_FORM_DIALOG = "/pages/activity/ActivityDialog.xhtml";
+    public static final String ACTIVITY_VIEW = "/pages/activity/ActivityView.xhtml?faces-redirect=true";
 
 
 

@@ -3,6 +3,7 @@ package org.pahappa.systems.kpiTracker.models.goalMgt;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.constants.Approvals;
 import org.pahappa.systems.kpiTracker.constants.GoalStatus;
+import org.pahappa.systems.kpiTracker.models.activity.Activity;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
@@ -26,6 +27,7 @@ public class Goal extends BaseEntity {
 //    private Department department;
     private  Double goalEvaluationWeight;
     private Double progress = 0.0;
+    private List<Activity> activities = new ArrayList<>();
     private List<GoalDepartment> goalDepartments = new ArrayList<>();
 
 
@@ -99,4 +101,13 @@ public class Goal extends BaseEntity {
     public List<GoalDepartment> getGoalDepartments(){
     return goalDepartments;
 }
+
+    @OneToMany(
+            mappedBy = "goal",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    public List<Activity> getActivities() {
+        return activities;
+    }
 }

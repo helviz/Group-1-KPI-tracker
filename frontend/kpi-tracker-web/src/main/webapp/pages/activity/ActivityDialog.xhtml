@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/dialog-template.xhtml">
+    <ui:define name="head">
+        <style type="text/css">
+            .capitalized {
+                text-transform: capitalize;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <title>#{activityFormDialog.model.id != null ? 'Edit Activity' : 'Add Activity'}</title>
+        <h:form id="activityForm" styleClass="card">
+            <div class="p-grid ui-fluid" style="display:flex; flex-direction: column; gap: 1rem;">
+
+                <div class="ui-col-12">
+                    <h5>Activity Name</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputText id="activityNameInput"
+                                     value="#{activityFormDialog.model.name}"
+                                     required="true"/>
+                    </div>
+                </div>
+
+                <div class="ui-col-12">
+                    <h5>Description</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputTextarea id="descriptionInput"
+                                         value="#{activityFormDialog.model.description}"
+                                         rows="4" autoResize="false"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-col-12 ui-md-12" style="margin-top: 20px;">
+                <div class="p-grid p-justify-end">
+                    <div class="p-col-2">
+                        <p:commandButton id="cancelButton" value="Cancel"
+                                         process="@this"
+                                         actionListener="#{activityFormDialog.hide}"
+                                         styleClass="ui-button-outlined ui-button-help"/>
+                    </div>
+                    <div class="p-col-2">
+                        <p:commandButton id="saveButton" value="Save Activity"
+                                         process="@this"
+                                         immediate="true"
+                                         actionListener="#{activityFormDialog.save}"
+                                         update="@form" validateClient="true"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
