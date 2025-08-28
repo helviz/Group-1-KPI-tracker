@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <h:form id="departmentDetailForm" enctype="multipart/form-data">
+
+                    <!-- Department Header -->
+                    <div class="p-mb-4">
+                        <!-- Back Navigation -->
+                        <div style="margin-bottom: 15px;">
+                            <p:commandButton icon="fa fa-arrow-left"
+                                action="#{departmentDetailView.navigateToDepartments}"
+                                styleClass="ui-button-icon-only ui-button-rounded ui-button-outlined"
+                                style="width: 35px; height: 35px; border-radius: 50%; background: white; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                title="Back to departments" />
+                        </div>
+
+                        <div class="p-d-flex p-ai-center">
+                            <i class="#{departmentDetailView.departmentIcon} p-mr-3"
+                                style="font-size: 2rem; color: #007bff;"> </i>
+                            <h2 style="margin: 0; color: #333;">#{departmentDetailView.department.name}</h2>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Grid -->
+                    <div class="p-grid">
+
+                        <!-- Left Column - Details -->
+                        <div class="p-col-12 p-md-4">
+                            <div class="card" style="height: 100%;">
+                                <div class="card-header">
+                                    <h5 style="margin: 0; font-weight: 600;">Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="p-mb-3">
+                                        <strong>Lead:</strong>
+                                        <span class="p-ml-2">
+                                            #{departmentDetailView.department.departmentLead != null ?
+                                            departmentDetailView.department.departmentLead.fullName : 'No LeadAssigned'}
+                                        </span>
+                                    </div>
+
+                                    <div class="p-mb-3">
+                                        <p style="color: #666; line-height: 1.6; margin: 0;">
+                                            #{departmentDetailView.department.description != null ?
+                                            departmentDetailView.department.description : 'No description available.'}
+                                        </p>
+                                    </div>
+
+                                    <div class="p-mt-4">
+                                        <p:commandButton value="Edit Details" icon="fa fa-pencil"
+                                            actionListener="#{departmentFormDialog.show}"
+                                            styleClass="ui-button-primary">
+                                            <f:setPropertyActionListener value="#{departmentDetailView.department}"
+                                                target="#{departmentFormDialog.model}" />
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="p-col-12 p-md-8">
+
+                            <!-- Teams Section -->
+                            <div class="card p-mb-4">
+                                <div class="card-header" style="display: flex; justify-content: space-between; ">
+                                    <h5 style="margin: 0; font-weight: 600; ">
+                                        Teams (#{departmentDetailView.teams.size()})
+                                    </h5>
+                                    <span style="align-items: end ; margin:5px">
+                                        <p:commandButton value=" Add team" icon="fa fa-plus"
+                                            actionListener="#{teamFormDialog.show}" styleClass="ui-button-primary">
+                                            <f:setPropertyActionListener value="#{departmentDetailView.department}"
+                                                target="#{teamFormDialog.selectedDepartment}" />
+                                        </p:commandButton>
+                                    </span>
+
+                                </div>
+                                <div class="card-body">
+                                    <ui:fragment rendered="#{not empty departmentDetailView.teams}">
+                                        <div class="team-list">
+                                            <ui:repeat value="#{departmentDetailView.teams}" var="team">
+                                                <div class="team-item p-p-3 p-mb-2"
+                                                    style="border: 1px solid #e9ecef; border-radius: 8px; background: #f8f9fa;">
+                                                    <div class="p-d-flex p-jc-between p-ai-center">
+                                                        <div>
+                                                            <h6
+                                                                style="margin: 0 0 5px 0; color: #333; font-weight: 600;">
+                                                                #{team.teamName}
+                                                            </h6>
+                                                            <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                                                                Lead: #{team.teamLead != null ? team.teamLead.fullName :
+                                                                'No Lead'} •
+                                                                #{team.members != null ? team.members.size() : 0}
+                                                                Members
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <p:commandButton value="View Details" icon="fa fa-eye"
+                                                                styleClass="ui-button-outlined ui-button-sm"
+                                                                action="#{teamDetailView.navigateToTeamDetail(team)}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ui:repeat>
+                                        </div>
+                                    </ui:fragment>
+
+                                    <ui:fragment rendered="#{empty departmentDetailView.teams}">
+                                        <div class="p-text-center p-p-4">
+                                            <i class="fa fa-users"
+                                                style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                                            <p style="color: #666; margin: 0;">No teams found for this department.</p>
+                                            <p:commandButton value="Create First Team" icon="fa fa-plus"
+                                                actionListener="#{teamFormDialog.show}"
+                                                styleClass="ui-button-primary p-mt-2">
+                                                <f:setPropertyActionListener value="#{departmentDetailView.department}"
+                                                    target="#{teamFormDialog.selectedDepartment}" />
+                                            </p:commandButton>
+                                        </div>
+                                    </ui:fragment>
+                                </div>
+                            </div>
+
+                            <!-- Unassigned Members Section -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="margin: 0; font-weight: 600;">
+                                        Members without a team (#{departmentDetailView.unassignedMembers.size()})
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <ui:fragment rendered="#{not empty departmentDetailView.unassignedMembers}">
+                                        <div class="member-list">
+                                            <ui:repeat value="#{departmentDetailView.unassignedMembers}" var="member"
+                                                varStatus="status">
+                                                <div class="member-item p-p-3 p-mb-2"
+                                                    style="border: 1px solid #e9ecef; border-radius: 8px; background: #fff;">
+                                                    <div class="p-d-flex p-jc-between p-ai-center">
+                                                        <div>
+                                                            <span
+                                                                style="color: #666; margin-right: 10px;">#{status.index
+                                                                +
+                                                                1}.</span>
+                                                            <span
+                                                                style="font-weight: 500; color: #333;">#{member.fullName}</span>
+                                                        </div>
+                                                        <div>
+                                                            <p:commandButton value="Assign team" icon="fa fa-user-plus"
+                                                                styleClass="ui-button-outlined ui-button-sm"
+                                                                actionListener="#{memberAssignmentDialog.show}">
+                                                                <f:setPropertyActionListener value="#{member}"
+                                                                    target="#{memberAssignmentDialog.selectedMember}" />
+                                                                <f:setPropertyActionListener
+                                                                    value="#{departmentDetailView.department}"
+                                                                    target="#{memberAssignmentDialog.selectedDepartment}" />
+                                                            </p:commandButton>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ui:repeat>
+                                        </div>
+                                    </ui:fragment>
+
+                                    <ui:fragment rendered="#{empty departmentDetailView.unassignedMembers}">
+                                        <div class="p-text-center p-p-4">
+                                            <i class="fa fa-check-circle"
+                                                style="font-size: 3rem; color: #28a745; margin-bottom: 1rem;"></i>
+                                            <p style="color: #666; margin: 0;">All department members are assigned to
+                                                teams.
+                                            </p>
+                                        </div>
+                                    </ui:fragment>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Include dialogs -->
+                    <ui:include src="/pages/department/DepartmentFormDialog.xhtml" />
+                    <ui:include src="/pages/teams/TeamFormDialog.xhtml" />
+
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>
