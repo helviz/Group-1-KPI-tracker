@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="title">Team Goals</ui:define>
+
+    <ui:define name="content">
+        <!-- Include the form dialog -->
+        <ui:include src="/pages/goalMgt/TeamGoalFormDialog.xhtml" />
+
+        <h:form id="teamGoalView" enctype="multipart/form-data">
+
+            <!-- Dashboard Metrics Cards -->
+            <div class="grid mb-4">
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Total Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.totalGoals}</div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Active Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.activeGoals}</div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Completed Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.completedGoals}</div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Overdue Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.overdueGoals}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="card mb-4">
+                <h5 class="card-header">Search &amp; Filter</h5>
+                <div class="card-body">
+                    <div class="grid">
+                        <div class="col-12 md:col-3">
+                            <p:inputText id="searchTitle" value="#{teamGoalView.searchTitle}"
+                                placeholder="Search by title" styleClass="w-full" />
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p:inputText id="searchTeam" value="#{teamGoalView.searchTeam}" placeholder="Search by team"
+                                styleClass="w-full" />
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p:inputText id="searchOwner" value="#{teamGoalView.searchOwner}"
+                                placeholder="Search by owner" styleClass="w-full" />
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p:selectOneMenu id="searchStatus" value="#{teamGoalView.searchStatus}" styleClass="w-full">
+                                <f:selectItem itemLabel="All Statuses" itemValue="" />
+                                <f:selectItems value="#{teamGoalView.statusOptions}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="flex justify-content-end mt-3">
+                        <p:commandButton value="Search" action="#{teamGoalView.searchGoals}"
+                            styleClass="p-button-primary mr-2" />
+                        <p:commandButton value="Clear" action="#{teamGoalView.clearSearch}"
+                            styleClass="p-button-secondary" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goals DataTable -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Team Goals</h5>
+                    <p:commandButton value="Create New Goal" action="#{teamGoalFormDialog.show}"
+                        styleClass="p-button-primary" />
+                </div>
+                <div class="card-body">
+                    <p:dataTable id="goalsTable" value="#{teamGoalView.teamGoals}" var="goal" paginator="true" rows="10"
+                        styleClass="w-full"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="5,10,20,50">
+
+                        <p:column headerText="Title" sortBy="#{goal.title}">
+                            <h:outputText value="#{goal.title}" />
+                        </p:column>
+
+                        <p:column headerText="Team" sortBy="#{goal.teamName}">
+                            <h:outputText value="#{goal.teamName}" />
+                        </p:column>
+
+                        <p:column headerText="Parent Goal" sortBy="#{goal.parentGoal.title}">
+                            <h:outputText value="#{goal.parentGoal.title}" />
+                        </p:column>
+
+                        <p:column headerText="Progress" sortBy="#{goal.progress}">
+                            <div class="flex align-items-center">
+                                <p:progressBar value="#{goal.progress}" styleClass="flex-1 mr-2" />
+                                <span class="text-sm">#{goal.progress}%</span>
+                                <div class="text-xs text-muted">(Auto-calculated from child goals)</div>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="End Date" sortBy="#{goal.endDate}">
+                            <h:outputText value="#{goal.endDate}">
+                                <f:convertDateTime pattern="MMM dd, yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Owner" sortBy="#{goal.owner.firstName}">
+                            <h:outputText value="#{goal.owner.firstName} #{goal.owner.lastName}" />
+                        </p:column>
+
+                        <p:column headerText="Actions" styleClass="text-center">
+                            <div class="flex justify-content-center">
+                                <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
+                                    action="#{teamGoalFormDialog.show}"
+                                    actionListener="#{teamGoalFormDialog.loadGoal(goal)}" />
+                                <p:commandButton icon="pi pi-trash"
+                                    styleClass="p-button-text p-button-danger p-button-sm"
+                                    action="#{teamGoalView.showDeleteGoalDialog(goal)}" />
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Dialog -->
+            <p:dialog id="deleteGoalDialog" header="Delete Team Goal" visible="#{teamGoalView.showDeleteDialog}"
+                modal="true" styleClass="w-4" closable="true">
+                <div class="p-fluid">
+                    <p>Are you sure you want to delete the goal "<strong>#{teamGoalView.selectedGoal.title}</strong>"?
+                    </p>
+                    <p class="text-red-500">This action cannot be undone.</p>
+                </div>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Delete" action="#{teamGoalView.deleteGoal}" styleClass="p-button-danger" />
+                    <p:commandButton value="Cancel" onclick="PF('deleteGoalDialog').hide()"
+                        styleClass="p-button-secondary" />
+                </f:facet>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
