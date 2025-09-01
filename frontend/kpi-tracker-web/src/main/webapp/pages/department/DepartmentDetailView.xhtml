@@ -72,11 +72,12 @@
                                         Teams (#{departmentDetailView.teams.size()})
                                     </h5>
                                     <span style="align-items: end ; margin:5px">
-                                        <p:commandButton value=" Add team" icon="fa fa-plus"
-                                            actionListener="#{teamFormDialog.show}" styleClass="ui-button-primary">
-                                            <f:setPropertyActionListener value="#{departmentDetailView.department}"
-                                                target="#{teamFormDialog.selectedDepartment}" />
-                                        </p:commandButton>
+                                        <p:commandButton id="addTeamButton"
+                                                         value="Add Team"
+                                                         icon="fa fa-plus"
+                                                         actionListener="#{teamFormDialog.prepareNew(departmentDetailView.department)}"
+                                                         oncomplete="PF('teamFormDialogWidget').show()"
+                                                         styleClass="ui-button-primary" />
                                     </span>
 
                                 </div>
@@ -113,7 +114,8 @@
                                     <ui:fragment rendered="#{empty departmentDetailView.teams}">
                                         <div class="p-text-center p-p-4">
                                             <i class="fa fa-users"
-                                                style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                                                style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;">
+                                            </i>
                                             <p style="color: #666; margin: 0;">No teams found for this department.</p>
                                             <p:commandButton value="Create First Team" icon="fa fa-plus"
                                                 actionListener="#{teamFormDialog.show}"
@@ -182,9 +184,9 @@
 
                     <!-- Include dialogs -->
                     <ui:include src="/pages/department/DepartmentFormDialog.xhtml" />
-                    <ui:include src="/pages/teams/TeamFormDialog.xhtml" />
 
                 </h:form>
+                <ui:include src="/pages/teams/TeamFormDialog.xhtml" />
             </div>
         </div>
     </ui:define>

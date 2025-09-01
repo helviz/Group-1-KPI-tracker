@@ -139,6 +139,10 @@ public class DepartmentDetailView {
         return teamMembers + unassignedCount;
     }
 
+    public void nothingStayOnPage(){
+
+    }
+
     /**
      * Check if department has any teams
      */

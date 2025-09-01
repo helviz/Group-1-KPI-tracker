@@ -1,9 +1,9 @@
 package org.pahappa.systems.kpiTracker.views.activity;
 
 import lombok.Getter;
+import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
 import org.pahappa.systems.kpiTracker.core.services.ActivityService;
 import org.pahappa.systems.kpiTracker.models.activity.Activity;
-import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
 import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
@@ -45,7 +45,7 @@ public class ActivityDialog extends DialogForm<Activity> implements Serializable
 
         super.model = new Activity();
         super.model.setGoal(goal);
-        super.model.setStatus(ActivityStatus.NOT_STARTED);
+        super.model.setStatus(ActivityStatus.PENDING);
     }
 
     @Override

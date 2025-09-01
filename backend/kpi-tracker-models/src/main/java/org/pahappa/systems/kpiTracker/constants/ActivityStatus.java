@@ -1,9 +1,10 @@
 package org.pahappa.systems.kpiTracker.constants;
 
 public enum ActivityStatus {
-    DONE("Done"),
-    ON_GOING("On Going"),
-    NOT_STARTED("Not Started");
+    PENDING("Pending"),
+    IN_PROGRESS("In Progress"),
+    COMPLETED("Completed"),
+    CANCELLED("Cancelled");
 
     private final String displayName;
 
