@@ -2,8 +2,14 @@ package org.pahappa.systems.kpiTracker.views.goalMgt;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.pahappa.systems.kpiTracker.core.services.GoalService;
-import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
+import org.pahappa.systems.kpiTracker.core.services.IndividualGoalService;
+import org.pahappa.systems.kpiTracker.core.services.TeamGoalService;
+import org.pahappa.systems.kpiTracker.core.services.DepartmentGoalService;
+import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.TeamGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.FilterMeta;
@@ -18,6 +24,7 @@ import org.sers.webutils.server.shared.SharedAppData;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +34,13 @@ import java.util.Map;
 @ManagedBean(name = "goalView")
 @ViewScoped
 @ViewPath(path = HyperLinks.GOAL_VIEW)
-public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService> {
+public class GoalView extends PaginatedTableView<Object, Object, Object> {
 
     private static final long serialVersionUID = 1L;
-    private transient GoalService goalService;
+    private transient IndividualGoalService individualGoalService;
+    private transient TeamGoalService teamGoalService;
+    private transient DepartmentGoalService departmentGoalService;
+    private transient OrganisationGoalService organisationGoalService;
     private User loggedInUser;
     private String activeTabFilter = "MY_GOALS";
 
@@ -41,7 +51,10 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
 
     @PostConstruct
     public void init() {
-        this.goalService = ApplicationContextProvider.getBean(GoalService.class);
+        this.individualGoalService = ApplicationContextProvider.getBean(IndividualGoalService.class);
+        this.teamGoalService = ApplicationContextProvider.getBean(TeamGoalService.class);
+        this.departmentGoalService = ApplicationContextProvider.getBean(DepartmentGoalService.class);
+        this.organisationGoalService = ApplicationContextProvider.getBean(OrganisationGoalService.class);
         this.loggedInUser = SharedAppData.getLoggedInUser();
         try {
             reloadFilterReset();
@@ -56,8 +69,8 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
             super.setDataModels(Collections.emptyList());
             return;
         }
-        List<Goal> goals = goalService.getGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId(), first,
-                pageSize);
+
+        List<Object> goals = getGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId(), first, pageSize);
         super.setDataModels(goals);
     }
 
@@ -67,7 +80,7 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
             super.setTotalRecords(0);
             return;
         }
-        super.setTotalRecords(goalService.countGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId()));
+        super.setTotalRecords((int) countGoalsByUserContext(this.activeTabFilter, this.loggedInUser.getId()));
         super.reloadFilterReset();
     }
 
@@ -90,9 +103,56 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
         reloadFilterReset();
     }
 
-    public String updateProgress(Goal goal) {
-        if (goal.isIndividualGoal()) {
-            return "/pages/goals/UpdateProgress.xhtml?id=" + goal.getId() + "&faces-redirect=true";
+    /**
+     * Get goals by user context using the new MBO goal services
+     */
+    private List<Object> getGoalsByUserContext(String context, String userId, int first, int pageSize) {
+        try {
+            switch (context) {
+                case "MY_GOALS":
+                    return new ArrayList<>(individualGoalService.findByOwner(userId));
+                case "MY_TEAM":
+                    return new ArrayList<>(teamGoalService.findAllActive());
+                case "MY_DEPARTMENT":
+                    return new ArrayList<>(departmentGoalService.findAllActive());
+                case "ORGANIZATION":
+                    return new ArrayList<>(organisationGoalService.findAllActive());
+                default:
+                    return Collections.emptyList();
+            }
+        } catch (Exception e) {
+            // Log error and return empty list
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Count goals by user context using the new MBO goal services
+     */
+    private long countGoalsByUserContext(String context, String userId) {
+        try {
+            switch (context) {
+                case "MY_GOALS":
+                    return individualGoalService.countActiveGoals();
+                case "MY_TEAM":
+                    return teamGoalService.countActiveGoals();
+                case "MY_DEPARTMENT":
+                    return departmentGoalService.countActiveGoals();
+                case "ORGANIZATION":
+                    return organisationGoalService.countActiveGoals();
+                default:
+                    return 0;
+            }
+        } catch (Exception e) {
+            // Log error and return 0
+            return 0;
+        }
+    }
+
+    public String updateProgress(Object goal) {
+        // Since we're now working with different goal types, we need to check the type
+        if (goal instanceof IndividualGoal) {
+            return "/pages/goals/UpdateProgress.xhtml?id=" + ((IndividualGoal) goal).getId() + "&faces-redirect=true";
         }
         return null;
     }
@@ -111,7 +171,7 @@ public class GoalView extends PaginatedTableView<Goal, GoalService, GoalService>
     }
 
     @Override
-    public List<Goal> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
+    public List<Object> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
         return super.getDataModels(); // Correct implementation for PrimeFaces lazy loading
     }
 }

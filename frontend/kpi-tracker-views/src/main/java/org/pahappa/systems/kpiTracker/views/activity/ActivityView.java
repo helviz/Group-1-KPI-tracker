@@ -3,9 +3,9 @@ package org.pahappa.systems.kpiTracker.views.activity;
 import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.ActivityService;
-import org.pahappa.systems.kpiTracker.core.services.GoalService;
+import org.pahappa.systems.kpiTracker.core.services.IndividualGoalService;
 import org.pahappa.systems.kpiTracker.models.activity.Activity;
-import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.pahappa.systems.kpiTracker.models.security.PermissionConstants;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.utils.FacesUtils;
@@ -35,25 +35,24 @@ public class ActivityView extends PaginatedTableView<Activity, ActivityView, Act
     private static final long serialVersionUID = 1L;
 
     private transient ActivityService activityService;
-    private transient GoalService goalService;
-
+    private transient IndividualGoalService individualGoalService;
 
     private String goalId;
-    private Goal goal;
+    private IndividualGoal goal;
     private List<Activity> activities;
     private Activity activityToDelete;
 
     @PostConstruct
     public void init() {
         this.activityService = ApplicationContextProvider.getBean(ActivityService.class);
-        this.goalService = ApplicationContextProvider.getBean(GoalService.class);
+        this.individualGoalService = ApplicationContextProvider.getBean(IndividualGoalService.class);
 
         if (goalId != null && !goalId.isEmpty()) {
-            this.goal = goalService.getInstanceByID(goalId);
+            this.goal = individualGoalService.getInstanceByID(goalId);
             if (this.goal != null) {
                 loadActivities();
             } else {
-                FacesUtils.addError("Error", "Goal not found.");
+                FacesUtils.addError("Error", "Individual goal not found.");
             }
         }
     }
@@ -109,7 +108,8 @@ public class ActivityView extends PaginatedTableView<Activity, ActivityView, Act
     }
 
     @Override
-    public List<Activity> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+    public List<Activity> load(int first, int pageSize, Map<String, SortMeta> sortBy,
+            Map<String, FilterMeta> filterBy) {
         return Collections.emptyList();
     }
 }

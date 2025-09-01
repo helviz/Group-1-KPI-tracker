@@ -38,6 +38,14 @@ public class HyperLinks {
     public static final String ACTIVITY_FORM_DIALOG = "/pages/activity/ActivityDialog.xhtml";
     public static final String ACTIVITY_VIEW = "/pages/activity/ActivityView.xhtml?faces-redirect=true";
 
-
+    // Goal Management Links
+    public static final String ORGANISATION_GOAL_VIEW = "/pages/goalMgt/OrganisationGoalView.xhtml?faces-redirect=true";
+    public static final String ORGANISATION_GOAL_FORM_DIALOG = "/pages/goalMgt/OrganisationGoalFormDialog.xhtml";
+    public static final String DEPARTMENT_GOAL_VIEW = "/pages/goalMgt/DepartmentGoalView.xhtml?faces-redirect=true";
+    public static final String DEPARTMENT_GOAL_FORM_DIALOG = "/pages/goalMgt/DepartmentGoalFormDialog.xhtml";
+    public static final String TEAM_GOAL_VIEW = "/pages/goalMgt/TeamGoalView.xhtml?faces-redirect=true";
+    public static final String TEAM_GOAL_FORM_DIALOG = "/pages/goalMgt/TeamGoalFormDialog.xhtml";
+    public static final String INDIVIDUAL_GOAL_VIEW = "/pages/goalMgt/IndividualGoalView.xhtml?faces-redirect=true";
+    public static final String INDIVIDUAL_GOAL_FORM_DIALOG = "/pages/goalMgt/IndividualGoalFormDialog.xhtml";
 
 }

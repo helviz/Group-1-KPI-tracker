@@ -5,8 +5,8 @@ import com.googlecode.genericdao.search.Search;
 import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.KpiService;
-import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.MessageComposer;
 import org.primefaces.model.FilterMeta;
@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
     private static final long serialVersionUID = 1L;
     private KpiService kpiService;
     private String searchTerm;
-    private Goal selectedGoal;
+    private IndividualGoal selectedGoal;
 
     @ManagedProperty("#{kpiDialog}")
     private KpiFormDialog kpiDialog;
@@ -45,7 +44,7 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
     @PostConstruct
     public void init() {
         this.kpiService = ApplicationContextProvider.getBean(KpiService.class);
-       // this.reloadFilterReset();
+        // this.reloadFilterReset();
     }
 
     @Override
@@ -79,8 +78,7 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
         if (searchTerm != null && !searchTerm.isEmpty()) {
             search.addFilterOr(
                     Filter.like("title", "%" + searchTerm + "%"),
-                    Filter.like("description", "%" + searchTerm + "%")
-            );
+                    Filter.like("description", "%" + searchTerm + "%"));
         }
         return search;
     }
@@ -110,7 +108,7 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
         }
     }
 
-    public void onGoalSelected(Goal goal) {
+    public void onGoalSelected(IndividualGoal goal) {
         this.selectedGoal = goal;
         this.searchTerm = "";
         reloadFilterReset();

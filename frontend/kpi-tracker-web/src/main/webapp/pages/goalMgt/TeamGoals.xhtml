@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="title">Team Goals</ui:define>
+
+    <ui:define name="content">
+        <h:form id="teamGoalsForm">
+
+            <!-- Dashboard Metrics Cards -->
+            <div class="grid mb-4">
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Total Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalBean.dashboardMetrics.totalGoals}</div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Active Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalBean.dashboardMetrics.activeGoals}</div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Completed Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalBean.dashboardMetrics.completedGoals}</div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                    <div class="metric-card">
+                        <div class="text-xl font-bold mb-2">Overdue Goals</div>
+                        <div class="text-3xl font-bold">#{teamGoalBean.dashboardMetrics.overdueGoals}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="card mb-4">
+                <h5 class="card-header">Search &amp; Filter</h5>
+                <div class="card-body">
+                    <div class="grid">
+                        <div class="col-12 md:col-3">
+                            <p:inputText id="searchTitle" value="#{teamGoalBean.searchTitle}"
+                                placeholder="Search by title" styleClass="w-full" />
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p:inputText id="searchTeam" value="#{teamGoalBean.searchTeam}" placeholder="Search by team"
+                                styleClass="w-full" />
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p:inputText id="searchOwner" value="#{teamGoalBean.searchOwner}"
+                                placeholder="Search by owner" styleClass="w-full" />
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p:selectOneMenu id="searchStatus" value="#{teamGoalBean.searchStatus}" styleClass="w-full">
+                                <f:selectItem itemLabel="All Statuses" itemValue="" />
+                                <f:selectItems value="#{teamGoalBean.searchStatus}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="flex justify-content-end mt-3">
+                        <p:commandButton value="Search" action="#{teamGoalBean.searchGoals}"
+                            styleClass="p-button-primary mr-2" />
+                        <p:commandButton value="Clear" action="#{teamGoalBean.clearSearch}"
+                            styleClass="p-button-secondary" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goals DataTable -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Team Goals</h5>
+                    <p:commandButton value="Create New Goal" action="#{teamGoalBean.showCreateGoalDialog}"
+                        styleClass="p-button-primary" />
+                </div>
+                <div class="card-body">
+                    <p:dataTable id="goalsTable" value="#{teamGoalBean.teamGoals}" var="goal" paginator="true" rows="10"
+                        styleClass="w-full"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="5,10,20,50">
+
+                        <p:column headerText="Title" sortBy="#{goal.title}">
+                            <h:outputText value="#{goal.title}" />
+                        </p:column>
+
+                        <p:column headerText="Team" sortBy="#{goal.teamName}">
+                            <h:outputText value="#{goal.teamName}" />
+                        </p:column>
+
+                        <p:column headerText="Parent Goal" sortBy="#{goal.parentGoal.title}">
+                            <h:outputText value="#{goal.parentGoal.title}" />
+                        </p:column>
+
+                        <p:column headerText="Progress" sortBy="#{goal.progress}">
+                            <div class="flex align-items-center">
+                                <p:progressBar value="#{goal.progress}" styleClass="flex-1 mr-2" />
+                                <span class="text-sm">#{goal.progress}%</span>
+                                <div class="text-xs text-muted">(Auto-calculated from child goals)</div>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="End Date" sortBy="#{goal.endDate}">
+                            <h:outputText value="#{goal.endDate}">
+                                <f:convertDateTime pattern="MMM dd, yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Owner" sortBy="#{goal.owner.firstName}">
+                            <h:outputText value="#{goal.owner.firstName} #{goal.owner.lastName}" />
+                        </p:column>
+
+                        <p:column headerText="Actions" styleClass="text-center">
+                            <div class="flex justify-content-center">
+                                <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
+                                    action="#{teamGoalBean.showEditGoalDialog(goal)}" />
+                                <p:commandButton icon="pi pi-trash"
+                                    styleClass="p-button-text p-button-danger p-button-sm"
+                                    action="#{teamGoalBean.showDeleteGoalDialog(goal)}" />
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+
+            <!-- Create Goal Dialog -->
+            <p:dialog id="createGoalDialog" header="Create Team Goal" visible="#{teamGoalBean.showCreateDialog}"
+                modal="true" styleClass="w-6" closable="true">
+                <div class="p-fluid">
+                    <div class="field">
+                        <label for="newGoalTitle">Title</label>
+                        <p:inputText id="newGoalTitle" value="#{teamGoalBean.newGoal.title}" required="true"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="newGoalDescription">Description</label>
+                        <p:inputTextarea id="newGoalDescription" value="#{teamGoalBean.newGoal.description}" rows="3"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="newGoalParent">Parent Department Goal</label>
+                        <p:selectOneMenu id="newGoalParent" value="#{teamGoalBean.newGoal.parentGoal}" required="true"
+                            styleClass="w-full">
+                            <f:selectItem itemLabel="Select Parent Goal" itemValue="" />
+                            <f:selectItems value="#{teamGoalBean.departmentGoals}" var="deptGoal"
+                                itemLabel="#{deptGoal.title}" itemValue="#{deptGoal}" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="field">
+                        <label for="newGoalTeam">Team Name</label>
+                        <p:inputText id="newGoalTeam" value="#{teamGoalBean.newGoal.teamName}" required="true"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="newGoalEndDate">End Date</label>
+                        <p:calendar id="newGoalEndDate" value="#{teamGoalBean.newGoal.endDate}" required="true"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="newGoalOwner">Owner</label>
+                        <p:selectOneMenu id="newGoalOwner" value="#{teamGoalBean.newGoal.owner}" required="true"
+                            styleClass="w-full">
+                            <f:selectItem itemLabel="Select Owner" itemValue="" />
+                            <!-- Add owner selection logic here -->
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Create" action="#{teamGoalBean.createGoal}" styleClass="p-button-primary" />
+                    <p:commandButton value="Cancel" onclick="PF('createGoalDialog').hide()"
+                        styleClass="p-button-secondary" />
+                </f:facet>
+            </p:dialog>
+
+            <!-- Edit Goal Dialog -->
+            <p:dialog id="editGoalDialog" header="Edit Team Goal" visible="#{teamGoalBean.showEditDialog}" modal="true"
+                styleClass="w-6" closable="true">
+                <div class="p-fluid">
+                    <div class="field">
+                        <label for="editGoalTitle">Title</label>
+                        <p:inputText id="editGoalTitle" value="#{teamGoalBean.selectedGoal.title}" required="true"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="editGoalDescription">Description</label>
+                        <p:inputTextarea id="editGoalDescription" value="#{teamGoalBean.selectedGoal.description}"
+                            rows="3" styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="editGoalEndDate">End Date</label>
+                        <p:calendar id="editGoalEndDate" value="#{teamGoalBean.selectedGoal.endDate}" required="true"
+                            styleClass="w-full" />
+                    </div>
+
+                    <div class="field">
+                        <label for="editGoalProgress">Progress (%)</label>
+                        <p:inputNumber id="editGoalProgress" value="#{teamGoalBean.selectedGoal.progress}" minValue="0"
+                            maxValue="100" styleClass="w-full" />
+                    </div>
+                </div>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Update" action="#{teamGoalBean.updateGoal}" styleClass="p-button-primary" />
+                    <p:commandButton value="Cancel" onclick="PF('editGoalDialog').hide()"
+                        styleClass="p-button-secondary" />
+                </f:facet>
+            </p:dialog>
+
+            <!-- Delete Confirmation Dialog -->
+            <p:dialog id="deleteGoalDialog" header="Delete Team Goal" visible="#{teamGoalBean.showDeleteDialog}"
+                modal="true" styleClass="w-4" closable="true">
+                <div class="p-fluid">
+                    <p>Are you sure you want to delete the goal "<strong>#{teamGoalBean.selectedGoal.title}</strong>"?
+                    </p>
+                    <p class="text-red-500">This action cannot be undone.</p>
+                </div>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Delete" action="#{teamGoalBean.deleteGoal}" styleClass="p-button-danger" />
+                    <p:commandButton value="Cancel" onclick="PF('deleteGoalDialog').hide()"
+                        styleClass="p-button-secondary" />
+                </f:facet>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

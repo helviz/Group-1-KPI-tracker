@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .capitalized {
+                text-transform: capitalize;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <title>Individual Goal Details</title>
+        <h:form id="individualGoalFormDialog" style="height: 500px" styleClass="card">
+
+            <div class="p-grid ui-fluid">
+                <div class="ui-col-12">
+                    <h5>Goal Title</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputText value="#{individualGoalFormDialog.model.title}"
+                            placeholder="e.g. Complete Advanced Training Course" required="true" styleClass="w-full" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-grid ui-fluid">
+                <div class="ui-col-12">
+                    <h5>Description</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputTextarea value="#{individualGoalFormDialog.model.description}" rows="4"
+                            placeholder="Describe the goal in detail..." styleClass="w-full" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-grid ui-fluid">
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Parent Team Goal</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu value="#{individualGoalFormDialog.model.parentGoal}" required="true"
+                            styleClass="w-full">
+                            <f:selectItem itemLabel="-- Select Parent Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{individualGoalFormDialog.teamGoals}" var="teamGoal"
+                                itemLabel="#{teamGoal.title}" itemValue="#{teamGoal}" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Employee</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu value="#{individualGoalFormDialog.model.employee}" converter="userConverter"
+                            filter="true" filterMatchMode="contains" required="true" styleClass="w-full">
+                            <f:selectItem itemLabel="-- Select Employee --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{individualGoalFormDialog.availableEmployees}" var="employee"
+                                itemLabel="#{employee.fullName}" itemValue="#{employee}" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-grid ui-fluid">
+                <div class="ui-col-12 ui-md-6">
+                    <h5>End Date</h5>
+                    <div class="ui-inputgroup">
+                        <p:calendar value="#{individualGoalFormDialog.model.endDate}" required="true"
+                            styleClass="w-full" />
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Goal Owner</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu value="#{individualGoalFormDialog.model.owner}" converter="userConverter"
+                            filter="true" filterMatchMode="contains" required="true" styleClass="w-full">
+                            <f:selectItem itemLabel="-- Select Owner --" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{individualGoalFormDialog.availableUsers}" var="user"
+                                itemLabel="#{user.fullName}" itemValue="#{user}" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-grid ui-fluid">
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Progress (%)</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputNumber value="#{individualGoalFormDialog.model.progress}" minValue="0" maxValue="100"
+                            styleClass="w-full" />
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Status</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu value="#{individualGoalFormDialog.model.status}" required="true"
+                            styleClass="w-full">
+                            <f:selectItem itemLabel="Active" itemValue="ACTIVE" />
+                            <f:selectItem itemLabel="Inactive" itemValue="INACTIVE" />
+                            <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field col-12 p-d-flex p-jc-end p-mt-4">
+                <p:commandButton value="Cancel" immediate="true" process="@this"
+                    actionListener="#{individualGoalFormDialog.hide}"
+                    styleClass="ui-button-outlined ui-button-danger p-mr-2" />
+
+                <p:commandButton value="Save" process="@form" actionListener="#{individualGoalFormDialog.save}"
+                    update="@form" />
+            </div>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
