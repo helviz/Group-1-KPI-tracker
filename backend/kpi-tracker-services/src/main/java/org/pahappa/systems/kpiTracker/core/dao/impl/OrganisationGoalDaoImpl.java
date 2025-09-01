@@ -18,7 +18,7 @@ public class OrganisationGoalDaoImpl extends BaseDAOImpl<OrganisationGoal> imple
         Search search = new Search();
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -28,7 +28,7 @@ public class OrganisationGoalDaoImpl extends BaseDAOImpl<OrganisationGoal> imple
         search.addFilterEqual("goalPeriod", goalPeriod);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -38,7 +38,7 @@ public class OrganisationGoalDaoImpl extends BaseDAOImpl<OrganisationGoal> imple
         search.addFilterEqual("owner.id", ownerId);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -47,7 +47,7 @@ public class OrganisationGoalDaoImpl extends BaseDAOImpl<OrganisationGoal> imple
         Search search = new Search();
         search.addFilterEqual("recordStatus", status);
         search.addFilterEqual("isActive", true);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -68,7 +68,7 @@ public class OrganisationGoalDaoImpl extends BaseDAOImpl<OrganisationGoal> imple
         search.addFilterLike("title", "%" + title + "%");
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 

@@ -6,9 +6,6 @@
     <ui:define name="title">Individual Goals</ui:define>
 
     <ui:define name="content">
-        <!-- Include the form dialog -->
-        <ui:include src="/pages/goalMgt/IndividualGoalFormDialog.xhtml" />
-
         <h:form id="individualGoalView" enctype="multipart/form-data">
 
             <!-- Dashboard Metrics Cards -->
@@ -148,5 +145,8 @@
             </p:dialog>
 
         </h:form>
+
+        <!-- Include the form dialog -->
+        <ui:include src="/pages/goalMgt/IndividualGoalFormDialog.xhtml" />
     </ui:define>
 </ui:composition>

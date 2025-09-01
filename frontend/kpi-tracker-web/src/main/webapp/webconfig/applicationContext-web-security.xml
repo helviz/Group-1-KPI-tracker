@@ -157,7 +157,7 @@
 	</bean>
 
 	<bean id="formLoginFilter"
-		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		class="org.pahappa.systems.kpiTracker.security.EmailPasswordAuthenticationFilter">
 		<property name="authenticationManager"
 			ref="authenticationManager" />
 		<property name="filterProcessesUrl"

@@ -6,9 +6,6 @@
     <ui:define name="title">Department Goals</ui:define>
 
     <ui:define name="content">
-        <!-- Include the form dialog -->
-        <ui:include src="/pages/goalMgt/DepartmentGoalFormDialog.xhtml" />
-
         <h:form id="departmentGoalView" enctype="multipart/form-data">
 
             <!-- Dashboard Metrics Cards -->
@@ -149,5 +146,8 @@
             </p:dialog>
 
         </h:form>
+
+        <!-- Include the form dialog -->
+        <ui:include src="/pages/goalMgt/DepartmentGoalFormDialog.xhtml" />
     </ui:define>
 </ui:composition>

@@ -13,9 +13,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
-
 /**
- * 
+ * Controller for handling login operations.
+ * Supports both username and email-based authentication.
  */
 @ManagedBean(name = "loginController")
 @ViewScoped
@@ -39,6 +39,16 @@ public class LoginController implements PhaseListener {
 		dispatcher.forward((ServletRequest) context.getRequest(), (ServletResponse) context.getResponse());
 		FacesContext.getCurrentInstance().responseComplete();
 		return null;
+	}
+
+	/**
+	 * Get information about the login system.
+	 * 
+	 * @return Information about email-based login
+	 */
+	public String getLoginInfo() {
+		return "You can now log in using either your username or email address. " +
+				"The system will automatically detect which one you're using.";
 	}
 
 	/*

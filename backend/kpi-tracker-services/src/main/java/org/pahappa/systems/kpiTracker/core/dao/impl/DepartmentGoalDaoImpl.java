@@ -18,7 +18,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         Search search = new Search();
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -28,7 +28,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         search.addFilterEqual("parentGoal", parentGoal);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -38,7 +38,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         search.addFilterEqual("departmentName", departmentName);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -48,7 +48,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         search.addFilterEqual("owner.id", ownerId);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -57,7 +57,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         Search search = new Search();
         search.addFilterEqual("recordStatus", status);
         search.addFilterEqual("isActive", true);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -78,7 +78,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         search.addFilterLike("title", "%" + title + "%");
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -107,7 +107,7 @@ public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implement
         search.addFilterEqual("departmentName", departmentName);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 }

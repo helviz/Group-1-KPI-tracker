@@ -18,7 +18,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         Search search = new Search();
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -28,7 +28,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterEqual("parentGoal", parentGoal);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -38,7 +38,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterEqual("owner.id", ownerId);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -48,7 +48,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterLike("ownerName", "%" + ownerName + "%");
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -58,7 +58,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterEqual("department", department);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -68,7 +68,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterEqual("team", team);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -77,7 +77,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         Search search = new Search();
         search.addFilterEqual("recordStatus", status);
         search.addFilterEqual("isActive", true);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -98,7 +98,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterLike("title", "%" + title + "%");
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 
@@ -127,7 +127,7 @@ public class IndividualGoalDaoImpl extends BaseDAOImpl<IndividualGoal> implement
         search.addFilterEqual("owner.id", ownerId);
         search.addFilterEqual("isActive", true);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
-        search.addSort("createdAt", false);
+        search.addSort("dateCreated", false);
         return search(search);
     }
 }

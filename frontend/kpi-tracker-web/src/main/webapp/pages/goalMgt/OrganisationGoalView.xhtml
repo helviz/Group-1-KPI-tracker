@@ -6,9 +6,6 @@
     <ui:define name="title">Organisation Goals</ui:define>
 
     <ui:define name="content">
-        <!-- Include the form dialog -->
-        <ui:include src="/pages/goalMgt/OrganisationGoalFormDialog.xhtml" />
-
         <h:form id="organisationGoalView" enctype="multipart/form-data">
 
             <!-- Dashboard Metrics Cards -->
@@ -121,10 +118,10 @@
                             <h:outputText value="#{goal.owner.firstName} #{goal.owner.lastName}" />
                         </p:column>
 
-                        <p:column headerText="Status" sortBy="#{goal.status}">
-                            <p:tag value="#{goal.status}"
-                                severity="#{goal.status == 'ACTIVE' ? 'success' : 'warning'}" />
-                        </p:column>
+<!--                        <p:column headerText="Status" sortBy="#{goal.status}">-->
+<!--                            <p:tag value="#{goal.status}"-->
+<!--                                severity="#{goal.status == 'ACTIVE' ? 'success' : 'warning'}" />-->
+<!--                        </p:column>-->
 
                         <p:column headerText="Actions" styleClass="text-center">
                             <div class="flex justify-content-center">
@@ -159,5 +156,8 @@
             </p:dialog>
 
         </h:form>
+
+        <!-- Include the form dialog -->
+        <ui:include src="/pages/goalMgt/OrganisationGoalFormDialog.xhtml" />
     </ui:define>
 </ui:composition>
