@@ -1,9 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/pages/californiatemplate/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
         <div class="ui-g ui-fluid">
@@ -15,12 +12,11 @@
                             <div class="p-col-12">
                                 <div class="card">
                                     <p:dataTable id="kpisTable" var="model" value="#{kpiView.dataModels}"
-                                                 widgetVar="teamsTable"
-                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                                 paginator="true" lazy="true" rows="20"
-                                                 emptyMessage="No teams found."
-                                                 paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                 rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
+                                        widgetVar="teamsTable"
+                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                        paginator="true" lazy="true" rows="20" emptyMessage="No teams found."
+                                        paginatorPosition="bottom" paginatorAlwaysVisible="false" rowIndexVar="row"
+                                        reflow="true" styleClass="TableAlgnment">
 
                                         <f:facet name="header">
                                             <div class="p-d-flex p-jc-between">
@@ -30,11 +26,13 @@
                                                 <div>
                                                     <div class="p-d-flex p-flex-wrap">
                                                         <div class="p-mr-2 p-mb-2">
-                                                            <p:commandButton value="Add KPI" icon="fa fa-plus" process="@this"
-                                                                             actionListener="#{kpiFormDialog.show}">
+                                                            <p:commandButton value="Add KPI" icon="fa fa-plus"
+                                                                process="@this" actionListener="#{kpiFormDialog.show}">
                                                                 <f:setPropertyActionListener value="#{null}"
-                                                                                             target="#{kpiFormDialog.model}" />
-                                                                <p:ajax event="dialogReturn" listener="#{kpiView.reloadFilterReset}" update="kpisTable" />
+                                                                    target="#{kpiFormDialog.model}" />
+                                                                <p:ajax event="dialogReturn"
+                                                                    listener="#{kpiView.reloadFilterReset}"
+                                                                    update="kpisTable" />
                                                             </p:commandButton>
                                                         </div>
                                                     </div>
@@ -60,33 +58,48 @@
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
-                                                <h:outputText value="Goal Attached To" />
+                                                <h:outputText value="Goal Hierarchy" />
                                             </f:facet>
-                                            <h:outputText value="#{model.goal.name}" />
+                                            <div class="goal-hierarchy">
+                                                <div class="goal-level">
+                                                    <strong>Individual:</strong> #{model.goal.title}
+                                                </div>
+                                                <div class="goal-level" rendered="#{model.goal.parentGoal != null}">
+                                                    <strong>Team:</strong> #{model.goal.parentGoal.title}
+                                                </div>
+                                                <div class="goal-level"
+                                                    rendered="#{model.goal.parentGoal != null and model.goal.parentGoal.parentGoal != null}">
+                                                    <strong>Department:</strong>
+                                                    #{model.goal.parentGoal.parentGoal.title}
+                                                </div>
+                                                <div class="goal-level"
+                                                    rendered="#{model.goal.parentGoal != null and model.goal.parentGoal.parentGoal != null and model.goal.parentGoal.parentGoal.parentGoal != null}">
+                                                    <strong>Organisation:</strong>
+                                                    #{model.goal.parentGoal.parentGoal.parentGoal.title}
+                                                </div>
+                                            </div>
                                         </p:column>
                                         <p:column headerText="Description">
                                             <h:outputText value="#{model.description}" />
                                         </p:column>
 
                                         <p:column headerText="Action" width="140" exportable="false"
-                                                  style="text-align: center">
-                                            <p:commandButton process="@this" icon="fa fa-edit"
-                                                             immediate="true" rendered="true"
-                                                             actionListener="#{kpiFormDialog.show}" >
+                                            style="text-align: center">
+                                            <p:commandButton process="@this" icon="fa fa-edit" immediate="true"
+                                                rendered="true" actionListener="#{kpiFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
-                                                                             target="#{kpiFormDialog.model}" />
+                                                    target="#{kpiFormDialog.model}" />
                                                 <p:ajax event="dialogReturn" update="kpisTable" />
                                             </p:commandButton>
 
                                             <p:commandButton icon="fa fa-trash" title="Delete"
-                                                             styleClass="ui-button-danger"
-                                                             style="margin-left: 5px"
-                                                             actionListener="#{kpiView.deleteKpi()}"
-                                                             update="teamsView">
-                                                <f:setPropertyActionListener value="#{model}" target="#{kpiView.selectedKpi}" />
+                                                styleClass="ui-button-danger" style="margin-left: 5px"
+                                                actionListener="#{kpiView.deleteKpi()}" update="teamsView">
+                                                <f:setPropertyActionListener value="#{model}"
+                                                    target="#{kpiView.selectedKpi}" />
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete KPI '#{model.kpiName}'. Are you sure?"
-                                                           icon="ui-icon-alert" />
+                                                    message="You are about to delete KPI '#{model.kpiName}'. Are you sure?"
+                                                    icon="ui-icon-alert" />
                                             </p:commandButton>
 
                                         </p:column>
@@ -98,10 +111,10 @@
                     </ui:fragment>
 
                     <p:confirmDialog global="true">
-                        <p:commandButton value="Yes" type="button"
-                                         styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
-                        <p:commandButton value="No" type="button"
-                                         styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"
+                            icon="fa fa-thumbs-up" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                            icon="fa fa-thumbs-down" />
                     </p:confirmDialog>
                 </h:form>
             </div>

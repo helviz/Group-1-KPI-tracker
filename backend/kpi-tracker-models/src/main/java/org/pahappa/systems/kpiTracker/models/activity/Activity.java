@@ -1,7 +1,7 @@
 package org.pahappa.systems.kpiTracker.models.activity;
 
 import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
-import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.sers.webutils.model.BaseEntity;
 
 import javax.persistence.*;
@@ -22,8 +22,8 @@ public class Activity extends BaseEntity {
     private ActivityStatus status = ActivityStatus.NOT_STARTED;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "goal_id", nullable = false)
-    private Goal goal;
+    @JoinColumn(name = "goal_id", nullable = true)
+    private IndividualGoal goal;
 
     public String getName() {
         return name;
@@ -49,19 +49,22 @@ public class Activity extends BaseEntity {
         this.status = status;
     }
 
-    public Goal getGoal() {
+    public IndividualGoal getGoal() {
         return goal;
     }
 
-    public void setGoal(Goal goal) {
+    public void setGoal(IndividualGoal goal) {
         this.goal = goal;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if (!super.equals(o))
+            return false;
         Activity activity = (Activity) o;
         return Objects.equals(name, activity.name) &&
                 Objects.equals(description, activity.description) &&
