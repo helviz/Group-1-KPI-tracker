@@ -1,9 +1,9 @@
 package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import com.googlecode.genericdao.search.Search;
+import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
 import org.pahappa.systems.kpiTracker.core.services.ActivityService;
 import org.pahappa.systems.kpiTracker.models.activity.Activity;
-import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
 import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.utils.Validate;
 import org.sers.webutils.model.RecordStatus;
@@ -22,14 +22,14 @@ public class ActivityServiceImpl extends GenericServiceImpl<Activity> implements
     public Activity saveInstance(Activity activity) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(activity, "Activity details cannot be null");
         Validate.notNull(activity.getGoal(), "Activity must be attached to a goal");
-        Validate.hasText(activity.getName(), "Activity name is required");
+        Validate.hasText(activity.getTitle(), "Activity name is required");
 
-        if (isDuplicate(activity, "name", activity.getName())) {
+        if (isDuplicate(activity, "name", activity.getTitle())) {
             throw new ValidationFailedException("An activity with the same name already exists for this goal.");
         }
 
         if (activity.isNew()) {
-            activity.setStatus(ActivityStatus.NOT_STARTED);
+            activity.setStatus(ActivityStatus.PENDING);
         }
         return super.save(activity);
     }

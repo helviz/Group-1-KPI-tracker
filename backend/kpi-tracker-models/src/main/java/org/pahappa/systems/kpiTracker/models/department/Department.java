@@ -23,7 +23,7 @@ public class Department extends BaseEntity {
 //    @Size(min = 3, max = 100, message = "Department name must be between 3 and 100 characters")
 //    @Pattern(
 //            regexp = "^[A-Za-z0-9 .,!?'-]+$",
-//            message = "Depullartment name can only contain letters, numbers, spaces, and basic punctuation"
+//            message = "Department name can only contain letters, numbers, spaces, and basic punctuation"
 //    )
     private String name;
 

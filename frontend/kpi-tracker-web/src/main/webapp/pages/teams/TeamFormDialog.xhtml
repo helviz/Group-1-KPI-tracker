@@ -1,91 +1,71 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
-    <ui:define name="head">
-        <style type="text/css">
-            .capitalized {
-                text-transform: capitalize;
-            }
-        </style>
-    </ui:define>
-    <ui:define name="content">
-        <title>Add Team</title>
-        <h:form id="teamFormDialog" style="height: 450px" styleClass="card">
-            <div class="p-grid ui-fluid" style="display:flex">
+    xmlns:p="http://primefaces.org/ui">
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Team Name</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputText id="teamName" value="#{teamFormDialog.model.teamName}" required="true"
-                            placeholder="e.g. Sales Team Alpha" />
+        <h:form id="teamFormDialog">
+                <p:dialog header="#{teamFormDialog.edit ? 'Edit Team' : 'Add Team'}" width="450px"
+                          widgetVar="teamFormDialogWidget" modal="true" resizable="false"
+                          closable="true" onHide="PF('teamFormDialogWidget').hide(); #{teamFormDialog.resetModal()};"> <!-- Reset bean state on close -->
+
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                        <p:outputLabel value="Team Name:" for="teamNameInput" />
+                        <p:inputText id="teamNameInput" value="#{teamFormDialog.model.teamName}" required="true"
+                                     placeholder="e.g., Digital Marketing" />
+
+                        <p:outputLabel value="Department:" for="departmentSelect" />
+                        <p:selectOneMenu id="departmentSelect" value="#{teamFormDialog.selectedDepartment}"
+                                         converter="departmentConverter"
+                                         disabled="#{teamFormDialog.departmentSelectionDisabled}"
+                                            required="true" label="Department">
+                        <f:selectItem itemLabel="Select Department" itemValue="#{null}" />
+                        <f:selectItems value="#{teamFormDialog.availableDepartments}" var="dept"
+                                       itemLabel="#{dept.name}" itemValue="#{dept}" />
+                        <p:ajax event="change" update="membersPanel" listener="#{teamFormDialog.onDepartmentChange}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Members:" for="membersPanel" />
+                    <p:selectManyMenu id="membersPanel" value="#{teamFormDialog.selectedMembers}"
+                                      var="user" itemLabel="#{user.firstName} #{user.lastName}" itemValue="#{user}"
+                                      showCheckbox="true" filter="true" filterMatchMode="contains">
+                        <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
+                                       itemLabel="#{user.firstName} #{user.lastName}" itemValue="#{user}" />
+                    </p:selectManyMenu>
+
+                    <div class="ui-col-12 ui-md-12">
+                        <h5>Team Lead</h5>
+                            <div class="ui-inputgroup">
+                                <p:selectOneMenu id="teamLead" style="text-transform: capitalize"
+                                                 value="#{teamFormDialog.model.teamLead}" converter="userConverter" filter="true"
+                                                 filterMatchMode="contains">
+                                    <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}"
+                                                  noSelectionOption="true" />
+                                    <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
+                                                   itemLabel="#{user.fullName}" itemValue="#{user}" />
+                                </p:selectOneMenu>
+                            </div>
                     </div>
-                </div>
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Department</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectOneMenu id="department" value="#{teamFormDialog.model.department}"
-                            converter="departmentConverter" required="true" filter="true" filterMatchMode="contains">
-                            <f:selectItem itemLabel="-- Select a Department --" itemValue="#{null}"
-                                noSelectionOption="true" />
-                            <f:selectItems value="#{teamFormDialog.availableDepartments}" var="dept"
-                                itemLabel="#{dept.name}" itemValue="#{dept}" />
-                            <p:ajax event="change" listener="#{teamFormDialog.onDepartmentChange}"
-                                update="teamLead membersPanel" />
-                        </p:selectOneMenu>
-                    </div>
-                </div>
-
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Team Lead</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectOneMenu id="teamLead" style="text-transform: capitalize"
-                            value="#{teamFormDialog.model.teamLead}" converter="userConverter" filter="true"
-                            filterMatchMode="contains">
-                            <f:selectItem itemLabel="-- Select a Lead --" itemValue="#{null}"
-                                noSelectionOption="true" />
-                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
-                                itemLabel="#{user.fullName}" itemValue="#{user}" />
-                        </p:selectOneMenu>
-                    </div>
-                </div>
-
-                <div class="ui-col-12 ui-md-12">
-                    <h5>Description</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputTextarea id="description" value="#{teamFormDialog.model.description}" rows="4"
-                            autoResize="false" />
-                    </div>
-                </div>
-                <hr style="width: 100%" />
-
-                <p:outputPanel id="membersPanel" styleClass="ui-col-12 ui-md-12">
-                    <h5>Select Members</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectManyCheckbox id="membersCheckbox" value="#{teamFormDialog.selectedMembers}"
-                            layout="pageDirection" converter="userConverter">
-                            <f:selectItems value="#{teamFormDialog.availableUsersForSelect}" var="user"
-                                itemLabel="#{user.fullName}" itemValue="#{user}" />
-                        </p:selectManyCheckbox>
-                    </div>
-                </p:outputPanel>
-
-                <hr style="width: 100%" />
-
-                <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
-                    <div class="p-grid p-justify-end">
-                        <div class="p-col-2">
-                            <p:commandButton value="Cancel" immediate="true" process="@this"
-                                actionListener="#{teamFormDialog.hide}"
-                                styleClass="ui-button-outlined ui-button-help" />
-                        </div>
-                        <div class="p-col-2">
-                            <p:commandButton value="Save Team" process="@form" actionListener="#{teamFormDialog.save}"
-                                update="@form" validateClient="true" />
+                    <div class="ui-col-12 ui-md-12">
+                        <h5>Description</h5>
+                        <div class="ui-inputgroup">
+                            <p:inputTextarea id="description" value="#{teamFormDialog.model.description}" rows="4"
+                                             autoResize="false" />
                         </div>
                     </div>
-                </div>
-            </div>
+                    <hr style="width: 100%" />
+
+                </p:panelGrid>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" onclick="PF('teamFormDialogWidget').hide()"
+                                     styleClass="ui-button-outlined" />
+                    <p:commandButton value="#{teamFormDialog.edit ? 'Update Team' : 'Save Team'}"
+                                     actionListener="#{teamFormDialog.save}" update="teamFormDialog"
+                                     oncomplete="if (!args.validationFailed) PF('teamFormDialogWidget').hide()"
+                                     icon="pi pi-save" />
+                </f:facet>
+            </p:dialog>
+
         </h:form>
-    </ui:define>
+
 </ui:composition>

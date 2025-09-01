@@ -11,8 +11,6 @@ import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -31,17 +29,19 @@ public class Goal extends BaseEntity {
     private User approveBy;
     private Double goalEvaluationWeight;
     private Double progress = 0.0;
-    private List<Activity> activities = new ArrayList<>();
-    private List<GoalDepartment> goalDepartments = new ArrayList<>();
+
+    // Consolidated relationship with Activities
+    private Set<Activity> activities = new HashSet<>();
+
+    // Consolidated relationship with GoalDepartments
+    private Set<GoalDepartment> goalDepartments = new HashSet<>();
+
     private Goal parentGoal;
     private Set<Goal> childGoals = new HashSet<>();
     private Team team;
 
     // New relationship with KPIs for Individual goals
     private Set<KPI> kpis = new HashSet<>();
-
-    // New relationship with Activities for Individual goals
-    private Set<Activity> activities = new HashSet<>();
 
     @Column(name = "goal_title", nullable = false)
     public String getGoalTitle() {
@@ -100,25 +100,12 @@ public class Goal extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<GoalDepartment> getGoalDepartments() {
+    public Set<GoalDepartment> getGoalDepartments() {
         return goalDepartments;
     }
 
-    @OneToMany(
-            mappedBy = "goal", 
-            cascade = CascadeType.ALL, 
-            orphanRemoval = true 
-    )
-    public List<GoalDepartment> getGoalDepartments(){
-    return goalDepartments;
-}
-
-    @OneToMany(
-            mappedBy = "goal",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    public List<Activity> getActivities() {
+    @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Activity> getActivities() {
         return activities;
     }
 
@@ -133,26 +120,15 @@ public class Goal extends BaseEntity {
         return childGoals;
     }
 
-    // New relationship with KPIs for Individual goals
     @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     public Set<KPI> getKpis() {
         return kpis;
     }
 
-
-
-
-    // Add this new getter method
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id") // This will create a 'team_id' column in your 'goals' table
+    @JoinColumn(name = "team_id")
     public Team getTeam() {
         return team;
-    }
-
-    // New relationship with Activities for Individual goals
-    @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    public Set<Activity> getActivities() {
-        return activities;
     }
 
     public void addDepartment(Department department, Double weight) {
@@ -183,60 +159,39 @@ public class Goal extends BaseEntity {
     @PrePersist
     @PreUpdate
     protected void onSave() {
-        // Set default status based on hierarchy
         if (this.goalStatus == null) {
             if (this.parentGoal == null) {
-                // Organization level goals start as ON_TRACK
                 this.goalStatus = GoalStatus.ON_TRACK;
             } else {
-                // All other goals start as PENDING
                 this.goalStatus = GoalStatus.PENDING;
             }
         }
-
-        // Set default approval status if not set
         if (this.approvalStatus == null) {
             this.approvalStatus = Approvals.PENDING;
         }
-
-        // Set default progress if not set
         if (this.progress == null) {
             this.progress = 0.0;
         }
-
-        // Set default evaluation weight if not set
         if (this.goalEvaluationWeight == null) {
             this.goalEvaluationWeight = 0.0;
         }
     }
 
-    /**
-     * Check if this goal is at the Individual level
-     */
     @Transient
     public boolean isIndividualGoal() {
         return this.goalLevel != null && "Individual".equalsIgnoreCase(this.goalLevel.getName());
     }
 
-    /**
-     * Check if this goal is at the Organization level
-     */
     @Transient
     public boolean isOrganizationGoal() {
         return this.goalLevel != null && "Organization".equalsIgnoreCase(this.goalLevel.getName());
     }
 
-    /**
-     * Check if this goal is at the Department level
-     */
     @Transient
     public boolean isDepartmentGoal() {
         return this.goalLevel != null && "Department".equalsIgnoreCase(this.goalLevel.getName());
     }
 
-    /**
-     * Check if this goal is at the Team level
-     */
     @Transient
     public boolean isTeamGoal() {
         return this.goalLevel != null && "Team".equalsIgnoreCase(this.goalLevel.getName());

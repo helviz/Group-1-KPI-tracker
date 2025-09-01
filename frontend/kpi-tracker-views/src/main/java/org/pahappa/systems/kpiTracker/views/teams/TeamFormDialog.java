@@ -16,14 +16,13 @@ import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-// import java.util.stream.Collectors; // No longer needed
+import java.util.Set;
 
 @ManagedBean(name = "teamFormDialog", eager = true)
 @Getter
@@ -37,13 +36,12 @@ public class TeamFormDialog extends DialogForm<Team> {
     private DepartmentService departmentService;
     private UserService userService;
     private AssignedUserService assignedUserService;
-
     private List<Department> availableDepartments;
     private Department selectedDepartment;
     private List<User> selectedMembers = new ArrayList<>();
     private List<User> availableUsersForSelect = new ArrayList<>();
-
     private boolean edit;
+    private boolean departmentSelectionDisabled;
 
     @PostConstruct
     public void init() {
@@ -52,7 +50,6 @@ public class TeamFormDialog extends DialogForm<Team> {
             this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
             this.userService = ApplicationContextProvider.getBean(UserService.class);
             this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
-
             this.availableDepartments = this.departmentService.getAllInstances();
             resetModal();
         } catch (Exception e) {
@@ -66,10 +63,10 @@ public class TeamFormDialog extends DialogForm<Team> {
 
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
-        // Set members to the team model from the selectedMembers list
-        super.model.setMembers(new HashSet<User>(this.selectedMembers));
-        super.model.setDepartment(selectedDepartment);
-        this.teamService.saveInstance(super.model);
+        Team team = (Team) super.model;
+        team.setMembers(new HashSet<User>(this.selectedMembers));
+        team.setDepartment(selectedDepartment);
+        this.teamService.saveInstance(team);
     }
 
     @Override
@@ -78,6 +75,8 @@ public class TeamFormDialog extends DialogForm<Team> {
         super.model = new Team();
         this.selectedMembers = new ArrayList<User>();
         this.availableUsersForSelect = new ArrayList<User>();
+        this.selectedDepartment = null;
+        this.departmentSelectionDisabled =false;
         setEdit(false);
     }
 
@@ -86,7 +85,10 @@ public class TeamFormDialog extends DialogForm<Team> {
         super.setFormProperties();
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
-            this.selectedMembers = new ArrayList<User>(super.model.getMembers());
+            Team team = (Team) super.model;
+            this.selectedMembers = new ArrayList<User>(team.getMembers());
+            this.selectedDepartment = team.getDepartment();
+            this.departmentSelectionDisabled = true;
             onDepartmentChange();
         } else {
             if (super.model == null) {
@@ -95,28 +97,21 @@ public class TeamFormDialog extends DialogForm<Team> {
             setEdit(false);
             this.selectedMembers = new ArrayList<User>();
             this.availableUsersForSelect = new ArrayList<User>();
+            this.selectedDepartment = null;
+            this.departmentSelectionDisabled = false;
         }
     }
 
     public void onDepartmentChange() {
-        if (super.getModel().getDepartment() != null) {
+        if (this.selectedDepartment != null) {
             try {
                 List<AssignedUser> assignedUsersInDepartment = assignedUserService
-                        .getAssignedUsersByDepartment(super.getModel().getDepartment());
-                // 1. Create a new empty list to hold the results
-                List<User> users = new ArrayList<User>();
-
-                // 2. Loop through each AssignedUser in the original list
+                        .getAssignedUsersByDepartment(this.selectedDepartment);
+                List<User> users = new ArrayList<>();
                 for (AssignedUser assignedUser : assignedUsersInDepartment) {
-                    // 3. For each one, get the User and add it to our new list
                     users.add(assignedUser.getUser());
                 }
-
-                // 4. Assign the newly populated list
                 this.availableUsersForSelect = users;
-
-                // ===================== MODIFIED SECTION END =====================
-
             } catch (Exception e) {
                 System.err.println("An error occurred while fetching users for department.");
                 e.printStackTrace();
@@ -124,6 +119,19 @@ public class TeamFormDialog extends DialogForm<Team> {
             }
         } else {
             this.availableUsersForSelect = new ArrayList<User>();
+        }
+    }
+
+    public void prepareNew(Department department) {
+        resetModal();
+        if (super.model == null) {
+            super.model = new Team();
+        }
+        ((Team) super.model).setDepartment(department);
+        this.selectedDepartment = department;
+        this.departmentSelectionDisabled = true;
+        if (this.selectedDepartment != null) {
+            onDepartmentChange();
         }
     }
 }

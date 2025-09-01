@@ -1,4 +1,4 @@
-package org.pahappa.systems.kpiTracker.models.goalMgt;
+package org.pahappa.systems.kpiTracker.constants;
 
 public enum ActivityPriority {
     LOW("Low"),
