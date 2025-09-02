@@ -3,7 +3,6 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
                 template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
@@ -21,29 +20,25 @@
                     <div></div>
                 </div>
 
-                <p:accordionPanel id="permissions-panel">
-                    <c:forEach var="category" items="#{permissionView.categorizedPermissions.keySet()}">
-                        <p:tab title="#{category}">
-                            <div class="p-grid p-fluid">
-                                <p:selectManyCheckbox value="#{permissionView.selectedPermissions}" converter="permissionConverter" layout="grid" columns="2">
-                                    <f:selectItems value="#{permissionView.categorizedPermissions[category]}" var="perm"
-                                                   itemLabel="#{perm.name}" itemValue="#{perm}" />
-                                    <p:ajax listener="#{permissionView.display}" event="change" />
-                                </p:selectManyCheckbox>
-                            </div>
-                        </p:tab>
-                    </c:forEach>
-                </p:accordionPanel>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p:selectManyCheckbox id="permissions-checkbox" value="#{permissionView.selectedPermissions}" converter="permissionConverter" layout="responsive" columns="3" styleClass="ui-fluid">
+                            <f:selectItems value="#{permissionView.groupedPermissions}" />
+                            <p:ajax listener="#{permissionView.display}" event="change" />
+                        </p:selectManyCheckbox>
+                    </div>
+                </div>
+
 
                 <div class="p-d-flex p-jc-end p-mt-4">
                     <p:commandButton value="Cancel" styleClass="ui-button-secondary"
                                      immediate="true"
                                      onclick="window.history.back();" />
                     <p:commandButton value="Save" icon="fa fa-save"
-                                     immediate="true"
-                                     process="@this"
                                      actionListener="#{permissionView.persist}"
-                                     update="messages" styleClass="p-ml-2" />
+                                     process="@this"
+                                     immediate="true"
+                                     update="@form" styleClass="p-ml-2" />
                 </div>
             </div>
         </h:form>
