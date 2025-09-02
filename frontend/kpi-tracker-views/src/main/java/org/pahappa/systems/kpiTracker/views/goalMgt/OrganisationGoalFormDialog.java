@@ -3,6 +3,7 @@ package org.pahappa.systems.kpiTracker.views.goalMgt;
 import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
+import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
@@ -31,6 +32,7 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
     private UserService userService;
 
     private List<User> availableUsers;
+    private boolean edit;
 
     @PostConstruct
     public void init() {
@@ -56,6 +58,7 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
     public void resetModal() {
         super.resetModal();
         super.model = new OrganisationGoal();
+        setEdit(false);
         // Set default values
         super.model.setProgress(BigDecimal.ZERO);
         super.model.setEvaluationTarget(new BigDecimal("100.0"));
@@ -65,26 +68,22 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
 
     @Override
     public void setFormProperties() {
-        if (super.model == null) {
-            super.model = new OrganisationGoal();
-            super.model.setProgress(BigDecimal.ZERO);
-            super.model.setEvaluationTarget(new BigDecimal("100.0"));
-            super.model.setContributionToParent(new BigDecimal("100.0"));
-            super.model.setIsActive(true);
+        super.setFormProperties();
+        try {
+            this.availableUsers = this.userService.getUsers();
+        } catch (OperationFailedException e) {
+            throw new RuntimeException(e);
+        }
+        if (super.model != null && super.model.getId() != null) {
+            setEdit(true);
+        } else {
+            // If for some reason the model is null, ensure a new one is created.
+            if (super.model == null) {
+                super.model = new OrganisationGoal();
+            }
+            setEdit(false);
         }
     }
 
-    public void loadGoal(OrganisationGoal goal) {
-        if (goal != null) {
-            super.model = goal;
-        }
-    }
 
-    public List<User> getAvailableUsers() {
-        return availableUsers;
-    }
-
-    public void setAvailableUsers(List<User> availableUsers) {
-        this.availableUsers = availableUsers;
-    }
 }

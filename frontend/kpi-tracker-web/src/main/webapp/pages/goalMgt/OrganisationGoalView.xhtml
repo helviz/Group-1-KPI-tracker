@@ -84,7 +84,11 @@
                         <i class="pi pi-list"> </i> Organisation Goals
                     </h5>
                     <p:commandButton value="Create New Goal" icon="pi pi-plus"
-                        action="#{organisationGoalFormDialog.show}" update="@form" styleClass="p-button-success" />
+                        actionListener="#{organisationGoalFormDialog.show}" update="@form" styleClass="p-button-success">
+                    <f:setPropertyActionListener value="#{null}"
+                                                 target="#{organisationGoalFormDialog.model}" />
+                    </p:commandButton>
+
                 </div>
                 <div class="card-body">
                     <p:dataTable id="goalsTable" value="#{organisationGoalView.organisationGoals}" var="goal"
@@ -126,8 +130,10 @@
                         <p:column headerText="Actions" styleClass="text-center">
                             <div class="flex justify-content-center">
                                 <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
-                                    action="#{organisationGoalFormDialog.show}"
-                                    actionListener="#{organisationGoalFormDialog.loadGoal(goal)}" />
+                                    actionListener="#{organisationGoalFormDialog.show}" >
+                                <f:setPropertyActionListener value="#{organisationGoalView.organisationGoals}"
+                                                             target="#{organisationGoalFormDialog.model}" />
+                                </p:commandButton>
                                 <p:commandButton icon="pi pi-trash"
                                     styleClass="p-button-text p-button-danger p-button-sm"
                                     action="#{organisationGoalView.showDeleteGoalDialog(goal)}" />
