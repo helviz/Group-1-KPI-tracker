@@ -1,8 +1,8 @@
-package org.pahappa.systems.kpiTracker.models.kpi;
+package org.pahappa.systems.kpiTracker.constants;
 
 public enum KpiType {
-    NUMERICAL("Numerical (Metric-Based)"),
-    BINARY("Binary (Milestone-Based)");
+    QUANTITATIVE("Quantitative (Metric-Based)"),
+    QUALITATIVE("Qualitative (Milestone-Based)");
 
     private final String displayName;
 
