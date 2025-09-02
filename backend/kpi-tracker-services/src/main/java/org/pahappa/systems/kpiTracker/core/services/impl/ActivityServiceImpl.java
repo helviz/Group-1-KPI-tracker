@@ -1,10 +1,10 @@
 package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import com.googlecode.genericdao.search.Search;
-import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
 import org.pahappa.systems.kpiTracker.core.services.ActivityService;
 import org.pahappa.systems.kpiTracker.models.activity.Activity;
-import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
+import org.pahappa.systems.kpiTracker.constants.ActivityStatus;
 import org.pahappa.systems.kpiTracker.utils.Validate;
 import org.sers.webutils.model.RecordStatus;
 import org.sers.webutils.model.exception.OperationFailedException;
@@ -22,14 +22,14 @@ public class ActivityServiceImpl extends GenericServiceImpl<Activity> implements
     public Activity saveInstance(Activity activity) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(activity, "Activity details cannot be null");
         Validate.notNull(activity.getGoal(), "Activity must be attached to a goal");
-        Validate.hasText(activity.getTitle(), "Activity name is required");
+        Validate.hasText(activity.getName(), "Activity name is required");
 
-        if (isDuplicate(activity, "name", activity.getTitle())) {
+        if (isDuplicate(activity, "name", activity.getName())) {
             throw new ValidationFailedException("An activity with the same name already exists for this goal.");
         }
 
         if (activity.isNew()) {
-            activity.setStatus(ActivityStatus.PENDING);
+            activity.setStatus(ActivityStatus.NOT_STARTED);
         }
         return super.save(activity);
     }
@@ -43,8 +43,8 @@ public class ActivityServiceImpl extends GenericServiceImpl<Activity> implements
     }
 
     @Override
-    public List<Activity> getActivitiesForGoal(Goal goal) throws ValidationFailedException {
-        Validate.notNull(goal, "Goal cannot be null");
+    public List<Activity> getActivitiesForGoal(IndividualGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Individual goal cannot be null");
         Search search = new Search();
         search.addFilterEqual("goal", goal);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);

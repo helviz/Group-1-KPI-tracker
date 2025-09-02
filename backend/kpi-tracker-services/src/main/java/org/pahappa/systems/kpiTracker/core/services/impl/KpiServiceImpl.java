@@ -2,9 +2,11 @@ package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import com.googlecode.genericdao.search.Search;
 import org.pahappa.systems.kpiTracker.core.services.KpiService;
-import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
+
 import org.pahappa.systems.kpiTracker.constants.KpiType;
+
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.pahappa.systems.kpiTracker.utils.Validate;
 import org.sers.webutils.model.RecordStatus;
 import org.sers.webutils.model.exception.OperationFailedException;
@@ -28,11 +30,11 @@ public class KpiServiceImpl extends GenericServiceImpl<KPI> implements KpiServic
         if (isDuplicate(kpi, "title", kpi.getTitle())) {
             throw new ValidationFailedException("A KPI with the same title already exists for this goal.");
         }
-
         if (kpi.getKpiType() == KpiType.QUANTITATIVE) {
             Validate.notNull(kpi.getStartValue(), "Start value is required for a Quantitative KPI");
             Validate.notNull(kpi.getTargetValue(), "Target value is required for a Quantitative KPI");
             Validate.isTrue(kpi.getTargetValue().compareTo(kpi.getStartValue()) > 0, "Target value must be greater than the start value.");
+
 
             // Initialize current value if not set
             if (kpi.isNew() && kpi.getCurrentValue() == null) {
@@ -66,8 +68,8 @@ public class KpiServiceImpl extends GenericServiceImpl<KPI> implements KpiServic
     }
 
     @Override
-    public List<KPI> getKpisForGoal(Goal goal) throws ValidationFailedException {
-        Validate.notNull(goal, "Goal cannot be null");
+    public List<KPI> getKpisForGoal(IndividualGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Individual goal cannot be null");
         Search search = new Search();
         search.addFilterEqual("goal", goal);
         search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
@@ -76,7 +78,8 @@ public class KpiServiceImpl extends GenericServiceImpl<KPI> implements KpiServic
 
     private boolean isDuplicate(KPI entity, String property, Object value) {
         Search search = new Search().addFilterEqual(property, value).addFilterEqual("goal", entity.getGoal());
-        if (!entity.isNew()) search.addFilterNotEqual("id", entity.getId());
+        if (!entity.isNew())
+            search.addFilterNotEqual("id", entity.getId());
         return super.count(search) > 0;
     }
 }

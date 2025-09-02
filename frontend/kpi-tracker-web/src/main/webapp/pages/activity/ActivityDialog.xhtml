@@ -1,9 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/pages/californiatemplate/dialog-template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
     <ui:define name="head">
         <style type="text/css">
             .capitalized {
@@ -19,18 +16,86 @@
                 <div class="ui-col-12">
                     <h5>Activity Name</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText id="activityNameInput"
-                                     value="#{activityFormDialog.model.name}"
-                                     required="true"/>
+                        <p:inputText id="activityNameInput" value="#{activityFormDialog.model.name}" required="true" />
                     </div>
                 </div>
 
                 <div class="ui-col-12">
                     <h5>Description</h5>
                     <div class="ui-inputgroup">
-                        <p:inputTextarea id="descriptionInput"
-                                         value="#{activityFormDialog.model.description}"
-                                         rows="4" autoResize="false"/>
+                        <p:inputTextarea id="descriptionInput" value="#{activityFormDialog.model.description}" rows="4"
+                            autoResize="false" />
+                    </div>
+                </div>
+
+                <!-- Goal Hierarchy Selection -->
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Organisation Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="organisationGoalSelect"
+                            value="#{activityFormDialog.selectedOrganisationGoal}" styleClass="capitalized"
+                            required="true">
+                            <f:selectItem itemLabel="-- Select Organisation Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{activityFormDialog.organisationGoals}" var="orgGoal"
+                                itemLabel="#{orgGoal.title}" itemValue="#{orgGoal}" />
+                            <p:ajax event="change" listener="#{activityFormDialog.onOrganisationGoalChange}"
+                                update="departmentGoalSelect teamGoalSelect individualGoalSelect" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Department Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="departmentGoalSelect" value="#{activityFormDialog.selectedDepartmentGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Department Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{activityFormDialog.departmentGoals}" var="deptGoal"
+                                itemLabel="#{deptGoal.title}" itemValue="#{deptGoal}" />
+                            <p:ajax event="change" listener="#{activityFormDialog.onDepartmentGoalChange}"
+                                update="teamGoalSelect individualGoalSelect" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Team Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="teamGoalSelect" value="#{activityFormDialog.selectedTeamGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Team Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{activityFormDialog.teamGoals}" var="teamGoal"
+                                itemLabel="#{teamGoal.title}" itemValue="#{teamGoal}" />
+                            <p:ajax event="change" listener="#{activityFormDialog.onTeamGoalChange}"
+                                update="individualGoalSelect" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Individual Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="individualGoalSelect" value="#{activityFormDialog.selectedIndividualGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Individual Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{activityFormDialog.individualGoals}" var="indGoal"
+                                itemLabel="#{indGoal.title}" itemValue="#{indGoal}" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12">
+                    <h5>Activity Status</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="statusSelect" value="#{activityFormDialog.model.status}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItems value="#{activityFormDialog.activityStatuses}" var="status"
+                                itemLabel="#{status.name()}" itemValue="#{status}" />
+                        </p:selectOneMenu>
                     </div>
                 </div>
             </div>
@@ -38,17 +103,13 @@
             <div class="ui-col-12 ui-md-12" style="margin-top: 20px;">
                 <div class="p-grid p-justify-end">
                     <div class="p-col-2">
-                        <p:commandButton id="cancelButton" value="Cancel"
-                                         process="@this"
-                                         actionListener="#{activityFormDialog.hide}"
-                                         styleClass="ui-button-outlined ui-button-help"/>
+                        <p:commandButton id="cancelButton" value="Cancel" process="@this"
+                            actionListener="#{activityFormDialog.hide}"
+                            styleClass="ui-button-outlined ui-button-help" />
                     </div>
                     <div class="p-col-2">
-                        <p:commandButton id="saveButton" value="Save Activity"
-                                         process="@this"
-                                         immediate="true"
-                                         actionListener="#{activityFormDialog.save}"
-                                         update="@form" validateClient="true"/>
+                        <p:commandButton id="saveButton" value="Save Activity" process="@this" immediate="true"
+                            actionListener="#{activityFormDialog.save}" update="@form" validateClient="true" />
                     </div>
                 </div>
             </div>

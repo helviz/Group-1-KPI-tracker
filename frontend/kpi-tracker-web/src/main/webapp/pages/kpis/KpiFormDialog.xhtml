@@ -1,9 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/pages/californiatemplate/dialog-template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
     <ui:define name="head">
         <style type="text/css">
             .capitalized {
@@ -19,21 +16,19 @@
                 <div class="ui-col-12 ui-md-6">
                     <h5>KPI Name</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText id="kpiTitleInput"
-                                     value="#{kpiFormDialog.model.title}"
-                                     required="true"/>
+                        <p:inputText id="kpiTitleInput" value="#{kpiFormDialog.model.title}" required="true" />
                     </div>
                 </div>
 
                 <div class="ui-col-12 ui-md-6">
                     <h5>Tracking Method</h5>
                     <div class="ui-inputgroup">
-                        <p:selectOneMenu id="kpiTypeSelect"
-                                         value="#{kpiFormDialog.model.kpiType}"
-                                         styleClass="capitalized"
-                                         required="true">
-                            <f:selectItem itemLabel="-- Select Tracking Method --" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="#{kpiFormDialog.kpiTypes}" var="kpiType" itemLabel="#{kpiType.name()}" itemValue="#{kpiType}" />
+                        <p:selectOneMenu id="kpiTypeSelect" value="#{kpiFormDialog.model.kpiType}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Tracking Method --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{kpiFormDialog.kpiTypes}" var="kpiType" itemLabel="#{kpiType.name()}"
+                                itemValue="#{kpiType}" />
                             <p:ajax update="kpiFields" process="@this" />
                         </p:selectOneMenu>
                     </div>
@@ -42,9 +37,67 @@
                 <div class="ui-col-12 ui-md-12">
                     <h5>Description</h5>
                     <div class="ui-inputgroup">
-                        <p:inputTextarea id="descriptionInput"
-                                         value="#{kpiFormDialog.model.description}"
-                                         rows="4" autoResize="false"/>
+                        <p:inputTextarea id="descriptionInput" value="#{kpiFormDialog.model.description}" rows="4"
+                            autoResize="false" />
+                    </div>
+                </div>
+
+                <!-- Goal Hierarchy Selection -->
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Organisation Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="organisationGoalSelect" value="#{kpiFormDialog.selectedOrganisationGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Organisation Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{kpiFormDialog.organisationGoals}" var="orgGoal"
+                                itemLabel="#{orgGoal.title}" itemValue="#{orgGoal}" />
+                            <p:ajax event="change" listener="#{kpiFormDialog.onOrganisationGoalChange}"
+                                update="departmentGoalSelect teamGoalSelect individualGoalSelect" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Department Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="departmentGoalSelect" value="#{kpiFormDialog.selectedDepartmentGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Department Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{kpiFormDialog.departmentGoals}" var="deptGoal"
+                                itemLabel="#{deptGoal.title}" itemValue="#{deptGoal}" />
+                            <p:ajax event="change" listener="#{kpiFormDialog.onDepartmentGoalChange}"
+                                update="teamGoalSelect individualGoalSelect" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Team Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="teamGoalSelect" value="#{kpiFormDialog.selectedTeamGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Team Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{kpiFormDialog.teamGoals}" var="teamGoal"
+                                itemLabel="#{teamGoal.title}" itemValue="#{teamGoal}" />
+                            <p:ajax event="change" listener="#{kpiFormDialog.onTeamGoalChange}"
+                                update="individualGoalSelect" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="ui-col-12 ui-md-6">
+                    <h5>Individual Goal *</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="individualGoalSelect" value="#{kpiFormDialog.selectedGoal}"
+                            styleClass="capitalized" required="true">
+                            <f:selectItem itemLabel="-- Select Individual Goal --" itemValue="#{null}"
+                                noSelectionOption="true" />
+                            <f:selectItems value="#{kpiFormDialog.individualGoals}" var="indGoal"
+                                itemLabel="#{indGoal.title}" itemValue="#{indGoal}" />
+                        </p:selectOneMenu>
                     </div>
                 </div>
 
@@ -54,32 +107,28 @@
                             <div class="ui-col-12 ui-md-6">
                                 <h5>Start Value</h5>
                                 <div class="ui-inputgroup">
-                                    <p:inputNumber id="startValueInput"
-                                                   value="#{kpiFormDialog.model.startValue}"
-                                                   decimalPlaces="2"/>
+                                    <p:inputNumber id="startValueInput" value="#{kpiFormDialog.model.startValue}"
+                                        decimalPlaces="2" />
                                 </div>
                             </div>
                             <div class="ui-col-12 ui-md-6">
                                 <h5>Target Value</h5>
                                 <div class="ui-inputgroup">
-                                    <p:inputNumber id="targetValueInput"
-                                                   value="#{kpiFormDialog.model.targetValue}"
-                                                   decimalPlaces="2"/>
+                                    <p:inputNumber id="targetValueInput" value="#{kpiFormDialog.model.targetValue}"
+                                        decimalPlaces="2" />
                                 </div>
                             </div>
                             <div class="ui-col-12 ui-md-6">
                                 <h5>Current Value</h5>
                                 <div class="ui-inputgroup">
-                                    <p:inputNumber id="currentValueInput"
-                                                   value="#{kpiFormDialog.model.currentValue}"
-                                                   decimalPlaces="2"/>
+                                    <p:inputNumber id="currentValueInput" value="#{kpiFormDialog.model.currentValue}"
+                                        decimalPlaces="2" />
                                 </div>
                             </div>
                             <div class="ui-col-12 ui-md-6">
                                 <h5>Unit of Measure</h5>
                                 <div class="ui-inputgroup">
-                                    <p:inputText id="unitOfMeasureInput"
-                                                 value="#{kpiFormDialog.model.unitOfMeasure}"/>
+                                    <p:inputText id="unitOfMeasureInput" value="#{kpiFormDialog.model.unitOfMeasure}" />
                                 </div>
                             </div>
                         </div>
@@ -91,7 +140,7 @@
                                 <h5>Is Complete</h5>
                                 <div class="ui-inputgroup">
                                     <p:selectBooleanCheckbox id="isCompleteCheckbox"
-                                                             value="#{kpiFormDialog.model.isComplete}"/>
+                                        value="#{kpiFormDialog.model.isComplete}" />
                                 </div>
                             </div>
                         </div>
@@ -102,16 +151,12 @@
             <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
                 <div class="p-grid p-justify-end">
                     <div class="p-col-2">
-                        <p:commandButton id="cancelButton" value="Cancel"
-                                         process="@this"
-                                         actionListener="#{kpiFormDialog.hide}"
-                                         styleClass="ui-button-outlined ui-button-help"/>
+                        <p:commandButton id="cancelButton" value="Cancel" process="@this"
+                            actionListener="#{kpiFormDialog.hide}" styleClass="ui-button-outlined ui-button-help" />
                     </div>
                     <div class="p-col-2">
-                        <p:commandButton id="saveButton" value="Save KPI"
-                                         process="@form"
-                                         actionListener="#{kpiFormDialog.save}"
-                                         update="@form" validateClient="true" />
+                        <p:commandButton id="saveButton" value="Save KPI" process="@form"
+                            actionListener="#{kpiFormDialog.save}" update="@form" validateClient="true" />
                     </div>
                 </div>
             </div>

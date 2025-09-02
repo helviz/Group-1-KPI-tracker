@@ -102,7 +102,7 @@
 				<security:intercept-url pattern="/**"
 					access="perm_web_access" />
 				<security:intercept-url pattern="/pages/**"
-					access="isAuthenticated()" />
+					access="isAuthenticated()" /> 
 			</security:filter-security-metadata-source>
 		</property>
 	</bean>
@@ -157,7 +157,7 @@
 	</bean>
 
 	<bean id="formLoginFilter"
-		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		class="org.pahappa.systems.kpiTracker.security.EmailPasswordAuthenticationFilter">
 		<property name="authenticationManager"
 			ref="authenticationManager" />
 		<property name="filterProcessesUrl"

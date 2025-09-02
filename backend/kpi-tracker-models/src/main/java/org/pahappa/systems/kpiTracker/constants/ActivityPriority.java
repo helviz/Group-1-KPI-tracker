@@ -1,5 +1,8 @@
 package org.pahappa.systems.kpiTracker.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum ActivityPriority {
     LOW("Low"),
     MEDIUM("Medium"),
@@ -12,7 +15,4 @@ public enum ActivityPriority {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }

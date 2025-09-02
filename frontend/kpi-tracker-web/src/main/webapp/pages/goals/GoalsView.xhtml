@@ -4,11 +4,14 @@
 
     <ui:define name="content">
         <!--
-            This first form is intentionally left outside the main content card.
-            It only contains the dialog, preventing any nested form issues.
+            Include all the new goal form dialogs for each goal level.
+            These are intentionally left outside the main content card to prevent nested form issues.
         -->
         <h:form id="goalsForm">
-            <ui:include src="/pages/goals/GoalForm.xhtml" />
+            <ui:include src="/pages/goals/IndividualGoalForm.xhtml" />
+            <ui:include src="/pages/goals/TeamGoalForm.xhtml" />
+            <ui:include src="/pages/goals/DepartmentGoalForm.xhtml" />
+            <ui:include src="/pages/goals/OrganisationGoalForm.xhtml" />
         </h:form>
 
         <div class="card">
@@ -25,6 +28,14 @@
                         <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                             rowsPerPageTemplate="5,10,20,50" emptyMessage="No goals found" styleClass="p-datatable-sm">
+                            <f:facet name="header">
+                                <!-- PrimeFaces 7 layout for right-aligning a button -->
+                                <p:panelGrid columns="1" style="width:100%;" styleClass="ui-panelgrid-blank">
+                                    <p:commandButton value="Add Individual Goal" icon="ui-icon-plus"
+                                        actionListener="#{individualGoalBean.prepareNewGoal}" style="float:right;"
+                                        styleClass="ui-button-success" />
+                                </p:panelGrid>
+                            </f:facet>
 
                             <p:column headerText="Goal Name" sortBy="#{goal.goalTitle}">
                                 <h:outputText value="#{goal.goalTitle}" />
@@ -45,18 +56,14 @@
                             </p:column>
 
                             <p:column headerText="Actions" style="width: 250px;">
-                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
+                                <p:commandButton value="Edit" icon="ui-icon-pencil"
+                                    actionListener="#{individualGoalBean.edit}"
                                     styleClass="ui-button-sm ui-button-outlined">
                                     <f:attribute name="entity" value="#{goal}" />
                                 </p:commandButton>
                                 <p:commandButton value="Update Progress" icon="ui-icon-signal"
                                     action="#{goalView.updateProgress(goal)}"
-                                    styleClass="ui-button-sm ui-button-success" rendered="#{goal.isIndividualGoal()}" />
-                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
-                                    actionListener="#{goalForm.prepareNewChildGoal}"
-                                    styleClass="ui-button-sm ui-button-info" rendered="#{not goal.isIndividualGoal()}">
-                                    <f:attribute name="parentGoal" value="#{goal}" />
-                                </p:commandButton>
+                                    styleClass="ui-button-sm ui-button-success" />
                             </p:column>
                         </p:dataTable>
                     </p:tab>
@@ -65,73 +72,11 @@
                     <p:tab title="My Team" id="myTeamTab">
                         <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
                             emptyMessage="No team goals found" styleClass="p-datatable-sm">
-                            <p:column headerText="Goal Name">
-                                <h:outputText value="#{goal.goalTitle}" />
-                            </p:column>
-                            <p:column headerText="Owner">
-                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
-                            </p:column>
-                            <p:column headerText="Progress">
-                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
-                            </p:column>
-                            <p:column headerText="Status">
-                                <h:outputText value="#{goal.goalStatus}"
-                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
-                            </p:column>
-                            <p:column headerText="Actions" style="width: 200px;">
-                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
-                                    styleClass="ui-button-sm ui-button-outlined">
-                                    <f:attribute name="entity" value="#{goal}" />
-                                </p:commandButton>
-                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
-                                    actionListener="#{goalForm.prepareNewChildGoal}"
-                                    styleClass="ui-button-sm ui-button-info" rendered="#{not goal.isIndividualGoal()}">
-                                    <f:attribute name="parentGoal" value="#{goal}" />
-                                </p:commandButton>
-                            </p:column>
-                        </p:dataTable>
-                    </p:tab>
-
-                    <!-- My Department Tab -->
-                    <p:tab title="My Department" id="myDepartmentTab">
-                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
-                            emptyMessage="No department goals found" styleClass="p-datatable-sm">
-                            <p:column headerText="Goal Name">
-                                <h:outputText value="#{goal.goalTitle}" />
-                            </p:column>
-                            <p:column headerText="Owner">
-                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
-                            </p:column>
-                            <p:column headerText="Progress">
-                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
-                            </p:column>
-                            <p:column headerText="Status">
-                                <h:outputText value="#{goal.goalStatus}"
-                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
-                            </p:column>
-                            <p:column headerText="Actions" style="width: 200px;">
-                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
-                                    styleClass="ui-button-sm ui-button-outlined">
-                                    <f:attribute name="entity" value="#{goal}" />
-                                </p:commandButton>
-                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
-                                    actionListener="#{goalForm.prepareNewChildGoal}"
-                                    styleClass="ui-button-sm ui-button-info" rendered="#{not goal.isIndividualGoal()}">
-                                    <f:attribute name="parentGoal" value="#{goal}" />
-                                </p:commandButton>
-                            </p:column>
-                        </p:dataTable>
-                    </p:tab>
-
-                    <!-- Organization Tab -->
-                    <p:tab title="Organization" id="organizationTab">
-                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
-                            emptyMessage="No organization goals found" styleClass="p-datatable-sm">
                             <f:facet name="header">
                                 <!-- PrimeFaces 7 layout for right-aligning a button -->
                                 <p:panelGrid columns="1" style="width:100%;" styleClass="ui-panelgrid-blank">
-                                    <p:commandButton value="Add Organization Goal" icon="ui-icon-plus"
-                                        actionListener="#{goalForm.prepareNewOrganizationalGoal}" style="float:right;"
+                                    <p:commandButton value="Add Team Goal" icon="ui-icon-plus"
+                                        actionListener="#{teamGoalBean.prepareNewGoal}" style="float:right;"
                                         styleClass="ui-button-success" />
                                 </p:panelGrid>
                             </f:facet>
@@ -149,12 +94,92 @@
                                     styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
                             </p:column>
                             <p:column headerText="Actions" style="width: 200px;">
-                                <p:commandButton value="Edit" icon="ui-icon-pencil" actionListener="#{goalForm.edit}"
+                                <p:commandButton value="Edit" icon="ui-icon-pencil"
+                                    actionListener="#{teamGoalBean.edit}" styleClass="ui-button-sm ui-button-outlined">
+                                    <f:attribute name="entity" value="#{goal}" />
+                                </p:commandButton>
+                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
+                                    actionListener="#{individualGoalBean.prepareNewChildGoal}"
+                                    styleClass="ui-button-sm ui-button-info">
+                                    <f:attribute name="parentGoal" value="#{goal}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <!-- My Department Tab -->
+                    <p:tab title="My Department" id="myDepartmentTab">
+                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
+                            emptyMessage="No department goals found" styleClass="p-datatable-sm">
+                            <f:facet name="header">
+                                <!-- PrimeFaces 7 layout for right-aligning a button -->
+                                <p:panelGrid columns="1" style="width:100%;" styleClass="ui-panelgrid-blank">
+                                    <p:commandButton value="Add Department Goal" icon="ui-icon-plus"
+                                        actionListener="#{departmentGoalBean.prepareNewGoal}" style="float:right;"
+                                        styleClass="ui-button-success" />
+                                </p:panelGrid>
+                            </f:facet>
+                            <p:column headerText="Goal Name">
+                                <h:outputText value="#{goal.goalTitle}" />
+                            </p:column>
+                            <p:column headerText="Owner">
+                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Progress">
+                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText value="#{goal.goalStatus}"
+                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;">
+                                <p:commandButton value="Edit" icon="ui-icon-pencil"
+                                    actionListener="#{departmentGoalBean.edit}"
                                     styleClass="ui-button-sm ui-button-outlined">
                                     <f:attribute name="entity" value="#{goal}" />
                                 </p:commandButton>
                                 <p:commandButton value="Add Child" icon="ui-icon-sitemap"
-                                    actionListener="#{goalForm.prepareNewChildGoal}"
+                                    actionListener="#{teamGoalBean.prepareNewChildGoal}"
+                                    styleClass="ui-button-sm ui-button-info">
+                                    <f:attribute name="parentGoal" value="#{goal}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <!-- Organization Tab -->
+                    <p:tab title="Organization" id="organizationTab">
+                        <p:dataTable value="#{goalView}" var="goal" lazy="true" paginator="true" rows="10"
+                            emptyMessage="No organization goals found" styleClass="p-datatable-sm">
+                            <f:facet name="header">
+                                <!-- PrimeFaces 7 layout for right-aligning a button -->
+                                <p:panelGrid columns="1" style="width:100%;" styleClass="ui-panelgrid-blank">
+                                    <p:commandButton value="Add Organization Goal" icon="ui-icon-plus"
+                                        actionListener="#{organisationGoalBean.prepareNewGoal}" style="float:right;"
+                                        styleClass="ui-button-success" />
+                                </p:panelGrid>
+                            </f:facet>
+                            <p:column headerText="Goal Name">
+                                <h:outputText value="#{goal.goalTitle}" />
+                            </p:column>
+                            <p:column headerText="Owner">
+                                <h:outputText value="#{goal.owner != null ? goal.owner.username : 'N/A'}" />
+                            </p:column>
+                            <p:column headerText="Progress">
+                                <p:progressBar value="#{goal.progress}" displayOnly="true" labelTemplate="{value}%" />
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText value="#{goal.goalStatus}"
+                                    styleClass="goal-status #{goal.goalStatus == 'ON_TRACK' ? 'status-success' : goal.goalStatus == 'AT_RISK' ? 'status-warn' : goal.goalStatus == 'BEHIND' ? 'status-danger' : 'status-info'}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;">
+                                <p:commandButton value="Edit" icon="ui-icon-pencil"
+                                    actionListener="#{organisationGoalBean.edit}"
+                                    styleClass="ui-button-sm ui-button-outlined">
+                                    <f:attribute name="entity" value="#{goal}" />
+                                </p:commandButton>
+                                <p:commandButton value="Add Child" icon="ui-icon-sitemap"
+                                    actionListener="#{departmentGoalBean.prepareNewChildGoal}"
                                     styleClass="ui-button-sm ui-button-info">
                                     <f:attribute name="parentGoal" value="#{goal}" />
                                 </p:commandButton>

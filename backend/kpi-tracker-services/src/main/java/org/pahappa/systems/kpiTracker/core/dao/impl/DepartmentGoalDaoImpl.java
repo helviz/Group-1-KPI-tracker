@@ -1,0 +1,113 @@
+package org.pahappa.systems.kpiTracker.core.dao.impl;
+
+import com.googlecode.genericdao.search.Search;
+import org.pahappa.systems.kpiTracker.core.dao.DepartmentGoalDao;
+import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
+import org.sers.webutils.model.RecordStatus;
+import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
+
+@Repository
+public class DepartmentGoalDaoImpl extends BaseDAOImpl<DepartmentGoal> implements DepartmentGoalDao {
+
+    @Override
+    public List<DepartmentGoal> findAllActive() {
+        Search search = new Search();
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findByParentGoal(OrganisationGoal parentGoal) {
+        Search search = new Search();
+        search.addFilterEqual("parentGoal", parentGoal);
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findByDepartmentName(String departmentName) {
+        Search search = new Search();
+        search.addFilterEqual("departmentName", departmentName);
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findByOwner(String ownerId) {
+        Search search = new Search();
+        search.addFilterEqual("owner.id", ownerId);
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findByStatus(RecordStatus status) {
+        Search search = new Search();
+        search.addFilterEqual("recordStatus", status);
+        search.addFilterEqual("isActive", true);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findOverdueGoals() {
+        Search search = new Search();
+        search.addFilterLessThan("endDate", new Date());
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addFilterLessThan("progress", 100.0);
+        search.addSort("endDate", true);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findByTitleContaining(String title) {
+        Search search = new Search();
+        search.addFilterLike("title", "%" + title + "%");
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+
+    @Override
+    public long countActiveGoals() {
+        Search search = new Search();
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        return count(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findGoalsWithLowProgress(double threshold) {
+        Search search = new Search();
+        search.addFilterLessThan("progress", threshold);
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("progress", true);
+        return search(search);
+    }
+
+    @Override
+    public List<DepartmentGoal> findByParentGoalAndDepartment(OrganisationGoal parentGoal, String departmentName) {
+        Search search = new Search();
+        search.addFilterEqual("parentGoal", parentGoal);
+        search.addFilterEqual("departmentName", departmentName);
+        search.addFilterEqual("isActive", true);
+        search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+        search.addSort("dateCreated", false);
+        return search(search);
+    }
+}

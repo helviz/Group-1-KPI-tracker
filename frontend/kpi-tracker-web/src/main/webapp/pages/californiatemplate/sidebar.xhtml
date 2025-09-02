@@ -1,98 +1,106 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:pc="http://primefaces.org/california">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" xmlns:pc="http://primefaces.org/california">
 
     <div
-            class="layout-sidebar #{guestPreferences.menuColor eq 'dark' ? 'layout-sidebar-dark' : ''} #{guestPreferences.menuColor eq 'gradient' ? 'layout-sidebar-dark layout-sidebar-gradient': ''}">
+        class="layout-sidebar #{guestPreferences.menuColor eq 'dark' ? 'layout-sidebar-dark' : ''} #{guestPreferences.menuColor eq 'gradient' ? 'layout-sidebar-dark layout-sidebar-gradient': ''}">
         <div class="sidebar-scroll-content">
             <h:form id="sidebarProfileForm">
-                <ui:fragment
-                        rendered="#{guestPreferences.profileMode == 'inline' ? true : false}">
+                <ui:fragment rendered="#{guestPreferences.profileMode == 'inline' ? true : false}">
                     <div class="user-profile">
-                        <a id="sidebar-profile-button" href="#"> <p:graphicImage name="images/unnamed.png"
-                                                                                 style="width:80px; height: 80px;"
-                                                                                 library="california-layout"
-                                                                                 styleClass="profile-avatar"/>
+                        <a id="sidebar-profile-button" href="#">
+                            <p:graphicImage name="images/unnamed.png" style="width:80px; height: 80px;"
+                                library="california-layout" styleClass="profile-avatar" />
                             <span class="sidebar-profile-name">#{dashboard.loggedinUser.emailAddress}</span>
                             <span class="sidebar-profile-role">#{dashboard.loggedinUser.username}</span>
                         </a>
                         <ul id="sidebar-usermenu" class="usermenu">
-                            <li><h:commandLink action="#{profileView.getViewPath}">
-                                <i class="pi pi-fw pi-user"/>
-                                <span class="topbar-item-name">Profile</span>
-                                <f:setPropertyActionListener target="#{profileView.model}"
-                                                             value="#{dashboard.loggedinUser}"/>
-                            </h:commandLink></li>
+                            <li>
+                                <h:commandLink action="#{profileView.getViewPath}">
+                                    <i class="pi pi-fw pi-user" />
+                                    <span class="topbar-item-name">Profile</span>
+                                    <f:setPropertyActionListener target="#{profileView.model}"
+                                        value="#{dashboard.loggedinUser}" />
+                                </h:commandLink>
+                            </li>
                         </ul>
                     </div>
                 </ui:fragment>
             </h:form>
             <h:form id="menuform">
                 <pc:menu widgetVar="CaliforniaMenuWidget">
-                    <p:menuitem id="dashboard" value="Dashboard"
-                                icon="pi pi-fw pi-microsoft" outcome="/pages/dashboard/Dashboard"/>
+                    <p:menuitem id="dashboard" value="Dashboard" icon="pi pi-fw pi-microsoft"
+                        outcome="/pages/dashboard/Dashboard" />
 
-                    <p:submenu id="goals" label="Goals and Objectives"
-                                icon="pi pi-fw pi-megaphone" >
+                    <p:submenu id="goals" label="Goals and Objectives" icon="pi pi-fw pi-megaphone">
 
-                        <p:menuitem id="period" value="Create Goal Period"
-                                icon="pi pi-fw pi-hourglass" outcome="/pages/goals/goalPeriod/GoalPeriodView"/>
+                        <p:menuitem id="period" value="Create Goal Period" icon="pi pi-fw pi-hourglass"
+                            outcome="/pages/goals/goalPeriod/GoalPeriodView" />
 
-                        <p:menuitem id="Level" value="Create Goal Level"
-                                    icon="pi pi-fw pi-hourglass" outcome="/pages/goals/goalLevel/GoalLevelView"/>
-                        <p:menuitem id="goalsMgt" value="Manage Goals"
-                                icon="pi pi-fw pi-eye" outcome="/pages/goals/GoalsView"/>
+                        <p:menuitem id="Level" value="Create Goal Level" icon="pi pi-fw pi-hourglass"
+                            outcome="/pages/goals/goalLevel/GoalLevelView" />
+
+                        <p:menuitem id="organisationGoals" value="Organisation Goals" icon="pi pi-fw pi-building"
+                            outcome="/pages/goalMgt/OrganisationGoalView" />
+
+                        <p:menuitem id="departmentGoals" value="Department Goals" icon="pi pi-fw pi-sitemap"
+                            outcome="/pages/goalMgt/DepartmentGoalView" />
+
+                        <p:menuitem id="teamGoals" value="Team Goals" icon="pi pi-fw pi-users"
+                            outcome="/pages/goalMgt/TeamGoalView" />
+
+                        <p:menuitem id="individualGoals" value="Individual Goals" icon="pi pi-fw pi-user"
+                            outcome="/pages/goalMgt/IndividualGoalView" />
+
+
+
                         <p:menuitem id="kpi" value="KPI Management" icon="fa fa-bar-chart"
-                                    outcome="/pages/kpis/KpisView" />
+                            outcome="/pages/kpis/KpisView" />
+
                         <p:menuitem id="activities" value="Activities" icon="fa fa-action"
-                                    outcome="/pages/activity/ActivityView" />
+                            outcome="/pages/activity/ActivityView" />
 
                     </p:submenu>
-                    <p:menuitem id="department" value="Department"
-                                icon="pi pi-fw pi-sitemap" outcome="/pages/department/DepartmentView"/>
+                    <p:menuitem id="department" value="Department" icon="pi pi-fw pi-sitemap"
+                        outcome="/pages/department/DepartmentView" />
 
                     <p:submenu id="usersandroles" label="UsersandRoles" icon="pi pi-fw pi-users">
 
                         <p:menuitem id="users" value="Users Management" icon="pi pi-fw pi-user"
-                                    outcome="/pages/users/UsersView" />
+                            outcome="/pages/users/UsersView" />
 
-                        <p:menuitem id="roles" value="Roles " icon="fa fa-key"
-                                    outcome="/pages/roles/RolesView"/>
+                        <p:menuitem id="roles" value="Roles " icon="fa fa-key" outcome="/pages/roles/RolesView" />
                         <p:menuitem id="permmissions" value="Permissions" icon="fa fa-key"
-                                    outcome="/pages/permissions/Permissions"/>
+                            outcome="/pages/permissions/Permissions" />
 
                         <p:menuitem id="demo" value="Demo" icon="fa fa-wrench"
-                                    outcome="/pages/registerUser/RegisterUser"/>
+                            outcome="/pages/registerUser/RegisterUser" />
                     </p:submenu>
 
 
                     <p:menuitem id="performancetracking" value="Performance Tracking" icon="pi pi-fw pi-wave-pulse"
-
-                                outcome="/pages/performancetracking/PerformanceTracking" />
+                        outcome="/pages/performancetracking/PerformanceTracking" />
 
                     <p:menuitem id="rewards" value="Rewards &amp; PIPs" icon="fa fa-trophy"
-                                outcome="/pages/rewards/Rewards" />
+                        outcome="/pages/rewards/Rewards" />
 
                     <p:submenu id="OrganisationFit" label="Organisation Fit Surveys" icon="fa fa-thumbs-up">
                         <p:menuitem id="SurveySetup" value="SurveySetup" icon="fa fa-cog "
-                                    outcome="/pages/OrganisationFit/SurveyCategoryView" />
+                            outcome="/pages/OrganisationFit/SurveyCategoryView" />
                     </p:submenu>
 
                     <p:menuitem id="approvals" value="Notification &amp; Approvals" icon="fa fa-bell"
-                                outcome="/pages/approvals/Approvals" />
+                        outcome="/pages/approvals/Approvals" />
 
                     <p:menuitem id="reports" value="Reports  &amp; Analytics" icon="fa fa-area-chart"
-                                outcome="/pages/reports/Reports" />
+                        outcome="/pages/reports/Reports" />
 
                     <p:menuitem id="settings" value="System Settings" icon="fa fa-cog"
-                                outcome="/pages/sys-settings/Settings" />
+                        outcome="/pages/sys-settings/Settings" />
 
                     <p:menuitem id="logout" value="Logout" icon="fa fa-fw fa-sign-out"
-                                url="#{request.contextPath}/ServiceLogout"/>
-                    
+                        url="#{request.contextPath}/ServiceLogout" />
+
                 </pc:menu>
             </h:form>
         </div>

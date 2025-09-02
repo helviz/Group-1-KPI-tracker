@@ -1,7 +1,9 @@
 package org.pahappa.systems.kpiTracker.models.kpi;
 
+
 import org.pahappa.systems.kpiTracker.constants.KpiType;
 import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
 
@@ -17,8 +19,8 @@ public class KPI extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "goal_id", nullable = false)
-    private Goal goal;
+    @JoinColumn(name = "goal_id", nullable = true)
+    private IndividualGoal goal;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -60,7 +62,8 @@ public class KPI extends BaseEntity {
         switch (this.kpiType) {
             case QUANTITATIVE:
                 if (startValue == null || targetValue == null || currentValue == null || targetValue.subtract(startValue).compareTo(BigDecimal.ZERO) == 0) {
-                    return BigDecimal.ZERO;
+                  
+                 return BigDecimal.ZERO;
                 }
                 // Progress % = ((Current - Start) / (Target - Start)) * 100
                 BigDecimal progress = currentValue.subtract(startValue)
@@ -157,11 +160,11 @@ public class KPI extends BaseEntity {
         this.owner = owner;
     }
 
-    public Goal getGoal() {
+    public IndividualGoal getGoal() {
         return goal;
     }
 
-    public void setGoal(Goal goal) {
+    public void setGoal(IndividualGoal goal) {
         this.goal = goal;
     }
 
@@ -177,11 +180,12 @@ public class KPI extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         KPI kpi = (KPI) o;
         return super.getId() != null && Objects.equals(super.getId(), kpi.getId());
     }
-
 
 }

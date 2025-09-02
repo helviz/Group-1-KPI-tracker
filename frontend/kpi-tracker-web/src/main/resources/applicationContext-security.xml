@@ -23,7 +23,7 @@
 		class="org.sers.webutils.server.core.security.service.impl.CustomAuthenticationServiceImpl" />
 
 	<bean id="userDetailsService"
-		class="org.sers.webutils.server.core.security.service.impl.CustomUserDetailsServiceImpl" />
+		class="org.pahappa.systems.kpiTracker.security.CustomEmailUserDetailsService" />
 
 	<bean id="authenticationProvider"
 		class="org.sers.webutils.server.core.security.authentication.CustomAuthenticationProvider" />
