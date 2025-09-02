@@ -8,10 +8,7 @@
 - [ ] Others (cosmetics, styling, improvements)
 - [ ] This change requires a documentation update
 #### How Has This Been Tested?
-=> Please select the relevant option
-- [ ] Unit
-- [ ] Integration
-- [ ] End-to-end
+
 #### How can this be Tested?
 => Include the steps needed to test this PR
 #### Any background context you want to add

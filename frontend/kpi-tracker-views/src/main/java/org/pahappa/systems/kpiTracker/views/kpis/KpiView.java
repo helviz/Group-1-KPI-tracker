@@ -39,19 +39,20 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
     private String searchTerm;
     private Goal selectedGoal;
 
-    @ManagedProperty("#{kpiDialog}")
-    private KpiFormDialog kpiDialog;
+    @ManagedProperty("#{kpiFormDialog}")
+    private KpiFormDialog kpiFormDialog;
 
     @PostConstruct
     public void init() {
         this.kpiService = ApplicationContextProvider.getBean(KpiService.class);
-       // this.reloadFilterReset();
+        this.reloadFilterReset();
     }
 
     @Override
     public void reloadFromDB(int first, int pageSize, Map<String, Object> filterBy) throws Exception {
         Search search = createSearchQuery();
         super.setDataModels(kpiService.getInstances(search, first, pageSize));
+        super.setTotalRecords(kpiService.countInstances(search));
     }
 
     @Override
@@ -87,16 +88,16 @@ public class KpiView extends PaginatedTableView<KPI, KpiView, KpiService> implem
 
     public void addKpi() {
         if (this.selectedGoal != null) {
-            this.kpiDialog.reset(this.selectedGoal);
-            this.kpiDialog.show(null);
+            this.kpiFormDialog.reset(this.selectedGoal);
+            this.kpiFormDialog.show(null);
         } else {
             MessageComposer.error("Error", "Please select a goal first.");
         }
     }
 
     public void editKpi(KPI kpi) {
-        this.kpiDialog.setModel(kpi);
-        this.kpiDialog.setFormProperties();
+        this.kpiFormDialog.setModel(kpi);
+        this.kpiFormDialog.setFormProperties();
     }
 
     public void deleteKpi(KPI kpi) {

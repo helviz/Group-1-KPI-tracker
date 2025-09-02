@@ -49,7 +49,7 @@
                 </div>
 
                 <p:outputPanel id="kpiFields">
-                    <p:outputPanel rendered="#{kpiFormDialog.model.kpiType == 'NUMERICAL'}">
+                    <p:outputPanel rendered="#{kpiFormDialog.model.kpiType == 'QUANTITATIVE'}">
                         <div class="p-grid ui-fluid">
                             <div class="ui-col-12 ui-md-6">
                                 <h5>Start Value</h5>
@@ -85,7 +85,7 @@
                         </div>
                     </p:outputPanel>
 
-                    <p:outputPanel rendered="#{kpiFormDialog.model.kpiType == 'BINARY'}">
+                    <p:outputPanel rendered="#{kpiFormDialog.model.kpiType == 'QUALITATIVE'}" >
                         <div class="p-grid ui-fluid">
                             <div class="ui-col-12 ui-md-12">
                                 <h5>Is Complete</h5>

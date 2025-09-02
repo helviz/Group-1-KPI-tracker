@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.KpiService;
 import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
-import org.pahappa.systems.kpiTracker.models.kpi.KpiType;
+import org.pahappa.systems.kpiTracker.constants.KpiType;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.sers.webutils.client.views.presenters.ViewPath;
