@@ -92,7 +92,7 @@
                                             </h:panelGroup>
 
                                             <!-- CORRECTED: Replaced div with h:panelGroup for conditional rendering -->
-                                            <h:panelGroup rendered="#{kpi.kpiType == 'BINARY'}">
+                                            <h:panelGroup rendered="#{kpi.kpiType == 'QUALITATIVE'}">
                                                 <p:selectBooleanCheckbox value="#{kpi.isComplete}" />
                                                 <span class="p-ml-2">Completed</span>
                                             </h:panelGroup>

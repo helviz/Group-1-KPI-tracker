@@ -54,7 +54,7 @@
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.kpi.KPI"/>
-		<mapping class="org.pahappa.systems.kpiTracker.models.kpi.KpiType"/>
+		<mapping class="org.pahappa.systems.kpiTracker.constants.KpiType"/>
 
 
 		<!-- MBO System Entities -->

@@ -1,5 +1,8 @@
 package org.pahappa.systems.kpiTracker.models.kpi;
 
+
+import org.pahappa.systems.kpiTracker.constants.KpiType;
+import org.pahappa.systems.kpiTracker.models.goalMgt.Goal;
 import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.sers.webutils.model.BaseEntity;
 import org.sers.webutils.model.security.User;
@@ -29,7 +32,7 @@ public class KPI extends BaseEntity {
     @Column(name = "kpi_type", nullable = false)
     private KpiType kpiType;
 
-    // Fields for NUMERICAL KPI
+    // Fields for Quantitative KPI
     @Column(name = "start_value", precision = 19, scale = 4)
     private BigDecimal startValue;
 
@@ -42,7 +45,7 @@ public class KPI extends BaseEntity {
     @Column(name = "unit_of_measure")
     private String unitOfMeasure;
 
-    // Field for BINARY KPI
+    // Field for QUALITATIVE KPI
     @Column(name = "is_complete")
     private Boolean isComplete = false;
 
@@ -57,10 +60,10 @@ public class KPI extends BaseEntity {
         }
 
         switch (this.kpiType) {
-            case NUMERICAL:
-                if (startValue == null || targetValue == null || currentValue == null
-                        || targetValue.subtract(startValue).compareTo(BigDecimal.ZERO) == 0) {
-                    return BigDecimal.ZERO;
+            case QUANTITATIVE:
+                if (startValue == null || targetValue == null || currentValue == null || targetValue.subtract(startValue).compareTo(BigDecimal.ZERO) == 0) {
+                  
+                 return BigDecimal.ZERO;
                 }
                 // Progress % = ((Current - Start) / (Target - Start)) * 100
                 BigDecimal progress = currentValue.subtract(startValue)
@@ -76,7 +79,7 @@ public class KPI extends BaseEntity {
                 }
                 return progress.setScale(2, RoundingMode.HALF_UP);
 
-            case BINARY:
+            case QUALITATIVE:
                 return (isComplete != null && isComplete) ? new BigDecimal("100") : BigDecimal.ZERO;
 
             default:
