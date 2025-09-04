@@ -7,6 +7,10 @@ import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentGoalService;
 import org.pahappa.systems.kpiTracker.core.services.TeamGoalService;
 import org.pahappa.systems.kpiTracker.core.services.IndividualGoalService;
+import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
+import org.pahappa.systems.kpiTracker.models.goalMgt.TeamGoal;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 import org.pahappa.systems.kpiTracker.constants.KpiType;
 

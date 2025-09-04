@@ -4,14 +4,12 @@ import org.pahappa.systems.kpiTracker.models.activity.Activity;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 import org.pahappa.systems.kpiTracker.models.team.Team;
-import org.sers.webutils.model.security.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
-import org.pahappa.systems.kpiTracker.models.goalMgt.TeamGoal;
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 
 @Entity
 @Table(name = "individual_goals")
