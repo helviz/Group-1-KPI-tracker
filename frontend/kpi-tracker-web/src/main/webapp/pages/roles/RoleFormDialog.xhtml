@@ -41,9 +41,9 @@
                         </div>
                         <div class="p-col-2" >
                             <p:commandButton value="Save"
+                                             actionListener="#{roleFormDialog.save()}"
                                              process="@form"
-                                             actionListener="#{roleFormDialog.save}"
-                                             update="@form" validateClient="true" />
+                                             update="@form"/>
                         </div>
                     </div>
                 </div>

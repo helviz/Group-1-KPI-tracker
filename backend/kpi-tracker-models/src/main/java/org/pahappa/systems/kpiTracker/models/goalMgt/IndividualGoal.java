@@ -1,5 +1,6 @@
 package org.pahappa.systems.kpiTracker.models.goalMgt;
 
+import lombok.Setter;
 import org.pahappa.systems.kpiTracker.models.activity.Activity;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
@@ -13,12 +14,14 @@ import java.util.List;
 import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
 import org.pahappa.systems.kpiTracker.models.goalMgt.TeamGoal;
 
+@Setter
 @Entity
 @Table(name = "individual_goals")
 public class IndividualGoal extends BaseGoal {
 
     private static final long serialVersionUID = 1L;
 
+    // Setters
     private TeamGoal parentGoal;
     private String ownerName;
     private Department department;
@@ -107,31 +110,6 @@ public class IndividualGoal extends BaseGoal {
     @OneToMany(mappedBy = "goal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public List<KPI> getKpis() {
         return kpis;
-    }
-
-    // Setters
-    public void setParentGoal(TeamGoal parentGoal) {
-        this.parentGoal = parentGoal;
-    }
-
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public void setActivities(List<Activity> activities) {
-        this.activities = activities;
-    }
-
-    public void setKpis(List<KPI> kpis) {
-        this.kpis = kpis;
     }
 
 }

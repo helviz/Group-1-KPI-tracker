@@ -15,6 +15,8 @@ import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -112,7 +114,7 @@ public class PermissionsView implements Serializable {
     private PermissionService permissionService;
     private RoleService roleService;
 
-    private Map<String, List<Permission>> categorizedPermissions = new LinkedHashMap<>();
+    private List<SelectItem> groupedPermissions;
     private Set<Permission> selectedPermissions = new HashSet<>();
 
     @PostConstruct
@@ -122,26 +124,46 @@ public class PermissionsView implements Serializable {
 
         List<Permission> allPermissions = permissionService.getPermissions();
         if (allPermissions != null) {
-            categorizePermissions(allPermissions);
+            generateGroupedPermissions(allPermissions);
         }
-
     }
 
-    private void categorizePermissions(List<Permission> permissions) {
+    private void generateGroupedPermissions(List<Permission> permissions) {
+        // A map to temporarily hold permissions grouped by their category
+        Map<String, List<SelectItem>> categorizedItems = new LinkedHashMap<>();
+
+        // Group permissions into SelectItem objects
         for (Permission perm : permissions) {
-            String category = PERMISSION_CATEGORY_MAP.getOrDefault(perm.getName(), "General");
-            categorizedPermissions.computeIfAbsent(category, k -> new ArrayList<>()).add(perm);
-            System.out.println("categorized permissions" + categorizedPermissions.size());
+            String category = PERMISSION_CATEGORY_MAP.get(perm.getName());
+            if (category == null) {
+                category = "General"; // Default category if not found in map
+            }
+            if (!categorizedItems.containsKey(category)) {
+                categorizedItems.put(category, new ArrayList<>());
+            }
+            categorizedItems.get(category).add(new SelectItem(perm, perm.getName()));
+        }
+
+        // Now, converting the map to the List<SelectItem> format with SelectItemGroup
+        groupedPermissions = new ArrayList<>();
+        for (Map.Entry<String, List<SelectItem>> entry : categorizedItems.entrySet()) {
+            SelectItemGroup group = new SelectItemGroup(entry.getKey());
+            group.setSelectItems(entry.getValue().toArray(new SelectItem[0]));
+            groupedPermissions.add(group);
         }
     }
 
 
     public void persist() {
         try {
-            System.out.println("Selected role is: " +selectedRole );
             if (selectedRole != null) {
-                System.out.println("Selected permissions is: " + selectedPermissions.size() );
-                selectedRole.setPermissions(selectedPermissions);
+                Set<Permission> currentRolePermissions = selectedRole.getPermissions();
+                if (currentRolePermissions == null) {
+                    currentRolePermissions = new HashSet<>();
+                    selectedRole.setPermissions(currentRolePermissions);
+                }
+                currentRolePermissions.clear();
+                currentRolePermissions.addAll(selectedPermissions);
                 roleService.saveRole(selectedRole);
                 UiUtils.showMessageBox("Success!", "Permissions assigned to role successfully.");
             } else {
@@ -157,15 +179,18 @@ public class PermissionsView implements Serializable {
         return HyperLinks.ROLES_VIEW;
     }
 
-    public void display(){
-        for (Permission permission : selectedPermissions){
-            System.out.println("Permissions are: " +permission.getName());
+    public void display() {
+        for (Permission permission : selectedPermissions) {
+            System.out.println("Permissions are: " + permission.getName());
         }
     }
 
-    public Set<Permission> getSelectedPermissions() {
-        if (selectedRole != null)
-            selectedPermissions.addAll(selectedRole.getPermissions());
-        return selectedPermissions;
+    public void setSelectedRole(Role selectedRole) {
+        this.selectedRole = selectedRole;
+        if (selectedRole != null && selectedRole.getPermissions() != null) {
+            this.selectedPermissions = new HashSet<>(selectedRole.getPermissions());
+        } else {
+            this.selectedPermissions = new HashSet<>();
+        }
     }
 }
