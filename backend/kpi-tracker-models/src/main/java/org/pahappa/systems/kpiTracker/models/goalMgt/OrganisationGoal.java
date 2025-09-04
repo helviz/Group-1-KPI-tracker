@@ -1,16 +1,13 @@
 package org.pahappa.systems.kpiTracker.models.goalMgt;
 
 import lombok.Setter;
-import org.sers.webutils.model.security.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod;
-import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 
 @Setter
 @Entity

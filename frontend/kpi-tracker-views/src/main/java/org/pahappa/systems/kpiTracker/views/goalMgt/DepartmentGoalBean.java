@@ -1,10 +1,10 @@
 package org.pahappa.systems.kpiTracker.views.goalMgt;
 
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentGoalService;
 import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
 import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
 import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
 import org.sers.webutils.model.RecordStatus;
 import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.security.User;

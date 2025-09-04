@@ -8,7 +8,7 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 
 @MappedSuperclass
 public abstract class BaseGoal extends BaseEntity {

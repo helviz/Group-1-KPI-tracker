@@ -26,8 +26,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.util.*;
-import java.util.logging.Level;
+        import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @ManagedBean(name = "usersView")
 @Getter
@@ -133,7 +134,18 @@ public class UsersView extends PaginatedTableView<User, UsersView, UsersView> {
         dept.getName(); // touch it to make sure it’s loaded
         return dept.getName();
     }
+    //method converts the set role display as  strings
+//    public String getRolesAsString(User user) {
+//        if (user == null || user.getRoles() == null) {
+//            return "No Roles Assigned";
+//        }
+//        return user.getRoles().stream()
+//                .map(Role::getName)
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.joining(", "));
+  //  <!--                                            <h:outputText value="#{usersView.getRolesAsString(model)}" />-->
 
+//    }
 
 
 }

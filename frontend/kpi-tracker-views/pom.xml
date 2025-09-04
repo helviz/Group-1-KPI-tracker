@@ -9,6 +9,23 @@
     <name>kpi-tracker-views</name>
     <url>http://maven.apache.org</url>
     <dependencies>
+
+<!--        <dependency>-->
+<!--            <groupId>com.pahappa.systems</groupId>-->
+<!--            <artifactId>web_receipt</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.google.zxing</groupId>-->
+<!--            <artifactId>core</artifactId>-->
+<!--            <version>3.5.3</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.google.zxing</groupId>-->
+<!--            <artifactId>javase</artifactId>-->
+<!--            <version>3.5.3</version>-->
+<!--        </dependency>-->
         <!-- Custom Web Utils Dependencies -->
         <dependency>
             <groupId>org.sers.webutils</groupId>

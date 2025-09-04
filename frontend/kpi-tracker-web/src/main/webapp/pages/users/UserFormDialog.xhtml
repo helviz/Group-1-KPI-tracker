@@ -1,121 +1,185 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/pages/californiatemplate/dialog-template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
     <ui:define name="head">
         <style type="text/css">
             .capitalized {
                 text-transform: capitalize;
             }
+
+            .card {
+                background: #ffffff;
+                padding: 1rem;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-container {
+                margin-top: 1rem;
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 2rem;
+            }
+
+            hr {
+                margin: 1rem 0;
+                border: 0;
+                border-top: 1px solid #ccc;
+            }
+
+            .ui-selectmanymenu {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .error {
+                color: #d32f2f;
+                font-size: 0.9rem;
+                margin-top: 0.25rem;
+            }
         </style>
     </ui:define>
     <ui:define name="content">
         <title>Add user</title>
-        <h:form id="userFormDialog" style="height: 450px" styleClass="card">
-            <div class="p-grid ui-fluid" style="display:flex">
-                <div class="ui-col-12 ui-md-6">
+        <h:form id="userFormDialog" styleClass="card">
+            <div class="ui-g ui-fluid form-container">
+                <div class="ui-g-12 ui-md-6">
                     <h5>First name</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText value="#{userFormDialog.model.firstName}" required="true" />
+                        <p:inputText id="firstName" value="#{userFormDialog.model.firstName}" required="true"
+                            requiredMessage="First name is required."
+                            validatorMessage="First name must contain only letters, spaces, or hyphens (e.g., Mary-Jane).">
+                            <f:validateRegex pattern="^[a-zA-Z\s-]{2,50}$" />
+                            <f:validateLength minimum="2" maximum="50" />
+                        </p:inputText>
+                        <p:message for="userFormDialog:firstName" styleClass="error" />
                     </div>
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
+                <div class="ui-g-12 ui-md-6">
                     <h5>Last name</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText value="#{userFormDialog.model.lastName}" required="true" />
+                        <p:inputText id="lastName" value="#{userFormDialog.model.lastName}" required="true"
+                            requiredMessage="Last name is required."
+                            validatorMessage="Last name must contain only letters, spaces, or hyphens (e.g., Alvin-yoo).">
+                            <f:validateRegex pattern="^[a-zA-Z\s-]{2,50}$" />
+                            <f:validateLength minimum="2" maximum="50" />
+                        </p:inputText>
+                        <p:message for="userFormDialog:lastName" styleClass="error" />
                     </div>
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
+                <div class="ui-g-12 ui-md-6">
                     <h5>Username</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText value="#{userFormDialog.model.username}" disabled="#{userFormDialog.edit}" required="true" />
+                        <p:inputText id="username" value="#{userFormDialog.model.username}"
+                            disabled="#{userFormDialog.edit}" required="true" requiredMessage="Username is required."
+                            validatorMessage="Username must be between 4 and 20 characters and contain only letters and numbers.">
+                            <f:validateRegex pattern="[a-zA-Z0-9]{4,20}" />
+                        </p:inputText>
+                        <p:message for="userFormDialog:username" styleClass="error" />
                     </div>
                 </div>
 
-
-                <div class="ui-col-12 ui-md-6">
+                <div class="ui-g-12 ui-md-6">
                     <h5>Email</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText value="#{userFormDialog.model.emailAddress}" />
+                        <p:inputText id="emailAddress" value="#{userFormDialog.model.emailAddress}" required="true"
+                            requiredMessage="Email is required." validatorMessage="Please enter a valid email address.">
+                            <f:validateRegex pattern="^[A-Za-z0-9+_.-]+@(.+)$" />
+                        </p:inputText>
+                        <p:message for="userFormDialog:emailAddress" styleClass="error" />
                     </div>
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
+                <div class="ui-g-12 ui-md-6">
                     <h5>Gender</h5>
                     <div class="ui-inputgroup">
-                        <p:selectOneMenu value="#{userFormDialog.model.gender}"
-                                         converter="genderConverter" filter="true"
-                                         required="true" effect="fold">
+                        <p:selectOneMenu id="gender" value="#{userFormDialog.model.gender}" converter="genderConverter"
+                            required="true" requiredMessage="Gender is required.">
                             <f:selectItem itemLabel="Select gender" itemValue="" />
                             <f:selectItems value="#{userFormDialog.listOfGenders}" />
                         </p:selectOneMenu>
+                        <p:message for="userFormDialog:gender" styleClass="error" />
                     </div>
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
+                <div class="ui-g-12 ui-md-6">
                     <h5>Phone number</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText value="#{userFormDialog.model.phoneNumber}"  />
-                    </div>
-                </div>
-                <hr></hr>
-                <div class="ui-col-12 ui-md-12">
-                    <h5>Roles</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectManyCheckbox id="rolesGrid" value="#{userFormDialog.userRoles}" 
-                                              converter="roleConverter" 
-                                              layout="grid" columns="3" >
-                            <f:selectItems value="#{userFormDialog.databaseRoles}" var="role" itemLabel="#{role}" itemValue="#{role}"/>
-                        </p:selectManyCheckbox>
-                    </div>
-                </div>
-
-                <div class="ui-col-12 ui-md-12">
-                    <h5>Assign User To a Department</h5>
-                    <div>
-                        <p:selectOneRadio id="department-line" value="#{userFormDialog.selectedDepartment}"
-                                          converter="departmentConverter"
-                                          layout="lineDirection">
-                            <f:selectItems value="#{userFormDialog.listOfDepartments}" var="department" itemLabel="#{department.name}" itemValue="#{department}"/>
-                            <p:ajax event="change" listener="#{userFormDialog.setSelectedDepartment(department)}" />
-                        </p:selectOneRadio>
+                        <p:inputText id="phoneNumber" value="#{userFormDialog.model.phoneNumber}" required="true"
+                            requiredMessage="Phone number is required."
+                            validatorMessage="Phone number must be 10 digits.">
+                            <f:validateRegex pattern="[0-9]{10}" />
+                        </p:inputText>
+                        <p:message for="userFormDialog:phoneNumber" styleClass="error" />
                     </div>
                 </div>
 
                 <hr />
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Password</h5>
+                <div class="ui-g-12">
+                    <h5>Roles</h5>
                     <div class="ui-inputgroup">
-                        <p:password id="pwd1" value="#{userFormDialog.model.clearTextPassword}" match="pwd2" />
+                        <p:selectManyMenu id="rolesGrid" value="#{userFormDialog.userRoles}" converter="roleConverter"
+                            required="true" requiredMessage="At least one role is required." styleClass="ui-fluid">
+                            <f:selectItems value="#{userFormDialog.databaseRoles}" var="role" itemLabel="#{role.name}"
+                                itemValue="#{role}" />
+                            <p:ajax event="change" listener="#{userFormDialog.onRolesChange}" update="@form" />
+                        </p:selectManyMenu>
+                        <p:message for="userFormDialog:rolesGrid" styleClass="error" />
                     </div>
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Confirm Password</h5>
+                <div class="ui-g-12 ui-md-12">
+                    <h5>Department</h5>
                     <div class="ui-inputgroup">
-                        <p:password id="pwd2" value="#{userFormDialog.model.clearTextPassword}"  />
+                        <p:selectOneMenu id="department" value="#{userFormDialog.selectedDepartment}"
+                            converter="departmentConverter" required="true" requiredMessage="Department is required.">
+                            <f:selectItems value="#{userFormDialog.listOfDepartments}" var="department"
+                                itemLabel="#{department.name}" itemValue="#{department}" />
+                            <p:ajax event="change" listener="#{userFormDialog.onDepartmentChange}" update="@form" />
+                        </p:selectOneMenu>
+                        <p:message for="userFormDialog:department" styleClass="error" />
                     </div>
                 </div>
-                <div class="ui-col-12 ui-md-12" style="margin-top: 60px; align-self: flex-end !important;">
-                    <div class="p-grid p-justify-end">
-                        <div class="p-col-2">
-                            <p:commandButton value="Cancel" 
-                                             validateClient="false"
-                                             process="@this"
-                                             action="#{userFormDialog.hide}"
-                                             styleClass="ui-button-outlined ui-button-help" />
-                        </div>
-                        <div class="p-col-2" >
-                            <p:commandButton value="Save" 
-                                             process="@form"
-                                             actionListener="#{userFormDialog.save}"
-                                             update="@form" validateClient="true" />
-                        </div>
+
+                <hr />
+
+                <div class="ui-g-12 ui-md-6">
+                    <h5>Password</h5>
+                    <div class="ui-inputgroup">
+                        <p:password id="pwd1" value="#{userFormDialog.model.clearTextPassword}" required="true"
+                            requiredMessage="Password is required."
+                            validatorMessage="Password must be at least 8 characters long." match="pwd2">
+                            <f:validateLength minimum="8" />
+                        </p:password>
+                        <p:message for="userFormDialog:pwd1" styleClass="error" />
+                    </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-6">
+                    <h5>Confirm Password</h5>
+                    <div class="ui-inputgroup">
+                        <p:password id="pwd2" value="#{userFormDialog.model.clearTextPassword}" required="true"
+                            requiredMessage="Confirm password is required." validatorMessage="Passwords do not match.">
+                            <!-- Match validation is handled by p:password's 'match' attribute -->
+                        </p:password>
+                        <p:message for="userFormDialog:pwd2" styleClass="error" />
+                    </div>
+                </div>
+
+                <div class="ui-g-12 button-container">
+                    <div class="ui-g-6" style="text-align: right;">
+                        <p:commandButton value="Cancel" validateClient="false" process="@this"
+                            action="#{userFormDialog.hide}" styleClass="ui-button-outlined ui-button-help" />
+                    </div>
+                    <div class="ui-g-6">
+                        <p:commandButton value="Save" process="@form" actionListener="#{userFormDialog.save}"
+                            update="@form" validateClient="true" />
                     </div>
                 </div>
             </div>
