@@ -5,7 +5,7 @@ import org.pahappa.systems.kpiTracker.core.services.IndividualGoalService;
 import org.pahappa.systems.kpiTracker.core.services.ProgressCalculationService;
 import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.pahappa.systems.kpiTracker.models.goalMgt.TeamGoal;
-import org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel;
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 import org.sers.webutils.model.RecordStatus;
 import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.exception.OperationFailedException;

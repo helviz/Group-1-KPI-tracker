@@ -52,7 +52,7 @@
 		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyQuestion" />
 
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod"/>
-		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.GoalLevel"/>
+		<mapping class="org.pahappa.systems.kpiTracker.constants.GoalLevel"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.kpi.KPI"/>
 		<mapping class="org.pahappa.systems.kpiTracker.constants.KpiType"/>
 

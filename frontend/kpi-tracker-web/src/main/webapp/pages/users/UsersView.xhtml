@@ -9,42 +9,13 @@
         <div class="ui-g ui-fluid">
             <div class="ui-g-12">
                 <h:form id="usersView" enctype="multipart/form-data">
-
-                    <div class="p-grid overlay-demo">
-                        <div class="p-col-12 p-md-3">
-                            <div class="card">
-                                <h:outputText value="Total" />
-                                <h2 class="p-text-right">#{usersView.total}</h2>
-                            </div>
-                        </div>
-                        <div class="p-col-12 p-md-3">
-                            <div class="card">
-                                <h:outputText value="Male" />
-                                <h2 class="p-text-right">#{usersView.noMale}</h2>
-                            </div>
-                        </div>
-                        <div class="p-col-12 p-md-3">
-                            <div class="card">
-                                <h:outputText value="Female" />
-                                <h2 class="p-text-right">#{usersView.noFemale}</h2>
-                            </div>
-                        </div>
-                        <div class="p-col-12 p-md-3">
-                            <div class="card">
-                                <h:outputText value="UnKnown" />
-                                <h2 class="p-text-right">#{usersView.noUnknown}</h2>
-                            </div>
-                        </div>
-
-                    </div>
                     <div class="card">
-                        <h:outputText value="Filters" />
                         <p:growl id="messages" showDetail="true" />
                         <div class="p-grid">
                             <div class="p-col-12 p-md-6 p-lg-2">
                                 <p:inputText id="searchTerm" required="false"
                                              value="#{usersView.searchTerm}" placeholder="Search ..."
-                                             onkeyup="#{staffView.reloadFilterReset()}">
+                                             onkeyup="#{usersView.reloadFilterReset()}">
 
                                     <p:ajax event="keyup"
                                             update="usersView"
@@ -74,7 +45,7 @@
                             </div>
                             <div class="p-col-12 p-md-6 p-lg-1">
                                 <p:commandButton icon="fa fa-search"
-                                                 styleClass="ui-button-success" id="searchBtn"
+                                                 styleClass="ui-button" id="searchBtn"
                                                  style="margin-right: 18px" update="usersView"
                                                  actionListener="#{usersView.reloadFilterReset()}">
                                 </p:commandButton>
@@ -99,15 +70,15 @@
                                         <f:facet name="header">
                                             <div class="p-d-flex p-jc-between">
                                                 <div>
-                                                    <span class="table-header-text">System users</span>
+                                                    <span class="table-header-text">User Management</span>
 
                                                 </div>
 
                                                 <div>
                                                     <div class="p-d-flex p-flex-wrap">
                                                         <div class="p-mr-2 p-mb-2">
-                                                            <p:commandButton value="Add user" process="@this"
-                                                                             styleClass="ui-button-help" immediate="true"
+                                                            <p:commandButton value="Add user" process="@this" icon="fa fa-plus"
+                                                                             styleClass="ui-button" immediate="true"
                                                                              actionListener="#{userFormDialog.show}">
                                                                 <f:setPropertyActionListener value="#{null}"
                                                                                              target="#{userFormDialog.model}" />
@@ -124,14 +95,7 @@
                                         <p:column width="30" headerText="No.">
                                             <h:outputText value="#{row + 1}" />
                                         </p:column>
-                                        <p:column exportable="false">
-                                            <f:facet name="header">
-                                                <h:outputText value="Image" />
-                                            </f:facet>
-                                            <p:graphicImage id="imageView"
-                                                            styleClass="profile-image-small"
-                                                            value="#{ model.customPropOne!=null?model.customPropOne:'resources/california-layout/images/default-profile-image.png'}" />
-                                        </p:column>
+
                                         <p:column>
                                             <f:facet name="header">
                                                 <h:outputText value="Full name" />
@@ -156,7 +120,7 @@
                                             <f:facet name="header">
                                                 <h:outputText value="Roles" />
                                             </f:facet>
-                                            <h:outputText value="#{model.roles}" />
+                                            <h:outputText value="#{model.roles}"/>
                                         </p:column>
 
                                         <p:column>
@@ -176,7 +140,7 @@
                                         <p:column headerText="Action" width="140" exportable="false"
                                                   style="text-align: center">
                                             <p:commandButton process="@this" icon="fa fa-edit"
-                                                             styleClass="ui-button-help" immediate="true" rendered="true"
+                                                             styleClass="ui-button" immediate="true" rendered="true"
                                                              actionListener="#{userFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
                                                                              target="#{userFormDialog.model}" />
