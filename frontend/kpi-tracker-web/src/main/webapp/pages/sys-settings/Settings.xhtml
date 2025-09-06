@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/template.xhtml">
+
+    <ui:define name="viewname">System Settings</ui:define>
+
+    <ui:define name="head">
+        <h:outputScript name="js/chart.js" library="demo" />
+    </ui:define>
+
+    <ui:define name="content">
+        <div>
+            <h5 style="color:#4b6cb7 ">System Settings</h5>
+            <p>Manage core application settings, define review cycle, and configure performance parameters</p>
+        </div>
+        <hr />
+
+        <p:tabView id="settingsTabView">
+            <p:tab title="Review Cycles" id="reviewCyclesTab">
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12">
+                        <h:form id="reviewCyclesForm" enctype="multipart/form-data">
+                            <ui:fragment>
+                                <div class="p-grid table-demo">
+                                    <div class="p-col-12">
+                                        <div class="card">
+                                            <p:dataTable id="periodTable" var="model"
+                                                value="#{goalPeriodView.dataModels}" widgetVar="periodTable"
+                                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                paginator="true" lazy="true" rows="20" rowsPerPageTemplate="5,10,15,20"
+                                                emptyMessage="#{goalPeriodView.dataEmptyMessage}"
+                                                paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                                rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
+                                                <f:facet name="header">
+                                                    <div class="p-d-flex p-jc-between p-ai-center">
+                                                        <div class="p-flex-grow-1 p-mr-3">
+                                                            <p:inputText id="searchTerm" required="false"
+                                                                value="#{goalPeriodView.searchTerm}"
+                                                                placeholder="Search periods..." styleClass="w-full">
+                                                                <p:ajax event="keyup" update="periodTable"
+                                                                    listener="#{goalPeriodView.search()}" />
+                                                            </p:inputText>
+                                                        </div>
+                                                        <div>
+                                                            <p:commandButton value="Add Review Cycle" icon="fa fa-plus"
+                                                                actionListener="#{goalPeriodForm.show}"
+                                                                styleClass="ui-button ui-button-primary">
+                                                                <f:setPropertyActionListener value="#{null}"
+                                                                    target="#{goalPeriodForm.model}" />
+                                                                <p:ajax event="dialogReturn"
+                                                                    listener="#{goalPeriodView.reloadFilterReset}"
+                                                                    update="@form" />
+                                                            </p:commandButton>
+                                                        </div>
+                                                    </div>
+                                                </f:facet>
+                                                <p:column width="30" headerText="No.">
+                                                    <h:outputText value="#{row + 1}" />
+                                                </p:column>
+                                                <p:column headerText="Review Cycle" style="width: 20%;">
+                                                    <h:outputText value="#{model.periodName}" />
+                                                </p:column>
+
+                                                <p:column headerText="Dates" style="width: 30%;">
+                                                    <h:panelGroup>
+                                                        <h:outputText value="#{model.startDate}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:outputText>
+                                                        <h:outputText value=" - " rendered="#{model.endDate != null}" />
+                                                        <h:outputText value="#{model.endDate}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:outputText>
+                                                    </h:panelGroup>
+                                                </p:column>
+
+                                                <p:column headerText="MBO Weight(%)" style="width: 15%; text-align: center;">
+                                                    <h:outputText value="#{model.businessGoalContribution}" />
+                                                </p:column>
+
+                                                <p:column headerText="Org Fit Weight(%)" style="width: 15%; text-align: center;">
+                                                    <h:outputText value="#{model.organisationalFitScore}" />
+                                                </p:column>
+
+                                                <p:column headerText="Action" width="140" exportable="false"
+                                                    style="text-align: center">
+                                                    <p:commandButton icon="fa fa-edit" title="Edit"
+                                                        actionListener="#{goalPeriodForm.show}">
+                                                        <f:setPropertyActionListener value="#{model}"
+                                                            target="#{goalPeriodForm.model}" />
+                                                        <p:ajax event="dialogReturn"
+                                                            listener="#{goalPeriodView.reloadFilterReset}"
+                                                            update="@form" />
+                                                    </p:commandButton>
+                                                    <p:commandButton icon="fa fa-trash" title="Delete"
+                                                        styleClass="ui-button-danger" style="margin-left: 5px"
+                                                        actionListener="#{goalPeriodView.deleteSelectedGoalsPeriod(model)}"
+                                                        update="@form">
+                                                        <p:confirm header="Confirmation"
+                                                            message="You are about to delete period '#{model.periodName}'. Are you sure?"
+                                                            icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                responsive="true" width="350">
+                                                <p:commandButton value="No" type="button"
+                                                    styleClass="ui-confirmdialog-no ui-button-secondary"
+                                                    icon="pi pi-times" />
+                                                <p:commandButton value="Yes" type="button"
+                                                    styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ui:fragment>
+                        </h:form>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab title="Goal Levels &amp; Thresholds" id="goalLevelsTab">
+                <h:outputText value="Ipsum" />
+            </p:tab>
+            <p:tab title="Notifications &amp; Reminders" id="notificationsTab">
+                <h:outputText value="Dolor" />
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+</ui:composition>

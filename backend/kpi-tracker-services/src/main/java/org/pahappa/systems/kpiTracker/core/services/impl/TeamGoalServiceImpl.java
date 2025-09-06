@@ -29,13 +29,13 @@ public class TeamGoalServiceImpl extends GenericServiceImpl<TeamGoal> implements
         Validate.hasText(goal.getTitle(), "Goal title is required");
         Validate.notNull(goal.getParentGoal(), "Parent department goal is required");
         Validate.hasText(goal.getTeamName(), "Team name is required");
-        Validate.notNull(goal.getEndDate(), "End date is required");
+        //Validate.notNull(goal.getEndDate(), "End date is required");
         Validate.notNull(goal.getOwner(), "Owner is required");
 
         // Validate end date is not after parent goal end date
-        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
-            throw new ValidationFailedException("Team goal end date cannot be after parent goal end date");
-        }
+//        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
+//            throw new ValidationFailedException("Team goal end date cannot be after parent goal end date");
+//        }
 
         // Set default values
         goal.setGoalLevel(GoalLevel.TEAM);

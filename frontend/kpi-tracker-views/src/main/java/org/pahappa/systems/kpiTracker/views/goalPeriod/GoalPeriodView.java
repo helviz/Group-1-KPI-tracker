@@ -19,20 +19,25 @@ import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-@ViewScoped
+
+@SessionScoped
 @Getter
 @Setter
 @ViewPath(path = HyperLinks.GOAL_PERIOD_VIEW)
-@ManagedBean(name="goalPeriodView")
-public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodService,GoalPeriodService> {
+@ManagedBean(name = "goalPeriodView")
+public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodService, GoalPeriodService> {
+
+    private static final long serialVersionUID = 1L;
     public GoalPeriodService goalPeriodService;
     private GoalPeriod selectedGoalPeriod;
     private List<SearchField> searchFields, selectedSearchFields;
 
+    // Search functionality
+    private String searchTerm = "";
 
     @PostConstruct
     public void init() {
@@ -43,9 +48,7 @@ public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodSer
             throw new RuntimeException(e);
         }
 
-
     }
-
 
     @Override
     public void reloadFromDB(int i, int i1, Map<String, Object> map) throws Exception {
@@ -53,12 +56,12 @@ public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodSer
                 .getInstances(new Search().addFilterEqual("recordStatus", RecordStatus.ACTIVE), i, i1));
     }
 
-
-//    @Override
-//    public List<GoalPeriod> load(int first, int pageSize, Map<String, SortMeta> sortBy,
-//                                  Map<String, FilterMeta> filterBy) {
-//        return getDataModels();
-//    }
+    // @Override
+    // public List<GoalPeriod> load(int first, int pageSize, Map<String, SortMeta>
+    // sortBy,
+    // Map<String, FilterMeta> filterBy) {
+    // return getDataModels();
+    // }
 
     @Override
     public void reloadFilterReset() {
@@ -73,6 +76,7 @@ public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodSer
 
     /**
      * Deletes the specific GoalPeriod passed from the UI.
+     * 
      * @param periodToDelete The record selected by the user in the data table.
      */
     public void deleteSelectedGoalsPeriod(GoalPeriod periodToDelete) {
@@ -106,5 +110,38 @@ public class GoalPeriodView extends PaginatedTableView<GoalPeriod, GoalPeriodSer
     @Override
     public List<GoalPeriod> load(int i, int i1, Map<String, SortMeta> map, Map<String, FilterMeta> map1) {
         return Collections.emptyList();
+    }
+
+    /**
+     * Search for goal periods based on the search term
+     */
+    public void search() {
+        try {
+            if (searchTerm == null || searchTerm.trim().isEmpty()) {
+                // If search term is empty, reload all data
+                this.reloadFilterReset();
+            } else {
+                // Create search criteria
+                Search search = new Search();
+                search.addFilterEqual("recordStatus", RecordStatus.ACTIVE);
+                search.addFilterILike("periodName", "%" + searchTerm.trim() + "%");
+
+                // Get filtered results
+                List<GoalPeriod> filteredResults = goalPeriodService.getInstances(search, 0, Integer.MAX_VALUE);
+                super.setDataModels(filteredResults);
+                super.setTotalRecords(filteredResults.size());
+            }
+        } catch (Exception e) {
+            UiUtils.ComposeFailure("Search Error", "Error searching periods: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Clear the search and reload all data
+     */
+    public void clearSearch() {
+        searchTerm = "";
+        this.reloadFilterReset();
     }
 }

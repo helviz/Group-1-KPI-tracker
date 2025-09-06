@@ -15,6 +15,16 @@ public class GoalPeriod extends BaseEntity {
     private String periodName;
     private Date startDate;
     private Date endDate;
+    private double  businessGoalContribution;
+    private  double  organisationalFitScore;
+@Column(name="managementByObjective")
+    public double getBusinessGoalContribution() {
+        return businessGoalContribution;
+    }
+@Column(name="organisationFit")
+    public double getOrganisationalFitScore() {
+        return organisationalFitScore;
+    }
 
     @Column(name = "name", nullable = false)
     public String getPeriodName() {

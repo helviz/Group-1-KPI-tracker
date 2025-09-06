@@ -3,6 +3,7 @@ package org.pahappa.systems.kpiTracker.core.services.impl;
 import com.googlecode.genericdao.search.Search;
 import org.pahappa.systems.kpiTracker.core.dao.OrganisationGoalDao;
 import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
+import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
 import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
 import org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod;
 import org.pahappa.systems.kpiTracker.utils.Validate;
@@ -187,4 +188,5 @@ public class OrganisationGoalServiceImpl extends GenericServiceImpl<Organisation
 
         return metrics;
     }
+
 }

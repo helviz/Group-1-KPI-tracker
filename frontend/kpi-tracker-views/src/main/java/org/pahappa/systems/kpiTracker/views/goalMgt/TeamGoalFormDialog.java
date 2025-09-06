@@ -78,7 +78,7 @@ public class TeamGoalFormDialog extends DialogForm<TeamGoal> {
             model.setDescription(description);
             model.setTeamName(teamName);
             model.setOwner(owner);
-            model.setEndDate(endDate);
+            //model.setEndDate(endDate);
             model.setEvaluationTarget(evaluationTarget);
             model.setParentGoal(parentGoal);
 
@@ -132,7 +132,7 @@ public class TeamGoalFormDialog extends DialogForm<TeamGoal> {
             this.description = goal.getDescription();
             this.teamName = goal.getTeamName();
             this.owner = goal.getOwner();
-            this.endDate = goal.getEndDate();
+            //this.endDate = goal.getEndDate();
             this.evaluationTarget = goal.getEvaluationTarget();
             this.parentGoal = goal.getParentGoal();
         }

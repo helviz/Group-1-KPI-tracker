@@ -78,7 +78,7 @@ public class DepartmentGoalFormDialog extends DialogForm<DepartmentGoal> {
             model.setDescription(description);
             model.setDepartmentName(departmentName);
             model.setOwner(owner);
-            model.setEndDate(endDate);
+           // model.setEndDate(endDate);
             model.setEvaluationTarget(evaluationTarget);
             model.setParentGoal(parentGoal);
 
@@ -132,7 +132,7 @@ public class DepartmentGoalFormDialog extends DialogForm<DepartmentGoal> {
             this.description = goal.getDescription();
             this.departmentName = goal.getDepartmentName();
             this.owner = goal.getOwner();
-            this.endDate = goal.getEndDate();
+         //   this.endDate = goal.getEndDate();
             this.evaluationTarget = goal.getEvaluationTarget();
             this.parentGoal = goal.getParentGoal();
         }

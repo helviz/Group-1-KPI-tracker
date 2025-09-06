@@ -2,8 +2,9 @@ package org.pahappa.systems.kpiTracker.views.goalMgt;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.pahappa.systems.kpiTracker.core.services.GoalPeriodService;
 import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
-import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod;
 import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
@@ -13,14 +14,18 @@ import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
+import org.sers.webutils.server.shared.SharedAppData;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
-@ManagedBean(name = "organisationGoalFormDialog", eager = true)
+@ManagedBean(name = "organisationGoalFormDialog")
 @Getter
 @Setter
 @ViewPath(path = HyperLinks.ORGANISATION_GOAL_FORM_DIALOG)
@@ -28,30 +33,66 @@ import java.util.List;
 public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
 
     private static final long serialVersionUID = 1L;
-    private OrganisationGoalService organisationGoalService;
-    private UserService userService;
+    private static final Logger LOGGER = Logger.getLogger(OrganisationGoalFormDialog.class.getName());
 
+    private OrganisationGoalService organisationGoalService;
+    private GoalPeriodService goalPeriodService;
+    private UserService userService;
     private List<User> availableUsers;
+    private List<GoalPeriod> goalPeriods;
+
     private boolean edit;
+    private User owner;
+    public Date currentDate;
 
     @PostConstruct
     public void init() {
         try {
             this.organisationGoalService = ApplicationContextProvider.getBean(OrganisationGoalService.class);
             this.userService = ApplicationContextProvider.getBean(UserService.class);
+            this.goalPeriodService = ApplicationContextProvider.getBean(GoalPeriodService.class);
+            this.currentDate = new Date();// current date initialisation
+            this.goalPeriods = goalPeriodService.getAllInstances();
             this.availableUsers = this.userService.getUsers();
+            this.owner = SharedAppData.getLoggedInUser();
+            LOGGER.info("OrganisationGoalFormDialog initialized with " + goalPeriods.size() + " periods and "
+                    + availableUsers.size() + " users");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.severe("Failed to initialize OrganisationGoalFormDialog: " + e.getMessage());
         }
     }
 
     public OrganisationGoalFormDialog() {
-        super(HyperLinks.ORGANISATION_GOAL_FORM_DIALOG, 700, 500);
+        super(HyperLinks.ORGANISATION_GOAL_FORM_DIALOG, 600, 650);
     }
 
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
-        this.organisationGoalService.saveInstance(super.model);
+        try {
+            if (super.model == null) {
+                super.model = new OrganisationGoal();
+            }
+
+            // Set form values to model
+            super.model.setOwner(owner);
+            if (super.model.getEndDate() == null) {
+                super.model.setEndDate(new Date()); // Set default to current date
+            }
+
+            // Set audit fields for new records
+            if (super.model.getId() == null) {
+                super.model.setCreatedBy(SharedAppData.getLoggedInUser());
+                super.model.setDateCreated(new Date());
+                super.model.setProgress(BigDecimal.ZERO);
+                super.model.setContributionToParent(new BigDecimal("100.0"));
+                super.model.setIsActive(true);
+            }
+
+            // Save the goal
+            this.organisationGoalService.saveInstance(super.model);
+        } catch (Exception e) {
+            throw new OperationFailedException("Failed to save organisation goal: " + e.getMessage());
+        }
     }
 
     @Override
@@ -59,11 +100,11 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
         super.resetModal();
         super.model = new OrganisationGoal();
         setEdit(false);
-        // Set default values
         super.model.setProgress(BigDecimal.ZERO);
         super.model.setEvaluationTarget(new BigDecimal("100.0"));
         super.model.setContributionToParent(new BigDecimal("100.0"));
         super.model.setIsActive(true);
+        super.model.setEndDate(new Date()); // Initialize endDate here
     }
 
     @Override
@@ -71,13 +112,15 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
         super.setFormProperties();
         try {
             this.availableUsers = this.userService.getUsers();
+            this.goalPeriods = goalPeriodService.getAllInstances();
+            this.owner = SharedAppData.getLoggedInUser();
         } catch (OperationFailedException e) {
-            throw new RuntimeException(e);
+            LOGGER.severe("Failed to load form properties: " + e.getMessage());
         }
+
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
         } else {
-            // If for some reason the model is null, ensure a new one is created.
             if (super.model == null) {
                 super.model = new OrganisationGoal();
             }
@@ -85,5 +128,8 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
         }
     }
 
+    public Date getCurrentDate() {
+        return currentDate != null ? currentDate : new Date(); // Return current date if null
+    }
 
 }

@@ -35,12 +35,12 @@ public class IndividualGoalServiceImpl extends GenericServiceImpl<IndividualGoal
         Validate.hasText(goal.getOwnerName(), "Owner name is required");
         Validate.notNull(goal.getDepartment(), "Department is required");
         Validate.notNull(goal.getTeam(), "Team is required");
-        Validate.notNull(goal.getEndDate(), "End date is required");
+       // Validate.notNull(goal.getEndDate(), "End date is required");
 
         // Validate end date is not after parent goal end date
-        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
-            throw new ValidationFailedException("Individual goal end date cannot be after parent goal end date");
-        }
+//        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
+//            throw new ValidationFailedException("Individual goal end date cannot be after parent goal end date");
+//        }
 
         // Set default values
         goal.setGoalLevel(GoalLevel.INDIVIDUAL);

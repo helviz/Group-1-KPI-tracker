@@ -2,85 +2,110 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
+    <ui:define name="viewname">Organisation Goals </ui:define>
     <ui:define name="head">
         <style type="text/css">
             .capitalized {
                 text-transform: capitalize;
             }
+
+            .ui-inputgroup .ui-inputfield,
+            .ui-inputgroup .ui-calendar {
+                width: 100%;
+            }
+
+            .ui-fluid .ui-inputgroup {
+                margin-bottom: 1rem;
+            }
         </style>
     </ui:define>
+
     <ui:define name="content">
-        <title>Organisation Goal Details</title>
-        <h:form id="organisationGoalFormDialog" style="height: 500px" styleClass="card">
-            <div class="p-grid ui-fluid" style="display:flex">
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Goal Title</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputText value="#{organisationGoalFormDialog.model.title}"
-                            placeholder="e.g. Increase Market Share" required="true" />
-                    </div>
-                </div>
+        <h:form id="organisationGoalFormDialog" styleClass="card">
+            <p:growl id="messages" showDetail="true" />
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Goal Owner</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectOneMenu id="goalOwner" value="#{organisationGoalFormDialog.model.owner}"
-                            converter="userConverter" filter="true" filterMatchMode="contains"
-                            styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-                            <f:selectItem itemLabel="-- Select an Owner --" itemValue="#{null}"
-                                noSelectionOption="true" />
-                            <f:selectItems value="#{organisationGoalFormDialog.availableUsers}" var="user"
-                                itemLabel="#{user.fullName}" itemValue="#{user}" />
-                        </p:selectOneMenu>
-                    </div>
+            <div class="p-grid ui-fluid">
+                <div class="p-col-12 p-md-6">
+                    <p:outputLabel for="goalTitle" value="Goal Title *" styleClass="field-label" />
+                    <p:inputText id="goalTitle" value="#{organisationGoalFormDialog.model.title}"
+                        placeholder="e.g. Increase Market Share" required="true"
+                        requiredMessage="Goal title is required."
+                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary" />
+                    <p:message for="goalTitle" display="icon" />
                 </div>
-            </div>
-
-            <div class="ui-col-12">
-                <h5>Description</h5>
-                <div class="ui-inputgroup">
-                    <p:inputTextarea id="goalDescription" value="#{organisationGoalFormDialog.model.description}"
-                        rows="4" placeholder="Describe the goal objectives and expected outcomes..."
-                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
+                <div class="p-col-12 p-md-6">
+                    <p:outputLabel for="owner" value="Owner *" styleClass="field-label" />
+                    <p:outputLabel id="owner"
+                        value="#{organisationGoalFormDialog.owner != null ? organisationGoalFormDialog.owner.username : 'Not Assigned'}"
+                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round" />
+                    <p:message for="owner" display="icon" />
+                </div>
+                <div class="p-col-12 p-md-6">
+                    <p:outputLabel for="period" value="Period *" styleClass="field-label" />
+                    <p:selectOneMenu id="period" value="#{organisationGoalFormDialog.model.goalPeriod}"
+                        converter="goalPeriodConverter" required="true" filter="true" filterMatchMode="contains"
+                        requiredMessage="Period is required.">
+                        <f:selectItem itemLabel="Select Period" itemValue="#{null}" />
+                        <f:selectItems value="#{organisationGoalFormDialog.goalPeriods}" var="p1"
+                            itemLabel="#{p1.periodName}" itemValue="#{p1}" />
+                    </p:selectOneMenu>
+                    <p:message for="period" display="icon" />
                 </div>
             </div>
 
             <div class="p-grid ui-fluid">
-                <div class="ui-col-12 ui-md-6">
-                    <h5>End Date</h5>
-                    <div class="ui-inputgroup">
-                        <p:calendar value="#{organisationGoalFormDialog.model.endDate}" required="true" showTime="false"
-                            pattern="MM/dd/yyyy"
-                            styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
-                    </div>
-                </div>
-
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Evaluation Target (%)</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputNumber value="#{organisationGoalFormDialog.model.evaluationTarget}" minValue="0"
-                            maxValue="100" decimalPlaces="2"
-                            styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
-                    </div>
+                <div class="p-col-12">
+                    <p:outputLabel for="goalDescription" value="Description" styleClass="field-label" />
+                    <p:inputTextarea id="goalDescription" value="#{organisationGoalFormDialog.model.description}"
+                        rows="4" placeholder="Describe the goal objectives and expected outcomes..."
+                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
+                    <p:message for="goalDescription" display="icon" />
                 </div>
             </div>
 
-            <div class="ui-col-12">
-                <h5>Progress</h5>
-                <div class="text-muted text-sm">
-                    Progress is automatically calculated from child department goals and cannot be manually edited.
+            <div class="p-grid ui-fluid">
+                <div class="p-col-12 p-md-6">
+                    <p:outputLabel for="startDate" value="Start Date *" styleClass="field-label" />
+                    <p:calendar id="startDate" value="#{organisationGoalFormDialog.model.startDate}" required="true"
+                        showTime="false" pattern="MM/dd/yyyy" mindate="#{organisationGoalFormDialog.currentDate}"
+                        requiredMessage="Start date is required."
+                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary" />
+                    <p:message for="startDate" display="icon" />
+                </div>
+                <div class="p-col-12 p-md-6">
+                    <p:outputLabel for="endDate" value="End Date *" styleClass="field-label" />
+                    <p:calendar id="endDate" value="#{organisationGoalFormDialog.model.endDate}" required="true"
+                        showTime="false" pattern="MM/dd/yyyy" mindate="#{now }"
+                        min="#{organisationGoalFormDialog.model.startDate}"
+                        maxDate="#{organisationGoalFormDialog.model.goalPeriod.endDate}"
+                        requiredMessage="End date is required."
+                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary">
+                        <p:ajax event="dateSelect" update="endDate" /> <!-- Refresh when date changes -->
+                    </p:calendar>
+                    <p:message for="endDate" display="icon" />
+                </div>
+            </div>
+            <div class="p-grid ui-fluid">
+                <div class="p-col-12">
+                    <p:outputLabel value="Progress" styleClass="field-label" />
+                    <div class="text-muted text-sm">
+                        Progress is automatically calculated from child department goals and cannot be manually edited.
+                    </div>
+                    <p:outputLabel
+                        value="#{organisationGoalFormDialog.model.progress != null ? organisationGoalFormDialog.model.progress : '0'}%" />
+                    <p:progressBar
+                        value="#{organisationGoalFormDialog.model.progress != null ? organisationGoalFormDialog.model.progress.intValue() : 0}"
+                        style="width: 100%; margin-top: 0.5rem;" />
                 </div>
             </div>
 
-            <div class="field col-12 p-d-flex p-jc-end p-mt-4">
+            <div class="p-col-12 p-d-flex p-jc-end p-mt-4">
                 <p:commandButton value="Cancel" immediate="true" process="@this"
                     actionListener="#{organisationGoalFormDialog.hide}"
                     styleClass="ui-button-outlined ui-button-danger p-mr-2" />
-
                 <p:commandButton value="Save" process="@form" actionListener="#{organisationGoalFormDialog.save}"
-                    update="@form" />
+                    update="messages @form" oncomplete="PF('organisationGoalDialog').hide()" />
             </div>
-
         </h:form>
     </ui:define>
 </ui:composition>
