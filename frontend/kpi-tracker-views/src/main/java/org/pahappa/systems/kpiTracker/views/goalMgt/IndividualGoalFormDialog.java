@@ -76,7 +76,7 @@ public class IndividualGoalFormDialog extends DialogForm<IndividualGoal> {
             model.setTitle(title);
             model.setDescription(description);
             model.setOwner(owner);
-            model.setEndDate(endDate);
+            //model.setEndDate(endDate);
             model.setEvaluationTarget(evaluationTarget);
             model.setParentGoal(parentGoal);
 
@@ -129,7 +129,7 @@ public class IndividualGoalFormDialog extends DialogForm<IndividualGoal> {
             this.title = goal.getTitle();
             this.description = goal.getDescription();
             this.owner = goal.getOwner();
-            this.endDate = goal.getEndDate();
+            //this.endDate = goal.getEndDate();
             this.evaluationTarget = goal.getEvaluationTarget();
             this.parentGoal = goal.getParentGoal();
         }

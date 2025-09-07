@@ -29,13 +29,13 @@ public class DepartmentGoalServiceImpl extends GenericServiceImpl<DepartmentGoal
         Validate.hasText(goal.getTitle(), "Goal title is required");
         Validate.notNull(goal.getParentGoal(), "Parent organisation goal is required");
         Validate.hasText(goal.getDepartmentName(), "Department name is required");
-        Validate.notNull(goal.getEndDate(), "End date is required");
+        //Validate.notNull(goal.getEndDate(), "End date is required");
         Validate.notNull(goal.getOwner(), "Owner is required");
 
-        // Validate end date is not after parent goal end date
-        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
-            throw new ValidationFailedException("Department goal end date cannot be after parent goal end date");
-        }
+//        // Validate end date is not after parent goal end date
+//        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
+//            throw new ValidationFailedException("Department goal end date cannot be after parent goal end date");
+//        }
 
         // Set default values
         goal.setGoalLevel(GoalLevel.DEPARTMENT);

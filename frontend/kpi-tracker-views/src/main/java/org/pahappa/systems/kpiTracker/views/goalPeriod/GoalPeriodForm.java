@@ -36,21 +36,34 @@ public class GoalPeriodForm extends DialogForm<GoalPeriod> implements Serializab
     @PostConstruct
     public void init() {
         this.goalPeriodService = ApplicationContextProvider.getBean(GoalPeriodService.class);
-
         super.model = new GoalPeriod();
-        // Set default dates to the current time to avoid the JavaScript error
-        super.model.setStartDate(new Date());
-        super.model.setEndDate(new Date());
+        // Initialize dates as null to keep datepicker empty
+        super.model.setStartDate(null);
+        super.model.setEndDate(null);
+        System.out.println("Init - End Date: " + (super.model.getEndDate() != null ? super.model.getEndDate().toString() : "null"));
     }
 
     @Override
     public void persist() throws Exception {
+        // Validate the sum of MBO and Org Fit weights as doubles
+        double mboWeight = super.model.getBusinessGoalContribution(); // Defaults to 0.0 if not set
+        double orgFitWeight = super.model.getOrganisationalFitScore(); // Defaults to 0.0 if not set
+        double totalWeight = mboWeight + orgFitWeight;
+
+        // Use a small epsilon to handle floating-point precision
+        final double EPSILON = 0.001;
+        if (Math.abs(totalWeight - 100.0) > EPSILON && totalWeight > 100.0) {
+            UiUtils.ComposeFailure("Validation Error",
+                    String.format("The sum of MBO Weight and Org Fit Weight must not exceed 100.0%%. Current sum: %.2f%%. Please correct the values.", totalWeight));
+            throw new ValidationFailedException("The sum of MBO Weight and Org Fit Weight must not exceed 100.0%.");
+        }
+
         try {
             this.goalPeriodService.saveInstance(super.model);
+
         } catch (ValidationFailedException e) {
             UiUtils.ComposeFailure("Validation Error", e.getLocalizedMessage());
         } catch (Exception e) {
-            //LOGGER.log(Level.SEVERE, "An unexpected error occurred", e);
             UiUtils.ComposeFailure("Action Failed", e.getMessage());
         }
     }
@@ -59,9 +72,10 @@ public class GoalPeriodForm extends DialogForm<GoalPeriod> implements Serializab
     public void resetModal() {
         super.resetModal();
         super.model = new GoalPeriod();
-        // Set default dates to the current time to avoid the JavaScript error
-        super.model.setStartDate(new Date());
-        super.model.setEndDate(new Date());
+        // Keep dates null to ensure empty datepicker
+        super.model.setStartDate(null);
+        super.model.setEndDate(null);
+        System.out.println("Reset - End Date: " + (super.model.getEndDate() != null ? super.model.getEndDate().toString() : "null"));
     }
 
     @Override
@@ -70,13 +84,20 @@ public class GoalPeriodForm extends DialogForm<GoalPeriod> implements Serializab
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
         } else {
-            // If for some reason the model is null, ensure a new one is created.
             if (super.model == null) {
                 super.model = new GoalPeriod();
             }
             setEdit(false);
+            // Ensure dates are null for new forms
+            super.model.setStartDate(null);
+            super.model.setEndDate(null);
         }
     }
 
-}
+    // Debugging method to check selected date
+    public void printDate() {
+        String message = "End Date: " + (super.model.getEndDate() != null ? super.model.getEndDate().toString() : "null");
+        System.out.println(message);
 
+    }
+}

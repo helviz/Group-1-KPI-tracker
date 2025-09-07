@@ -5,41 +5,13 @@
     <div
         class="layout-sidebar #{guestPreferences.menuColor eq 'dark' ? 'layout-sidebar-dark' : ''} #{guestPreferences.menuColor eq 'gradient' ? 'layout-sidebar-dark layout-sidebar-gradient': ''}">
         <div class="sidebar-scroll-content">
-            <h:form id="sidebarProfileForm">
-                <ui:fragment rendered="#{guestPreferences.profileMode == 'inline' ? true : false}">
-                    <div class="user-profile">
-                        <a id="sidebar-profile-button" href="#">
-                            <p:graphicImage name="images/unnamed.png" style="width:80px; height: 80px;"
-                                library="california-layout" styleClass="profile-avatar" />
-                            <span class="sidebar-profile-name">#{dashboard.loggedinUser.emailAddress}</span>
-                            <span class="sidebar-profile-role">#{dashboard.loggedinUser.username}</span>
-                        </a>
-                        <ul id="sidebar-usermenu" class="usermenu">
-                            <li>
-                                <h:commandLink action="#{profileView.getViewPath}">
-                                    <i class="pi pi-fw pi-user" />
-                                    <span class="topbar-item-name">Profile</span>
-                                    <f:setPropertyActionListener target="#{profileView.model}"
-                                        value="#{dashboard.loggedinUser}" />
-                                </h:commandLink>
-                            </li>
-                        </ul>
-                    </div>
-                </ui:fragment>
-            </h:form>
+
             <h:form id="menuform">
                 <pc:menu widgetVar="CaliforniaMenuWidget">
                     <p:menuitem id="dashboard" value="Dashboard" icon="pi pi-fw pi-microsoft"
                         outcome="/pages/dashboard/Dashboard" />
 
                     <p:submenu id="goals" label="Goals and Objectives" icon="pi pi-fw pi-megaphone">
-
-                        <p:menuitem id="period" value="Create Goal Period" icon="pi pi-fw pi-hourglass"
-                            outcome="/pages/goals/goalPeriod/GoalPeriodView" />
-
-                        <p:menuitem id="Level" value="Create Goal Level" icon="pi pi-fw pi-hourglass"
-                            outcome="/pages/goals/goalLevel/GoalLevelView" />
-
                         <p:menuitem id="organisationGoals" value="Organisation Goals" icon="pi pi-fw pi-building"
                             outcome="/pages/goalMgt/OrganisationGoalView" />
 

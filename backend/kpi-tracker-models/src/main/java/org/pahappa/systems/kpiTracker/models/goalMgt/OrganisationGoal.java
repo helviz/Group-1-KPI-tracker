@@ -3,11 +3,14 @@ package org.pahappa.systems.kpiTracker.models.goalMgt;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import org.pahappa.systems.kpiTracker.constants.GoalLevel;
+import org.sers.webutils.model.security.User;
+import org.sers.webutils.server.shared.SharedAppData;
 
 @Setter
 @Entity
@@ -15,8 +18,8 @@ import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 public class OrganisationGoal extends BaseGoal {
 
     private static final long serialVersionUID = 1L;
-    // Setters
     private GoalPeriod goalPeriod;
+    private Date endDate;
     private Date startDate;
     private List<DepartmentGoal> departmentGoals;
 
@@ -45,6 +48,34 @@ public class OrganisationGoal extends BaseGoal {
     public boolean canBeParentOf(GoalLevel childLevel) {
         return childLevel == GoalLevel.DEPARTMENT;
     }
+
+
+    // Getters
+    @NotNull(message = "Goal period is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_period_id", nullable = false)
+    public GoalPeriod getGoalPeriod() {
+        return goalPeriod;
+    }
+
+    @Column(name = "start_date")
+    @Temporal(TemporalType.DATE)
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    @Future(message = "End date must be in the future")
+    @Column(name = "end_date")
+    @Temporal(TemporalType.DATE)
+    public Date getEndDate() {
+        return endDate;
+    }
+    // One-to-many relationship with DepartmentGoals
+    @OneToMany(mappedBy = "parentGoal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public List<DepartmentGoal> getDepartmentGoals() {
+        return departmentGoals;
+    }
+
 
     // Business logic methods
     public BigDecimal calculateRollupProgress() {
@@ -90,24 +121,12 @@ public class OrganisationGoal extends BaseGoal {
         return totalContribution.compareTo(new BigDecimal("100")) == 0;
     }
 
-    // Getters and Setters
-    @NotNull(message = "Goal period is required")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "goal_period_id", nullable = false)
-    public GoalPeriod getGoalPeriod() {
-        return goalPeriod;
+    @Transient
+    public boolean isValidEndDate(Date parentEndDate) {
+        if (parentEndDate == null)
+            return true;
+        return this.endDate == null || !this.endDate.after(parentEndDate);
     }
 
-    @Column(name = "start_date")
-    @Temporal(TemporalType.DATE)
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    // One-to-many relationship with DepartmentGoals
-    @OneToMany(mappedBy = "parentGoal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    public List<DepartmentGoal> getDepartmentGoals() {
-        return departmentGoals;
-    }
 
 }
