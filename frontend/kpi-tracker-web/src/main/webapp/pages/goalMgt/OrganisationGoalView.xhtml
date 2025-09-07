@@ -7,7 +7,6 @@
 
     <ui:define name="content">
         <h:form id="organisationGoalView" enctype="multipart/form-data">
-
             <!-- Dashboard Metrics Cards -->
             <div class="grid mb-4">
                 <div class="col-12 md:col-3">
@@ -53,24 +52,17 @@
                             <p:inputText id="searchOwner" value="#{organisationGoalView.searchOwner}"
                                 placeholder="Search by owner" styleClass="w-full" />
                         </div>
-                        <div class="col-12 md:col-3">
-                            <p:selectOneMenu id="searchStatus" value="#{organisationGoalView.searchStatus}"
-                                styleClass="w-full">
-                                <f:selectItem itemLabel="All Statuses" itemValue="#{null}" />
-                                <f:selectItem itemLabel="Active" itemValue="ACTIVE" />
-                                <f:selectItem itemLabel="Inactive" itemValue="INACTIVE" />
-                            </p:selectOneMenu>
-                        </div>
+
                         <div class="col-12 md:col-3">
                             <p:commandButton value="Search" icon="pi pi-search"
-                                action="#{organisationGoalView.searchGoals}" update="@form"
+                                action="#{organisationGoalView.searchGoals}" update="goalsTable :organisationGoalView"
                                 styleClass="p-button-primary w-full" />
                         </div>
                     </div>
                     <div class="grid mt-2">
                         <div class="col-12">
                             <p:commandButton value="Clear Search" icon="pi pi-times"
-                                action="#{organisationGoalView.clearSearch}" update="@form"
+                                action="#{organisationGoalView.clearSearch}" update="goalsTable :organisationGoalView"
                                 styleClass="p-button-secondary" />
                         </div>
                     </div>
@@ -84,9 +76,11 @@
                         <i class="pi pi-list"> </i> Organisation Goals
                     </h5>
                     <p:commandButton value="Create New Goal" icon="pi pi-plus"
-                        actionListener="#{organisationGoalFormDialog.show}" update="@form" styleClass="p-button-success">
-                    <f:setPropertyActionListener value="#{null}"
-                                                 target="#{organisationGoalFormDialog.model}" />
+                        actionListener="#{organisationGoalFormDialog.show}" update="@form"
+                        styleClass="p-button-success">
+                        <f:setPropertyActionListener value="#{null}" target="#{organisationGoalFormDialog.model}" />
+                        <p:ajax event="dialogReturn" listener="#{organisationGoalView.reloadFilterReset}"
+                            update="goalsTable :organisationGoalView" />
                     </p:commandButton>
 
                 </div>
@@ -122,45 +116,40 @@
                             <h:outputText value="#{goal.owner.firstName} #{goal.owner.lastName}" />
                         </p:column>
 
-<!--                        <p:column headerText="Status" sortBy="#{goal.status}">-->
-<!--                            <p:tag value="#{goal.status}"-->
-<!--                                severity="#{goal.status == 'ACTIVE' ? 'success' : 'warning'}" />-->
-<!--                        </p:column>-->
+                        <!--                        <p:column headerText="Status" sortBy="#{goal.status}">-->
+                        <!--                            <p:tag value="#{goal.status}"-->
+                        <!--                                severity="#{goal.status == 'ACTIVE' ? 'success' : 'warning'}" />-->
+                        <!--                        </p:column>-->
 
                         <p:column headerText="Actions" styleClass="text-center">
                             <div class="flex justify-content-center">
                                 <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
-                                    actionListener="#{organisationGoalFormDialog.show}" >
-                                <f:setPropertyActionListener value="#{organisationGoalView.organisationGoals}"
-                                                             target="#{organisationGoalFormDialog.model}" />
+                                    actionListener="#{organisationGoalFormDialog.show}">
+                                    <f:setPropertyActionListener value="#{goal}"
+                                        target="#{organisationGoalFormDialog.model}" />
+                                    <p:ajax event="dialogReturn" listener="#{organisationGoalView.reloadFilterReset}"
+                                        update="goalsTable :organisationGoalView" />
                                 </p:commandButton>
+
                                 <p:commandButton icon="pi pi-trash"
                                     styleClass="p-button-text p-button-danger p-button-sm"
-                                    action="#{organisationGoalView.showDeleteGoalDialog(goal)}" />
+                                    actionListener="#{organisationGoalView.deleteSelectedGoal(goal)}"
+                                    update="goalsTable :organisationGoalView">
+                                    <p:confirm header="Confirmation"
+                                        message="You are about to delete organisational goal '#{goal.title}'. Are you sure?"
+                                        icon="ui-icon-alert" />
+                                </p:commandButton>
+
                             </div>
                         </p:column>
                     </p:dataTable>
                 </div>
             </div>
 
-            <!-- Delete Confirmation Dialog -->
-            <p:dialog id="deleteGoalDialog" header="Delete Organisation Goal"
-                visible="#{organisationGoalView.showDeleteDialog}" modal="true" styleClass="w-4" closable="true">
-                <div class="p-fluid">
-                    <p>Are you sure you want to delete the goal
-                        "<strong>#{organisationGoalView.selectedGoal.title}</strong>"?
-                    </p>
-                    <p class="text-red-500">This action cannot be undone.</p>
-                </div>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Delete" action="#{organisationGoalView.deleteGoal}"
-                        styleClass="p-button-danger" />
-                    <p:commandButton value="Cancel" onclick="PF('deleteGoalDialog').hide()"
-                        styleClass="p-button-secondary" />
-                </f:facet>
-            </p:dialog>
-
+            <p:confirmDialog global="true">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+            </p:confirmDialog>
         </h:form>
 
         <!-- Include the form dialog -->

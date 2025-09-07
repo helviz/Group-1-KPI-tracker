@@ -27,10 +27,6 @@ public class OrganisationGoalView {
 
     // Data
     private List<OrganisationGoal> organisationGoals;
-    private OrganisationGoal selectedGoal;
-
-    // UI State
-    private boolean showDeleteDialog = false;
 
     // Search and Filter
     private String searchTitle = "";
@@ -52,6 +48,20 @@ public class OrganisationGoalView {
             organisationGoals = organisationGoalService.findAllActive();
         } catch (Exception e) {
             addErrorMessage("Error loading data: " + e.getMessage());
+        }
+    }
+
+    public void refreshData() {
+        loadData();
+        loadDashboardMetrics();
+    }
+
+    public void reloadFilterReset() {
+        try {
+            loadData();
+            loadDashboardMetrics();
+        } catch (Exception e) {
+            addErrorMessage("Error reloading data: " + e.getMessage());
         }
     }
 
@@ -85,21 +95,15 @@ public class OrganisationGoalView {
         loadData();
     }
 
-    public void showDeleteGoalDialog(OrganisationGoal goal) {
-        this.selectedGoal = goal;
-        this.showDeleteDialog = true;
-    }
-
-    public void deleteGoal() {
+    public void deleteSelectedGoal(OrganisationGoal goal) {
         try {
-            if (selectedGoal != null) {
-                organisationGoalService.deleteInstance(selectedGoal);
+            if (goal != null) {
+                organisationGoalService.deleteInstance(goal);
                 MessageComposer.info("Success",
-                        "Organisation goal '" + selectedGoal.getTitle() + "' has been deleted.");
-                this.showDeleteDialog = false;
-                this.selectedGoal = null;
-                loadData();
-                loadDashboardMetrics();
+                        "Organisation goal '" + goal.getTitle() + "' has been deleted.");
+                this.reloadFilterReset();
+            } else {
+                MessageComposer.error("Error", "No goal was selected for deletion.");
             }
         } catch (Exception e) {
             MessageComposer.error("Deletion Failed", e.getMessage());
@@ -116,6 +120,5 @@ public class OrganisationGoalView {
     private void addErrorMessage(String message) {
         MessageComposer.error("Error", message);
     }
-
 
 }

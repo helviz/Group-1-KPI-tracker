@@ -6,7 +6,9 @@ import org.pahappa.systems.kpiTracker.core.services.GoalPeriodService;
 import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
 import org.pahappa.systems.kpiTracker.models.goalMgt.GoalPeriod;
 import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
+import org.pahappa.systems.kpiTracker.views.goalMgt.OrganisationGoalView;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.sers.webutils.client.views.presenters.ViewPath;
 import org.sers.webutils.model.exception.OperationFailedException;
@@ -19,7 +21,6 @@ import org.sers.webutils.server.shared.SharedAppData;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -75,8 +76,11 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
 
             // Set form values to model
             super.model.setOwner(owner);
-            if (super.model.getEndDate() == null) {
-                super.model.setEndDate(new Date()); // Set default to current date
+
+            // Validate that goal period is selected (dates will be inherited from goal
+            // period)
+            if (super.model.getGoalPeriod() == null) {
+                throw new ValidationFailedException("Goal period is required");
             }
 
             // Set audit fields for new records
@@ -86,10 +90,15 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
                 super.model.setProgress(BigDecimal.ZERO);
                 super.model.setContributionToParent(new BigDecimal("100.0"));
                 super.model.setIsActive(true);
+                // Ensure goal level is set for organisation goals
+                super.model.setGoalLevel(GoalLevel.ORGANISATION);
             }
 
             // Save the goal
             this.organisationGoalService.saveInstance(super.model);
+
+            // Refresh the parent view data
+            refreshParentView();
         } catch (Exception e) {
             throw new OperationFailedException("Failed to save organisation goal: " + e.getMessage());
         }
@@ -104,7 +113,9 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
         super.model.setEvaluationTarget(new BigDecimal("100.0"));
         super.model.setContributionToParent(new BigDecimal("100.0"));
         super.model.setIsActive(true);
-        super.model.setEndDate(new Date()); // Initialize endDate here
+        // Don't set endDate here - let user select it (must be in future per @Future
+        // constraint)
+        super.model.setGoalLevel(GoalLevel.ORGANISATION); // Ensure goal level is set
     }
 
     @Override
@@ -124,12 +135,49 @@ public class OrganisationGoalFormDialog extends DialogForm<OrganisationGoal> {
             if (super.model == null) {
                 super.model = new OrganisationGoal();
             }
+            super.model.setGoalLevel(GoalLevel.ORGANISATION); // Ensure goal level is set
             setEdit(false);
         }
     }
 
     public Date getCurrentDate() {
         return currentDate != null ? currentDate : new Date(); // Return current date if null
+    }
+
+    public String getGoalPeriodStartDate() {
+        try {
+            if (super.model != null && super.model.getGoalPeriod() != null) {
+                Date startDate = super.model.getGoalPeriod().getStartDate();
+                return startDate != null ? startDate.toString() : "Not set";
+            }
+        } catch (Exception e) {
+            // Handle lazy initialization or other exceptions
+        }
+        return "Select a period";
+    }
+
+    public String getGoalPeriodEndDate() {
+        try {
+            if (super.model != null && super.model.getGoalPeriod() != null) {
+                Date endDate = super.model.getGoalPeriod().getEndDate();
+                return endDate != null ? endDate.toString() : "Not set";
+            }
+        } catch (Exception e) {
+            // Handle lazy initialization or other exceptions
+        }
+        return "Select a period";
+    }
+
+    private void refreshParentView() {
+        try {
+            // Get the OrganisationGoalView bean and refresh its data
+            OrganisationGoalView parentView = ApplicationContextProvider.getBean(OrganisationGoalView.class);
+            if (parentView != null) {
+                parentView.refreshData();
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Failed to refresh parent view: " + e.getMessage());
+        }
     }
 
 }

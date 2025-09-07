@@ -48,6 +48,7 @@
                         <f:selectItem itemLabel="Select Period" itemValue="#{null}" />
                         <f:selectItems value="#{organisationGoalFormDialog.goalPeriods}" var="p1"
                             itemLabel="#{p1.periodName}" itemValue="#{p1}" />
+                        <p:ajax event="change" update="periodStartDate periodEndDate" />
                     </p:selectOneMenu>
                     <p:message for="period" display="icon" />
                 </div>
@@ -64,25 +65,27 @@
             </div>
 
             <div class="p-grid ui-fluid">
-                <div class="p-col-12 p-md-6">
-                    <p:outputLabel for="startDate" value="Start Date *" styleClass="field-label" />
-                    <p:calendar id="startDate" value="#{organisationGoalFormDialog.model.startDate}" required="true"
-                        showTime="false" pattern="MM/dd/yyyy" mindate="#{organisationGoalFormDialog.currentDate}"
-                        requiredMessage="Start date is required."
-                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary" />
-                    <p:message for="startDate" display="icon" />
-                </div>
-                <div class="p-col-12 p-md-6">
-                    <p:outputLabel for="endDate" value="End Date *" styleClass="field-label" />
-                    <p:calendar id="endDate" value="#{organisationGoalFormDialog.model.endDate}" required="true"
-                        showTime="false" pattern="MM/dd/yyyy" mindate="#{now }"
-                        min="#{organisationGoalFormDialog.model.startDate}"
-                        maxDate="#{organisationGoalFormDialog.model.goalPeriod.endDate}"
-                        requiredMessage="End date is required."
-                        styleClass="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary">
-                        <p:ajax event="dateSelect" update="endDate" /> <!-- Refresh when date changes -->
-                    </p:calendar>
-                    <p:message for="endDate" display="icon" />
+                <div class="p-col-12">
+                    <p:outputLabel value="Date Period" styleClass="field-label" />
+                    <div class="text-muted text-sm">
+                        The date period for this goal will be inherited from the selected goal period.
+                    </div>
+                    <div class="p-d-flex p-ai-center p-mt-2">
+                        <i class="pi pi-calendar p-mr-2"></i>
+                        <span class="text-base">
+                            <strong>Start:</strong>
+                            <p:outputPanel id="periodStartDate">
+                                #{organisationGoalFormDialog.goalPeriodStartDate}
+                            </p:outputPanel>
+                        </span>
+                        <span class="p-mx-2">-</span>
+                        <span class="text-base">
+                            <strong>End:</strong>
+                            <p:outputPanel id="periodEndDate">
+                                #{organisationGoalFormDialog.goalPeriodEndDate}
+                            </p:outputPanel>
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="p-grid ui-fluid">
@@ -100,11 +103,13 @@
             </div>
 
             <div class="p-col-12 p-d-flex p-jc-end p-mt-4">
+
                 <p:commandButton value="Cancel" immediate="true" process="@this"
                     actionListener="#{organisationGoalFormDialog.hide}"
                     styleClass="ui-button-outlined ui-button-danger p-mr-2" />
+
                 <p:commandButton value="Save" process="@form" actionListener="#{organisationGoalFormDialog.save}"
-                    update="messages @form" oncomplete="PF('organisationGoalDialog').hide()" />
+                    update="@form"/>
             </div>
         </h:form>
     </ui:define>

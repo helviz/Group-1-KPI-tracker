@@ -33,12 +33,20 @@ public class OrganisationGoalServiceImpl extends GenericServiceImpl<Organisation
         Validate.notNull(goal, "Organisation goal cannot be null");
         Validate.hasText(goal.getTitle(), "Goal title is required");
         Validate.notNull(goal.getGoalPeriod(), "Goal period is required");
-        Validate.notNull(goal.getEndDate(), "End date is required");
         Validate.notNull(goal.getOwner(), "Goal owner is required");
 
-        // Validate end date is in the future
-        if (goal.getEndDate().before(new Date())) {
-            throw new ValidationFailedException("End date must be in the future");
+        // Validate that the goal period has valid dates
+        if (goal.getGoalPeriod() != null) {
+            if (goal.getGoalPeriod().getStartDate() == null) {
+                throw new ValidationFailedException("Selected goal period must have a start date");
+            }
+            if (goal.getGoalPeriod().getEndDate() == null) {
+                throw new ValidationFailedException("Selected goal period must have an end date");
+            }
+            // Validate end date is in the future
+            if (goal.getGoalPeriod().getEndDate().before(new Date())) {
+                throw new ValidationFailedException("Selected goal period end date must be in the future");
+            }
         }
 
         // Set default values
