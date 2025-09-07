@@ -73,11 +73,13 @@
                                                     </h:panelGroup>
                                                 </p:column>
 
-                                                <p:column headerText="MBO Weight(%)" style="width: 15%; text-align: center;">
+                                                <p:column headerText="MBO Weight(%)"
+                                                    style="width: 15%; text-align: center;">
                                                     <h:outputText value="#{model.businessGoalContribution}" />
                                                 </p:column>
 
-                                                <p:column headerText="Org Fit Weight(%)" style="width: 15%; text-align: center;">
+                                                <p:column headerText="Org Fit Weight(%)"
+                                                    style="width: 15%; text-align: center;">
                                                     <h:outputText value="#{model.organisationalFitScore}" />
                                                 </p:column>
 
@@ -117,8 +119,67 @@
                     </div>
                 </div>
             </p:tab>
-            <p:tab title="Goal Levels &amp; Thresholds" id="goalLevelsTab">
-                <h:outputText value="Ipsum" />
+            <p:tab title="Thresholds" id="goalLevelsTab">
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12">
+                        <h:form id="thresholdsForm">
+                            <div class="p-grid">
+                                <div class="p-col-12">
+                                    <div class="card">
+                                        <h5 style="color: #4b6cb7; text-decoration: underline;">Set Performance
+                                            Thresholds for Individuals</h5>
+                                        <p style="color: #333; margin-bottom: 20px;">Global performance score thresholds
+                                            that trigger Reward eligibility or a Performance Improvement Plan (PIP).</p>
+                                        <div
+                                            style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 10px; margin-bottom: 20px;">
+                                            <small style="color: #6c757d;">
+                                                <strong>Validation Rules:</strong> Both values must be between 0-100,
+                                                and the Reward threshold must be greater than the PIP threshold.
+                                            </small>
+                                        </div>
+
+                                        <div class="p-grid p-formgrid">
+                                            <div class="p-field p-col-12 p-md-6">
+                                                <label for="rewardThreshold" class="p-label">Reward Eligibility
+                                                    Threshold (%)</label>
+                                                <p:inputText id="rewardThreshold"
+                                                    value="#{thresholdsBean.model.rewardEligibilityThreshold}"
+                                                    styleClass="p-inputtext p-component w-full" placeholder="95"
+                                                    maxlength="3">
+                                                    <p:ajax event="blur" update="@this" />
+                                                </p:inputText>
+                                            </div>
+
+                                            <div class="p-field p-col-12 p-md-6">
+                                                <label for="pipThreshold" class="p-label">PIP Initiation Threshold
+                                                    (%)</label>
+                                                <p:inputText id="pipThreshold"
+                                                    value="#{thresholdsBean.model.pipInitiationThreshold}"
+                                                    styleClass="p-inputtext p-component w-full" placeholder="70"
+                                                    maxlength="3">
+                                                    <p:ajax event="blur" update="@this" />
+                                                </p:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-grid" style="margin-top: 20px;">
+                                            <div class="p-col-12" style="text-align: right;">
+                                                <p:commandButton value="Save" icon="pi pi-save"
+                                                    action="#{thresholdsBean.persist}"
+                                                    styleClass="ui-button ui-button-primary ui-button-sm"
+                                                    style="margin-right: 8px;" update="@form" />
+                                                <p:commandButton value="Reset" icon="pi pi-refresh"
+                                                    action="#{thresholdsBean.resetModal}"
+                                                    styleClass="ui-button ui-button-secondary ui-button-sm"
+                                                    update="@form" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
             </p:tab>
             <p:tab title="Notifications &amp; Reminders" id="notificationsTab">
                 <h:outputText value="Dolor" />

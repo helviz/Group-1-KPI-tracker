@@ -63,7 +63,7 @@
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.TeamGoal"/>
 		<mapping class="org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal"/>
-
+<mapping class="org.pahappa.systems.kpiTracker.models.settings.PerformanceThresholds"/>
 
 		
 	</session-factory>
