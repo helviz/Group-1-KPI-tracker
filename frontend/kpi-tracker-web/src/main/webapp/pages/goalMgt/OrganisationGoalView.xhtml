@@ -39,36 +39,6 @@
                 </div>
             </div>
 
-            <!-- Search and Filter Section -->
-            <div class="card mb-4">
-                <h5 class="card-header">Search &amp; Filter</h5>
-                <div class="card-body">
-                    <div class="grid">
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchTitle" value="#{organisationGoalView.searchTitle}"
-                                placeholder="Search by title" styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchOwner" value="#{organisationGoalView.searchOwner}"
-                                placeholder="Search by owner" styleClass="w-full" />
-                        </div>
-
-                        <div class="col-12 md:col-3">
-                            <p:commandButton value="Search" icon="pi pi-search"
-                                action="#{organisationGoalView.searchGoals}" update="goalsTable :organisationGoalView"
-                                styleClass="p-button-primary w-full" />
-                        </div>
-                    </div>
-                    <div class="grid mt-2">
-                        <div class="col-12">
-                            <p:commandButton value="Clear Search" icon="pi pi-times"
-                                action="#{organisationGoalView.clearSearch}" update="goalsTable :organisationGoalView"
-                                styleClass="p-button-secondary" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Goals DataTable -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
