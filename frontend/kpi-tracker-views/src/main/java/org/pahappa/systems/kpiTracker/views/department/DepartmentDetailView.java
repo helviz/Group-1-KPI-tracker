@@ -156,4 +156,14 @@ public class DepartmentDetailView {
     public boolean hasUnassignedMembers() {
         return unassignedMembers != null && !unassignedMembers.isEmpty();
     }
+
+    public String navigateToTeamDetail(Team team) {
+        if (team != null) {
+            // Store the selected team in flash scope for the detail view
+            javax.faces.context.FacesContext.getCurrentInstance()
+                    .getExternalContext().getFlash().put("selectedTeamId", team.getId());
+            return HyperLinks.TEAM_DETAIL_VIEW + "?faces-redirect=true";
+        }
+        return null;
+    }
 }
