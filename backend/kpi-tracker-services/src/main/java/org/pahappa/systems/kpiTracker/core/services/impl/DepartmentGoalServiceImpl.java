@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,13 +30,14 @@ public class DepartmentGoalServiceImpl extends GenericServiceImpl<DepartmentGoal
         Validate.hasText(goal.getTitle(), "Goal title is required");
         Validate.notNull(goal.getParentGoal(), "Parent organisation goal is required");
         Validate.hasText(goal.getDepartmentName(), "Department name is required");
-        //Validate.notNull(goal.getEndDate(), "End date is required");
+        // Validate.notNull(goal.getEndDate(), "End date is required");
         Validate.notNull(goal.getOwner(), "Owner is required");
 
-//        // Validate end date is not after parent goal end date
-//        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
-//            throw new ValidationFailedException("Department goal end date cannot be after parent goal end date");
-//        }
+        // // Validate end date is not after parent goal end date
+        // if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
+        // throw new ValidationFailedException("Department goal end date cannot be after
+        // parent goal end date");
+        // }
 
         // Set default values
         goal.setGoalLevel(GoalLevel.DEPARTMENT);
@@ -79,47 +81,18 @@ public class DepartmentGoalServiceImpl extends GenericServiceImpl<DepartmentGoal
 
     @Override
     public double calculateRollupProgress(DepartmentGoal goal) {
-        if (goal.getTeamGoals() == null || goal.getTeamGoals().isEmpty()) {
-            return goal.getProgress().doubleValue();
-        }
-
-        double totalContribution = 0.0;
-        double weightedProgress = 0.0;
-
-        for (TeamGoal teamGoal : goal.getTeamGoals()) {
-            if (teamGoal.getIsActive() && teamGoal.getContributionToParent() != null) {
-                totalContribution += teamGoal.getContributionToParent().doubleValue();
-                weightedProgress += (teamGoal.getProgress().doubleValue()
-                        * teamGoal.getContributionToParent().doubleValue() / 100.0);
-            }
-        }
-
-        // Validate total contribution equals 100%
-        if (Math.abs(totalContribution - 100.0) > 0.01) {
-            return goal.getProgress().doubleValue(); // Return current progress if validation fails
-        }
-
-        return weightedProgress;
+        // Use the business logic method from the model
+        return goal.calculateRollupProgress().doubleValue();
     }
 
     @Override
     public boolean validateChildContributions(DepartmentGoal goal) throws ValidationFailedException {
-        if (goal.getTeamGoals() == null || goal.getTeamGoals().isEmpty()) {
-            return true;
-        }
-
-        double totalContribution = 0.0;
-        for (TeamGoal teamGoal : goal.getTeamGoals()) {
-            if (teamGoal.getIsActive() && teamGoal.getContributionToParent() != null) {
-                totalContribution += teamGoal.getContributionToParent().doubleValue();
-            }
-        }
-
-        if (Math.abs(totalContribution - 100.0) > 0.01) {
+        // Use the business logic method from the model
+        boolean isValid = goal.validateTeamGoalsContribution();
+        if (!isValid) {
             throw new ValidationFailedException(
-                    "Total contribution from team goals must equal 100%. Current total: " + totalContribution + "%");
+                    "Total contribution from team goals must equal 100%");
         }
-
         return true;
     }
 
@@ -228,29 +201,44 @@ public class DepartmentGoalServiceImpl extends GenericServiceImpl<DepartmentGoal
         DashboardMetrics metrics = new DashboardMetrics();
 
         try {
-            List<DepartmentGoal> allGoals = findAll();
-            List<DepartmentGoal> activeGoals = findAllActive();
+            // Use consistent filtering - all queries should use the same criteria
+            List<DepartmentGoal> allGoals = findAllActive(); // Use findAllActive for consistency
             List<DepartmentGoal> overdueGoals = findOverdueGoals();
 
+            System.out.println("DepartmentGoalServiceImpl.getDashboardMetrics() - allGoals.size(): " + allGoals.size());
+            System.out.println(
+                    "DepartmentGoalServiceImpl.getDashboardMetrics() - overdueGoals.size(): " + overdueGoals.size());
+
             metrics.setTotalGoals(allGoals.size());
-            metrics.setActiveGoals(activeGoals.size());
             metrics.setOverdueGoals(overdueGoals.size());
 
             // Calculate completed goals and average progress
             long completedCount = 0;
+            long activeCount = 0;
             double totalProgress = 0.0;
 
             for (DepartmentGoal goal : allGoals) {
                 if (goal.getProgress().compareTo(new java.math.BigDecimal("100.0")) >= 0) {
                     completedCount++;
+                } else {
+                    activeCount++;
                 }
                 totalProgress += goal.getProgress().doubleValue();
             }
 
             metrics.setCompletedGoals(completedCount);
+            metrics.setActiveGoals(activeCount); // Update with actual active count (non-completed)
             metrics.setAverageProgress(allGoals.isEmpty() ? 0.0 : totalProgress / allGoals.size());
 
+            System.out.println("DepartmentGoalServiceImpl.getDashboardMetrics() - Final metrics: " +
+                    "Total=" + metrics.getTotalGoals() +
+                    ", Active=" + metrics.getActiveGoals() +
+                    ", Completed=" + metrics.getCompletedGoals() +
+                    ", Overdue=" + metrics.getOverdueGoals());
+
         } catch (Exception e) {
+            System.out.println("DepartmentGoalServiceImpl.getDashboardMetrics() - Exception: " + e.getMessage());
+            e.printStackTrace();
             // Log error but return default metrics
             metrics.setTotalGoals(0);
             metrics.setActiveGoals(0);
@@ -269,6 +257,15 @@ public class DepartmentGoalServiceImpl extends GenericServiceImpl<DepartmentGoal
             return false; // Cannot delete if it has child goals
         }
         return true;
+    }
+
+    @Override
+    public boolean validateEndDate(DepartmentGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Department goal cannot be null");
+        if (goal.getParentGoal() == null || goal.getParentGoal().getEndDate() == null) {
+            return true;
+        }
+        return goal.getEndDate() == null || !goal.getEndDate().after(goal.getParentGoal().getEndDate());
     }
 
     /**

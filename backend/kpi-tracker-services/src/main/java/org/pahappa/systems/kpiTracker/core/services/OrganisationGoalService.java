@@ -6,6 +6,7 @@ import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.exception.OperationFailedException;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface OrganisationGoalService extends GenericService<OrganisationGoal> {
@@ -61,6 +62,11 @@ public interface OrganisationGoalService extends GenericService<OrganisationGoal
      * Count active organisation goals
      */
     long countActiveGoals() throws ValidationFailedException;
+
+    /**
+     * Validate end date against parent goal
+     */
+    boolean validateEndDate(OrganisationGoal goal, Date parentEndDate) throws ValidationFailedException;
 
     /**
      * Get dashboard metrics for organisation goals

@@ -197,4 +197,14 @@ public class OrganisationGoalServiceImpl extends GenericServiceImpl<Organisation
         return metrics;
     }
 
+    @Override
+    public boolean validateEndDate(OrganisationGoal goal, Date parentEndDate) throws ValidationFailedException {
+        Validate.notNull(goal, "Organisation goal cannot be null");
+        if (parentEndDate == null) {
+            return true;
+        }
+        Date goalEndDate = goal.getEndDate(); // Use the getter method which gets date from goal period
+        return goalEndDate == null || !goalEndDate.after(parentEndDate);
+    }
+
 }

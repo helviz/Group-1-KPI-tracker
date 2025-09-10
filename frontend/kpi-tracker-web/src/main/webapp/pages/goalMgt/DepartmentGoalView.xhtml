@@ -35,51 +35,20 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Search and Filter Section -->
-            <div class="card mb-4">
-                <h5 class="card-header">Search &amp; Filter</h5>
-                <div class="card-body">
-                    <div class="grid">
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchTitle" value="#{departmentGoalView.searchTitle}"
-                                placeholder="Search by title" styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchDepartment" value="#{departmentGoalView.searchDepartment}"
-                                placeholder="Search by department" styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchOwner" value="#{departmentGoalView.searchOwner}"
-                                placeholder="Search by owner" styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:selectOneMenu id="searchStatus" value="#{departmentGoalView.searchStatus}"
-                                styleClass="w-full">
-                                <f:selectItem itemLabel="All Statuses" itemValue="" />
-                                <f:selectItems value="#{departmentGoalView.statusOptions}" />
-                            </p:selectOneMenu>
-                        </div>
-                    </div>
-                    <div class="flex justify-content-end mt-3">
-                        <p:commandButton value="Search" action="#{departmentGoalView.searchGoals}"
-                            styleClass="p-button-primary mr-2" />
-                        <p:commandButton value="Clear" action="#{departmentGoalView.clearSearch}"
-                            styleClass="p-button-secondary" />
-                    </div>
-                </div>
-            </div>
-
             <!-- Goals DataTable -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Department Goals</h5>
-                    <p:commandButton value="Create New Goal" action="#{departmentGoalFormDialog.show}"
-                        styleClass="p-button-primary" />
+                    <p:commandButton value="Create New Goal" actionListener="#{departmentGoalFormDialog.show}"
+                        styleClass="p-button-primary">
+                        <f:setPropertyActionListener value="#{null}" target="#{departmentGoalFormDialog.model}" />
+                        <p:ajax event="dialogReturn" listener="#{departmentGoalView.reloadFilterReset}"
+                            update="goalsTable :departmentGoalView" />
+                    </p:commandButton>
                 </div>
                 <div class="card-body">
-                    <p:dataTable id="goalsTable" value="#{departmentGoalView.departmentGoals}" var="goal"
-                        paginator="true" rows="10" styleClass="w-full"
+                    <p:dataTable id="goalsTable" value="#{departmentGoalView.dataModels}" var="goal" paginator="true"
+                        rows="10" styleClass="w-full"
                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         rowsPerPageTemplate="5,10,20,50">
 
@@ -92,61 +61,56 @@
                         </p:column>
 
                         <p:column headerText="Parent Goal" sortBy="#{goal.parentGoal.title}">
-                            <h:outputText value="#{goal.parentGoal.title}" />
+                            <h:outputText value="#{goal.parentGoal != null ? goal.parentGoal.title : 'N/A'}" />
                         </p:column>
 
                         <p:column headerText="Progress" sortBy="#{goal.progress}">
                             <div class="flex align-items-center">
                                 <p:progressBar value="#{goal.progress}" styleClass="flex-1 mr-2" />
                                 <span class="text-sm">#{goal.progress}%</span>
-                                <div class="text-xs text-muted">(Auto-calculated from child goals)</div>
                             </div>
                         </p:column>
 
-                        <p:column headerText="End Date" sortBy="#{goal.endDate}">
-                            <h:outputText value="#{goal.endDate}">
+                        <p:column headerText="End Date" sortBy="#{goal.parentGoal.endDate}">
+                            <h:outputText value="#{goal.parentGoal != null ? goal.parentGoal.endDate : 'N/A'}">
                                 <f:convertDateTime pattern="MMM dd, yyyy" />
                             </h:outputText>
                         </p:column>
 
                         <p:column headerText="Owner" sortBy="#{goal.owner.firstName}">
-                            <h:outputText value="#{goal.owner.firstName} #{goal.owner.lastName}" />
+                            <h:outputText
+                                value="#{goal.owner != null ? goal.owner.firstName.concat(' ').concat(goal.owner.lastName) : 'N/A'}" />
                         </p:column>
 
                         <p:column headerText="Actions" styleClass="text-center">
                             <div class="flex justify-content-center">
-                                <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
-                                    action="#{departmentGoalFormDialog.show}"
-                                    actionListener="#{departmentGoalFormDialog.loadGoal(goal)}" />
-                                <p:commandButton icon="pi pi-trash"
+                                <p:commandButton icon="pi pi-pencil" title=" edit "
+                                    styleClass="p-button-text p-button-sm mr-1"
+                                    actionListener="#{departmentGoalFormDialog.show}">
+                                    <f:setPropertyActionListener value="#{goal}"
+                                        target="#{departmentGoalFormDialog.model}" />
+                                    <p:ajax event="dialogReturn" listener="#{departmentGoalView.reloadFilterReset()}"
+                                        update="goalsTable :departmentGoalView" />
+                                </p:commandButton>
+                                <p:commandButton icon="pi pi-trash" title="Delete"
                                     styleClass="p-button-text p-button-danger p-button-sm"
-                                    action="#{departmentGoalView.showDeleteGoalDialog(goal)}" />
+                                    actionListener="#{departmentGoalView.deleteDepartmentGoal(goal)}"
+                                    update="goalsTable :departmentGoalView">
+                                    <p:confirm header="Confirmation"
+                                        message="You are about to delete department goal '#{goal.title}'. Are you sure?"
+                                        icon="ui-icon-alert" />
+                                </p:commandButton>
                             </div>
                         </p:column>
                     </p:dataTable>
                 </div>
             </div>
-
-            <!-- Delete Confirmation Dialog -->
-            <p:dialog id="deleteGoalDialog" header="Delete Department Goal"
-                visible="#{departmentGoalView.showDeleteDialog}" modal="true" styleClass="w-4" closable="true">
-                <div class="p-fluid">
-                    <p>Are you sure you want to delete the goal
-                        "<strong>#{departmentGoalView.selectedGoal.title}</strong>"?
-                    </p>
-                    <p class="text-red-500">This action cannot be undone.</p>
-                </div>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Delete" action="#{departmentGoalView.deleteGoal}"
-                        styleClass="p-button-danger" />
-                    <p:commandButton value="Cancel" onclick="PF('deleteGoalDialog').hide()"
-                        styleClass="p-button-secondary" />
-                </f:facet>
-            </p:dialog>
-
         </h:form>
-
+        <!-- Delete Confirmation Dialog -->
+        <p:confirmDialog global="true">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+        </p:confirmDialog>
         <!-- Include the form dialog -->
         <ui:include src="/pages/goalMgt/DepartmentGoalFormDialog.xhtml" />
     </ui:define>

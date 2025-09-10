@@ -80,6 +80,21 @@ public interface IndividualGoalService extends GenericService<IndividualGoal> {
     long countActiveGoals() throws ValidationFailedException;
 
     /**
+     * Update owner name from owner details
+     */
+    void updateOwnerName(IndividualGoal goal) throws ValidationFailedException;
+
+    /**
+     * Update department and team information from owner
+     */
+    void updateDepartmentAndTeam(IndividualGoal goal) throws ValidationFailedException;
+
+    /**
+     * Validate end date against parent goal
+     */
+    boolean validateEndDate(IndividualGoal goal) throws ValidationFailedException;
+
+    /**
      * Find individual goals with low progress
      */
     List<IndividualGoal> findGoalsWithLowProgress(double threshold) throws ValidationFailedException;

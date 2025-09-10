@@ -10,31 +10,26 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import org.pahappa.systems.kpiTracker.constants.GoalLevel;
+
 @Setter
 @MappedSuperclass
 public abstract class BaseGoal extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-
     private String title;
 
     private String description;
 
-
-
+    private Date endDate;
 
     private BigDecimal progress = BigDecimal.ZERO;
 
-
     private BigDecimal contributionToParent = BigDecimal.ZERO;
-
 
     private BigDecimal evaluationTarget = new BigDecimal("100.0");
 
-
     private User owner;
-
 
     private GoalLevel goalLevel;
 
@@ -72,7 +67,6 @@ public abstract class BaseGoal extends BaseEntity {
 
     // Validation methods
 
-
     @Transient
     public boolean isValidContribution() {
         return this.contributionToParent != null &&
@@ -93,6 +87,10 @@ public abstract class BaseGoal extends BaseEntity {
         return description;
     }
 
+    @Column(name = "end_date")
+    public Date getEndDate() {
+        return endDate;
+    }
 
     @DecimalMin(value = "0.0", message = "Progress cannot be negative")
     @DecimalMax(value = "100.0", message = "Progress cannot exceed 100%")
@@ -108,7 +106,6 @@ public abstract class BaseGoal extends BaseEntity {
         return contributionToParent;
     }
 
-
     @NotNull(message = "Evaluation target is required")
     @DecimalMin(value = "0.0", message = "Evaluation target cannot be negative")
     @Column(name = "evaluation_target", precision = 5, scale = 2, nullable = false)
@@ -122,18 +119,14 @@ public abstract class BaseGoal extends BaseEntity {
         return owner;
     }
 
-
-
     @Enumerated(EnumType.STRING)
     @Column(name = "goal_level", nullable = false)
     public GoalLevel getGoalLevel() {
         return goalLevel;
     }
 
-
     public Boolean getIsActive() {
         return isActive;
     }
-
 
 }

@@ -97,7 +97,7 @@
 
                                         <p:column headerText="Action" width="140" exportable="false"
                                             style="text-align: center">
-                                            <p:commandButton process="@this" icon="fa fa-edit" immediate="true"
+                                            <p:commandButton process="@this" icon="fa fa-edit" title="edit" immediate="true"
                                                 rendered="true" actionListener="#{departmentFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
                                                     target="#{departmentFormDialog.model}" />

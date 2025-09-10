@@ -8,81 +8,62 @@
     <ui:define name="content">
         <h:form id="teamGoalView" enctype="multipart/form-data">
 
-            <!-- Dashboard Metrics Cards -->
+            <!-- Dashboard Metrics -->
             <div class="grid mb-4">
                 <div class="col-12 md:col-3">
                     <div class="metric-card">
                         <div class="text-xl font-bold mb-2">Total Goals</div>
-                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.totalGoals}</div>
+                        <div class="text-3xl font-bold">
+                            #{teamGoalView.dashboardMetrics != null ? teamGoalView.dashboardMetrics.totalGoals : 0}
+                        </div>
                     </div>
                 </div>
                 <div class="col-12 md:col-3">
                     <div class="metric-card">
                         <div class="text-xl font-bold mb-2">Active Goals</div>
-                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.activeGoals}</div>
+                        <div class="text-3xl font-bold">
+                            #{teamGoalView.dashboardMetrics != null ? teamGoalView.dashboardMetrics.activeGoals : 0}
+                        </div>
                     </div>
                 </div>
                 <div class="col-12 md:col-3">
                     <div class="metric-card">
                         <div class="text-xl font-bold mb-2">Completed Goals</div>
-                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.completedGoals}</div>
+                        <div class="text-3xl font-bold">
+                            #{teamGoalView.dashboardMetrics != null ? teamGoalView.dashboardMetrics.completedGoals : 0}
+                        </div>
                     </div>
                 </div>
                 <div class="col-12 md:col-3">
                     <div class="metric-card">
                         <div class="text-xl font-bold mb-2">Overdue Goals</div>
-                        <div class="text-3xl font-bold">#{teamGoalView.dashboardMetrics.overdueGoals}</div>
+                        <div class="text-3xl font-bold">
+                            #{teamGoalView.dashboardMetrics != null ? teamGoalView.dashboardMetrics.overdueGoals : 0}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Search and Filter Section -->
-            <div class="card mb-4">
-                <h5 class="card-header">Search &amp; Filter</h5>
-                <div class="card-body">
-                    <div class="grid">
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchTitle" value="#{teamGoalView.searchTitle}"
-                                placeholder="Search by title" styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchTeam" value="#{teamGoalView.searchTeam}" placeholder="Search by team"
-                                styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:inputText id="searchOwner" value="#{teamGoalView.searchOwner}"
-                                placeholder="Search by owner" styleClass="w-full" />
-                        </div>
-                        <div class="col-12 md:col-3">
-                            <p:selectOneMenu id="searchStatus" value="#{teamGoalView.searchStatus}" styleClass="w-full">
-                                <f:selectItem itemLabel="All Statuses" itemValue="" />
-                                <f:selectItems value="#{teamGoalView.statusOptions}" />
-                            </p:selectOneMenu>
-                        </div>
-                    </div>
-                    <div class="flex justify-content-end mt-3">
-                        <p:commandButton value="Search" action="#{teamGoalView.searchGoals}"
-                            styleClass="p-button-primary mr-2" />
-                        <p:commandButton value="Clear" action="#{teamGoalView.clearSearch}"
-                            styleClass="p-button-secondary" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Goals DataTable -->
+            <!-- Goals Table -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Team Goals</h5>
-                    <p:commandButton value="Create New Goal" action="#{teamGoalFormDialog.show}"
-                        styleClass="p-button-primary" />
+                    <p:commandButton value="Create New Goal" actionListener="#{teamGoalFormDialog.show}" update="@form"
+                        styleClass="p-button-primary">
+                        <f:setPropertyActionListener value="#{null}" target="#{teamGoalFormDialog.model}" />
+                        <p:ajax event="dialogReturn" actionListener="#{teamGoalView.reloadFilterReset}"
+                            update="goalsTable :teamGoalView" />
+                    </p:commandButton>
                 </div>
+
                 <div class="card-body">
                     <p:dataTable id="goalsTable" value="#{teamGoalView.teamGoals}" var="goal" paginator="true" rows="10"
-                        styleClass="w-full"
+                        styleClass="w-full" paginatorPosition="bottom"
                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         rowsPerPageTemplate="5,10,20,50">
 
-                        <p:column headerText="Title" sortBy="#{goal.title}">
+                        <p:column headerText="Title" sortBy="#{goal.title}" filterBy="#{goal.title}"
+                            filterMatchMode="contains">
                             <h:outputText value="#{goal.title}" />
                         </p:column>
 
@@ -91,58 +72,59 @@
                         </p:column>
 
                         <p:column headerText="Parent Goal" sortBy="#{goal.parentGoal.title}">
-                            <h:outputText value="#{goal.parentGoal.title}" />
+                            <h:outputText value="#{goal.parentGoal != null ? goal.parentGoal.title : 'N/A'}" />
                         </p:column>
 
                         <p:column headerText="Progress" sortBy="#{goal.progress}">
                             <div class="flex align-items-center">
                                 <p:progressBar value="#{goal.progress}" styleClass="flex-1 mr-2" />
                                 <span class="text-sm">#{goal.progress}%</span>
-                                <div class="text-xs text-muted">(Auto-calculated from child goals)</div>
                             </div>
                         </p:column>
 
-                        <p:column headerText="End Date" sortBy="#{goal.endDate}">
-                            <h:outputText value="#{goal.endDate}">
+                        <p:column headerText="End Date" sortBy="#{goal.parentGoal.endDate}">
+                            <h:outputText value="#{goal.parentGoal != null ? goal.parentGoal.endDate : 'N/A'}">
                                 <f:convertDateTime pattern="MMM dd, yyyy" />
                             </h:outputText>
                         </p:column>
 
                         <p:column headerText="Owner" sortBy="#{goal.owner.firstName}">
-                            <h:outputText value="#{goal.owner.firstName} #{goal.owner.lastName}" />
+                            <h:outputText
+                                value="#{goal.owner != null ? goal.owner.firstName.concat(' ').concat(goal.owner.lastName) : 'N/A'}" />
                         </p:column>
 
                         <p:column headerText="Actions" styleClass="text-center">
                             <div class="flex justify-content-center">
-                                <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
-                                    action="#{teamGoalFormDialog.show}"
-                                    actionListener="#{teamGoalFormDialog.loadGoal(goal)}" />
-                                <p:commandButton icon="pi pi-trash"
-                                    styleClass="p-button-text p-button-danger p-button-sm"
-                                    action="#{teamGoalView.showDeleteGoalDialog(goal)}" />
+                                <!-- Edit -->
+                                <p:commandButton icon="pi pi-pencil" title="Edit"
+                                    styleClass="p-button-text p-button-sm mr-1"
+                                    actionListener="#{teamGoalFormDialog.show}">
+                                    <f:setPropertyActionListener value="#{goal}" target="#{teamGoalFormDialog.model}" />
+                                    <p:ajax event="dialogReturn" actionListener="#{teamGoalView.reloadFilterReset}"
+                                        update="goalsTable :teamGoalView" />
+                                </p:commandButton>
+
+                                <!-- Delete -->
+                                <p:commandButton icon="pi pi-trash" title="Delete"
+                                    actionListener="#{teamGoalView.deleteTeamGoal(goal)}"
+                                    update="goalsTable :teamGoalView"
+                                    styleClass="p-button-text p-button-danger p-button-sm">
+                                    <p:confirm header="Confirmation"
+                                        message="You are about to delete Team Goal '#{goal.title}'. Are you sure?"
+                                        icon="ui-icon-alert" />
+                                </p:commandButton>
                             </div>
                         </p:column>
                     </p:dataTable>
                 </div>
             </div>
-
-            <!-- Delete Confirmation Dialog -->
-            <p:dialog id="deleteGoalDialog" header="Delete Team Goal" visible="#{teamGoalView.showDeleteDialog}"
-                modal="true" styleClass="w-4" closable="true">
-                <div class="p-fluid">
-                    <p>Are you sure you want to delete the goal "<strong>#{teamGoalView.selectedGoal.title}</strong>"?
-                    </p>
-                    <p class="text-red-500">This action cannot be undone.</p>
-                </div>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Delete" action="#{teamGoalView.deleteGoal}" styleClass="p-button-danger" />
-                    <p:commandButton value="Cancel" onclick="PF('deleteGoalDialog').hide()"
-                        styleClass="p-button-secondary" />
-                </f:facet>
-            </p:dialog>
-
         </h:form>
+
+        <!-- Delete Confirmation Dialog -->
+        <p:confirmDialog global="true">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
+        </p:confirmDialog>
 
         <!-- Include the form dialog -->
         <ui:include src="/pages/goalMgt/TeamGoalFormDialog.xhtml" />

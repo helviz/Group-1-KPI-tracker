@@ -3,66 +3,102 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
 
+    <!-- Custom Styles -->
     <ui:define name="head">
-        <style type="text/css">
+        <style>
             .capitalized {
                 text-transform: capitalize;
+            }
+
+            .card {
+                background: #fff;
+                padding: 1rem;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-container {
+                margin-top: 1rem;
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 2rem;
+            }
+
+            .ui-selectmanymenu {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .error {
+                color: #d32f2f;
+                font-size: 0.9rem;
+                margin-top: 0.25rem;
             }
         </style>
     </ui:define>
 
+    <!-- Dialog Content -->
     <ui:define name="content">
         <title>Team Goal Details</title>
-        <h:form id="teamGoalFormDialog" style="height: 500px" styleClass="card">
 
+        <h:form id="teamGoalFormDialog" styleClass="card">
+
+            <!-- Goal Title -->
             <div class="p-grid ui-fluid">
                 <div class="ui-col-12">
                     <h5>Goal Title</h5>
                     <div class="ui-inputgroup">
-                        <p:inputText value="#{teamGoalFormDialog.model.title}"
-                            placeholder="e.g. Improve Team Collaboration" required="true" styleClass="w-full" />
+                        <p:inputText id="goalTitle" value="#{teamGoalFormDialog.model.title}"
+                            placeholder="e.g. Improve Team Collaboration" required="true" style="width:100%">
+                            <f:validateLength minimum="2" maximum="255" />
+                        </p:inputText>
                     </div>
+                    <p:message for="goalTitle" display="icon" />
                 </div>
             </div>
 
+            <!-- Description -->
             <div class="p-grid ui-fluid">
                 <div class="ui-col-12">
                     <h5>Description</h5>
                     <div class="ui-inputgroup">
-                        <p:inputTextarea value="#{teamGoalFormDialog.model.description}" rows="4"
-                            placeholder="Describe the goal in detail..." styleClass="w-full" />
+                        <p:inputTextarea id="description" value="#{teamGoalFormDialog.model.description}"
+                            placeholder="Describe the goal in detail..." style="width:100%" />
                     </div>
                 </div>
             </div>
+
 
             <div class="p-grid ui-fluid">
                 <div class="ui-col-12 ui-md-6">
                     <h5>Parent Department Goal</h5>
                     <div class="ui-inputgroup">
-                        <p:selectOneMenu value="#{teamGoalFormDialog.model.parentGoal}" required="true"
+                        <p:selectOneMenu id="parentGoal" value="#{teamGoalFormDialog.model.parentGoal}" required="true"
+                            requiredMessage="Parent goal is required" converter="departmentGoalConverter"
                             styleClass="w-full">
+
                             <f:selectItem itemLabel="-- Select Parent Goal --" itemValue="#{null}"
                                 noSelectionOption="true" />
                             <f:selectItems value="#{teamGoalFormDialog.departmentGoals}" var="deptGoal"
                                 itemLabel="#{deptGoal.title}" itemValue="#{deptGoal}" />
                         </p:selectOneMenu>
                     </div>
+                    <p:message for="parentGoal" display="icon" />
                 </div>
 
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Team Name</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputText value="#{teamGoalFormDialog.model.teamName}" placeholder="e.g. Sales Team A"
-                            required="true" styleClass="w-full" />
-                    </div>
-                </div>
-            </div>
 
-            <div class="p-grid ui-fluid">
-                <div class="ui-col-12 ui-md-6">
-                    <h5>End Date</h5>
-                    <div class="ui-inputgroup">
-                        <p:calendar value="#{teamGoalFormDialog.model.endDate}" required="true" styleClass="w-full" />
+
+                <!-- End Date and Goal Owner -->
+                <div class="p-grid ui-fluid">
+                    <div class="ui-col-12 ui-md-6">
+                        <h5>Team Name</h5>
+                        <div class="ui-inputgroup">
+                            <p:inputText value="#{teamGoalFormDialog.model.teamName}" placeholder="e.g. Sales Team A"
+                                required="true" styleClass="w-full" />
+                        </div>
                     </div>
                 </div>
 
@@ -79,27 +115,7 @@
                 </div>
             </div>
 
-            <div class="p-grid ui-fluid">
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Progress (%)</h5>
-                    <div class="ui-inputgroup">
-                        <p:inputNumber value="#{teamGoalFormDialog.model.progress}" minValue="0" maxValue="100"
-                            styleClass="w-full" />
-                    </div>
-                </div>
-
-                <div class="ui-col-12 ui-md-6">
-                    <h5>Status</h5>
-                    <div class="ui-inputgroup">
-                        <p:selectOneMenu value="#{teamGoalFormDialog.model.status}" required="true" styleClass="w-full">
-                            <f:selectItem itemLabel="Active" itemValue="ACTIVE" />
-                            <f:selectItem itemLabel="Inactive" itemValue="INACTIVE" />
-                            <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
-                        </p:selectOneMenu>
-                    </div>
-                </div>
-            </div>
-
+            <!-- Action Buttons -->
             <div class="field col-12 p-d-flex p-jc-end p-mt-4">
                 <p:commandButton value="Cancel" immediate="true" process="@this"
                     actionListener="#{teamGoalFormDialog.hide}"

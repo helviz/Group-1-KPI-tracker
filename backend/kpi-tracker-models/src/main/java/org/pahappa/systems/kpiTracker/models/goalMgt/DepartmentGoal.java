@@ -89,12 +89,13 @@ public class DepartmentGoal extends BaseGoal {
         return totalContribution.compareTo(new BigDecimal("100")) == 0;
     }
 
-//    public boolean validateEndDate() {
-//        if (parentGoal == null || parentGoal.getEndDate() == null) {
-//            return true;
-//        }
-//        return this.getEndDate() == null || !this.getEndDate().after(parentGoal.getEndDate());
-//    }
+    // public boolean validateEndDate() {
+    // if (parentGoal == null || parentGoal.getEndDate() == null) {
+    // return true;
+    // }
+    // return this.getEndDate() == null ||
+    // !this.getEndDate().after(parentGoal.getEndDate());
+    // }
 
     // Getters
     @NotNull(message = "Parent organisation goal is required")

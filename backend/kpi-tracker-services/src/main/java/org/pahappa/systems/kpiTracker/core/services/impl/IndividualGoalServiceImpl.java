@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,12 +36,13 @@ public class IndividualGoalServiceImpl extends GenericServiceImpl<IndividualGoal
         Validate.hasText(goal.getOwnerName(), "Owner name is required");
         Validate.notNull(goal.getDepartment(), "Department is required");
         Validate.notNull(goal.getTeam(), "Team is required");
-       // Validate.notNull(goal.getEndDate(), "End date is required");
+        // Validate.notNull(goal.getEndDate(), "End date is required");
 
         // Validate end date is not after parent goal end date
-//        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
-//            throw new ValidationFailedException("Individual goal end date cannot be after parent goal end date");
-//        }
+        // if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
+        // throw new ValidationFailedException("Individual goal end date cannot be after
+        // parent goal end date");
+        // }
 
         // Set default values
         goal.setGoalLevel(GoalLevel.INDIVIDUAL);
@@ -223,26 +225,29 @@ public class IndividualGoalServiceImpl extends GenericServiceImpl<IndividualGoal
         DashboardMetrics metrics = new DashboardMetrics();
 
         try {
-            List<IndividualGoal> allGoals = findAll();
-            List<IndividualGoal> activeGoals = findAllActive();
+            // Use consistent filtering - all queries should use the same criteria
+            List<IndividualGoal> allGoals = findAllActive(); // Use findAllActive for consistency
             List<IndividualGoal> overdueGoals = findOverdueGoals();
 
             metrics.setTotalGoals(allGoals.size());
-            metrics.setActiveGoals(activeGoals.size());
             metrics.setOverdueGoals(overdueGoals.size());
 
             // Calculate completed goals and average progress
             long completedCount = 0;
+            long activeCount = 0;
             double totalProgress = 0.0;
 
             for (IndividualGoal goal : allGoals) {
                 if (goal.getProgress().compareTo(new java.math.BigDecimal("100.0")) >= 0) {
                     completedCount++;
+                } else {
+                    activeCount++;
                 }
                 totalProgress += goal.getProgress().doubleValue();
             }
 
             metrics.setCompletedGoals(completedCount);
+            metrics.setActiveGoals(activeCount); // Update with actual active count (non-completed)
             metrics.setAverageProgress(allGoals.isEmpty() ? 0.0 : totalProgress / allGoals.size());
 
         } catch (Exception e) {
@@ -261,6 +266,40 @@ public class IndividualGoalServiceImpl extends GenericServiceImpl<IndividualGoal
     public boolean isDeletable(IndividualGoal instance) throws OperationFailedException {
         // Individual goals are leaf nodes, so they can always be deleted
         return true;
+    }
+
+    /**
+     * Update owner name from owner details
+     */
+    public void updateOwnerName(IndividualGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Individual goal cannot be null");
+        if (goal.getOwner() != null) {
+            String ownerName = goal.getOwner().getFirstName() + " " + goal.getOwner().getLastName();
+            goal.setOwnerName(ownerName);
+        }
+    }
+
+    /**
+     * Update department and team information from owner
+     */
+    public void updateDepartmentAndTeam(IndividualGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Individual goal cannot be null");
+        if (goal.getOwner() != null) {
+            // This would typically be set when the goal is created or updated
+            // based on the owner's current department and team assignments
+            // Implementation would depend on how department and team are linked to users
+        }
+    }
+
+    /**
+     * Validate end date against parent goal
+     */
+    public boolean validateEndDate(IndividualGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Individual goal cannot be null");
+        if (goal.getParentGoal() == null || goal.getParentGoal().getEndDate() == null) {
+            return true;
+        }
+        return goal.getEndDate() == null || !goal.getEndDate().after(goal.getParentGoal().getEndDate());
     }
 
     /**

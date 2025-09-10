@@ -16,6 +16,18 @@
 		<param-value>Production</param-value>
 	</context-param>
 
+	<!-- JSF Flash Scope Configuration - Disabled to prevent cookie errors -->
+	<context-param>
+		<param-name>javax.faces.FLASH_SCOPE_DISABLED</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<!-- JSF Cookie Configuration -->
+	<context-param>
+		<param-name>javax.faces.COOKIE_MAX_AGE</param-name>
+		<param-value>3600</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
 		<param-value>california-#{guestPreferences.theme}</param-value>

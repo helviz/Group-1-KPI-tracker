@@ -60,6 +60,11 @@ public interface DepartmentGoalService extends GenericService<DepartmentGoal> {
     List<DepartmentGoal> findOverdueGoals() throws ValidationFailedException;
 
     /**
+     * Validate end date against parent goal
+     */
+    boolean validateEndDate(DepartmentGoal goal) throws ValidationFailedException;
+
+    /**
      * Find department goals by title
      */
     List<DepartmentGoal> findByTitleContaining(String title) throws ValidationFailedException;

@@ -70,6 +70,11 @@ public interface TeamGoalService extends GenericService<TeamGoal> {
     long countActiveGoals() throws ValidationFailedException;
 
     /**
+     * Validate end date against parent goal
+     */
+    boolean validateEndDate(TeamGoal goal) throws ValidationFailedException;
+
+    /**
      * Find team goals with low progress
      */
     List<TeamGoal> findGoalsWithLowProgress(double threshold) throws ValidationFailedException;

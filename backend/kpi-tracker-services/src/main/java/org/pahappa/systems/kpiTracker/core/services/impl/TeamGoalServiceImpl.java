@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,13 +30,14 @@ public class TeamGoalServiceImpl extends GenericServiceImpl<TeamGoal> implements
         Validate.hasText(goal.getTitle(), "Goal title is required");
         Validate.notNull(goal.getParentGoal(), "Parent department goal is required");
         Validate.hasText(goal.getTeamName(), "Team name is required");
-        //Validate.notNull(goal.getEndDate(), "End date is required");
+        // Validate.notNull(goal.getEndDate(), "End date is required");
         Validate.notNull(goal.getOwner(), "Owner is required");
 
         // Validate end date is not after parent goal end date
-//        if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
-//            throw new ValidationFailedException("Team goal end date cannot be after parent goal end date");
-//        }
+        // if (goal.getEndDate().after(goal.getParentGoal().getEndDate())) {
+        // throw new ValidationFailedException("Team goal end date cannot be after
+        // parent goal end date");
+        // }
 
         // Set default values
         goal.setGoalLevel(GoalLevel.TEAM);
@@ -223,26 +225,29 @@ public class TeamGoalServiceImpl extends GenericServiceImpl<TeamGoal> implements
         DashboardMetrics metrics = new DashboardMetrics();
 
         try {
-            List<TeamGoal> allGoals = findAll();
-            List<TeamGoal> activeGoals = findAllActive();
+            // Use consistent filtering - all queries should use the same criteria
+            List<TeamGoal> allGoals = findAllActive(); // Use findAllActive for consistency
             List<TeamGoal> overdueGoals = findOverdueGoals();
 
             metrics.setTotalGoals(allGoals.size());
-            metrics.setActiveGoals(activeGoals.size());
             metrics.setOverdueGoals(overdueGoals.size());
 
             // Calculate completed goals and average progress
             long completedCount = 0;
+            long activeCount = 0;
             double totalProgress = 0.0;
 
             for (TeamGoal goal : allGoals) {
                 if (goal.getProgress().compareTo(new java.math.BigDecimal("100.0")) >= 0) {
                     completedCount++;
+                } else {
+                    activeCount++;
                 }
                 totalProgress += goal.getProgress().doubleValue();
             }
 
             metrics.setCompletedGoals(completedCount);
+            metrics.setActiveGoals(activeCount); // Update with actual active count (non-completed)
             metrics.setAverageProgress(allGoals.isEmpty() ? 0.0 : totalProgress / allGoals.size());
 
         } catch (Exception e) {
@@ -264,6 +269,15 @@ public class TeamGoalServiceImpl extends GenericServiceImpl<TeamGoal> implements
             return false; // Cannot delete if it has child goals
         }
         return true;
+    }
+
+    @Override
+    public boolean validateEndDate(TeamGoal goal) throws ValidationFailedException {
+        Validate.notNull(goal, "Team goal cannot be null");
+        if (goal.getParentGoal() == null || goal.getParentGoal().getEndDate() == null) {
+            return true;
+        }
+        return goal.getEndDate() == null || !goal.getEndDate().after(goal.getParentGoal().getEndDate());
     }
 
     /**

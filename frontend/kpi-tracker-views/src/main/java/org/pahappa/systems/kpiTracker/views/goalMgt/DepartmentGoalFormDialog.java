@@ -2,12 +2,16 @@ package org.pahappa.systems.kpiTracker.views.goalMgt;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.pahappa.systems.kpiTracker.constants.GoalLevel;
+import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentGoalService;
 import org.pahappa.systems.kpiTracker.core.services.OrganisationGoalService;
+import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.goalMgt.DepartmentGoal;
 import org.pahappa.systems.kpiTracker.models.goalMgt.OrganisationGoal;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
+import org.sers.webutils.client.views.presenters.ViewPath;
 import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.security.User;
@@ -17,33 +21,35 @@ import org.sers.webutils.server.shared.SharedAppData;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
+import javax.faces.event.ActionEvent;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 @ManagedBean(name = "departmentGoalFormDialog")
 @Getter
 @Setter
-@ViewScoped
+@ViewPath(path = HyperLinks.DEPARTMENT_GOAL_FORM_DIALOG)
+@SessionScoped
 public class DepartmentGoalFormDialog extends DialogForm<DepartmentGoal> {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(DepartmentGoalFormDialog.class.getName());
 
     private DepartmentGoalService departmentGoalService;
     private OrganisationGoalService organisationGoalService;
     private UserService userService;
+    private AssignedUserService assignedUserService;
 
     // Available options for dropdowns
     private List<OrganisationGoal> availableOrganisationGoals;
-    private List<User> availableUsers;
 
-    // Form fields
-    private String title;
-    private String description;
-    private String departmentName;
+    private boolean edit;
     private User owner;
-    private Date endDate;
-    private BigDecimal evaluationTarget;
-    private OrganisationGoal parentGoal;
+    public Date currentDate;
 
     public DepartmentGoalFormDialog() {
         super(HyperLinks.DEPARTMENT_GOAL_FORM_DIALOG, 700, 500);
@@ -51,49 +57,62 @@ public class DepartmentGoalFormDialog extends DialogForm<DepartmentGoal> {
 
     @PostConstruct
     public void init() {
-        departmentGoalService = ApplicationContextProvider.getBean(DepartmentGoalService.class);
-        organisationGoalService = ApplicationContextProvider.getBean(OrganisationGoalService.class);
-        userService = ApplicationContextProvider.getBean(UserService.class);
-        loadAvailableOptions();
-    }
-
-    private void loadAvailableOptions() {
         try {
-            availableOrganisationGoals = organisationGoalService.findAllActive();
-            availableUsers = userService.getUsers();
+            this.departmentGoalService = ApplicationContextProvider.getBean(DepartmentGoalService.class);
+            this.organisationGoalService = ApplicationContextProvider.getBean(OrganisationGoalService.class);
+            this.userService = ApplicationContextProvider.getBean(UserService.class);
+            this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
+            this.currentDate = new Date(); // current date initialisation
+            this.availableOrganisationGoals = organisationGoalService.findAllActive();
+            this.owner = SharedAppData.getLoggedInUser();
+            LOGGER.info("DepartmentGoalFormDialog initialized with " + availableOrganisationGoals.size()
+                    + " organisation goals for user: " + (owner != null ? owner.getUsername() : "No user"));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.severe("Failed to initialize DepartmentGoalFormDialog: " + e.getMessage());
         }
     }
 
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
         try {
-            if (model == null) {
-                model = new DepartmentGoal();
+            if (super.model == null) {
+                super.model = new DepartmentGoal();
             }
 
             // Set form values to model
-            model.setTitle(title);
-            model.setDescription(description);
-            model.setDepartmentName(departmentName);
-            model.setOwner(owner);
-           // model.setEndDate(endDate);
-            model.setEvaluationTarget(evaluationTarget);
-            model.setParentGoal(parentGoal);
+            super.model.setOwner(owner);
 
-            // Set audit fields
-            if (model.getId() == null) {
-                model.setCreatedBy(getLoggedInUser());
-                model.setDateCreated(new Date());
-                model.setProgress(BigDecimal.ZERO);
-                model.setContributionToParent(new BigDecimal("100.0"));
-                model.setIsActive(true);
+            // Automatically set department name from logged-in user's department
+            String userDepartmentName = getUserDepartmentName();
+            if (!"No Department Assigned".equals(userDepartmentName)) {
+                super.model.setDepartmentName(userDepartmentName);
+                LOGGER.info("Set department name to: " + userDepartmentName);
+            } else {
+                throw new ValidationFailedException("User must be assigned to a department to create department goals");
+            }
+
+            // Log the parent goal for debugging
+            LOGGER.info("Parent goal before validation: "
+                    + (super.model.getParentGoal() != null ? super.model.getParentGoal().getTitle() : "null"));
+
+            // Validate that parent goal is selected
+            if (super.model.getParentGoal() == null) {
+                throw new ValidationFailedException("Parent organisation goal is required");
+            }
+
+            // Set audit fields for new records
+            if (super.model.getId() == null) {
+                super.model.setCreatedBy(SharedAppData.getLoggedInUser());
+                super.model.setDateCreated(new Date());
+                super.model.setProgress(BigDecimal.ZERO);
+                super.model.setIsActive(true);
+                super.model.setGoalLevel(GoalLevel.DEPARTMENT);
             }
 
             // Save the goal
-            departmentGoalService.saveInstance(model);
+            this.departmentGoalService.saveInstance(super.model);
         } catch (Exception e) {
+            LOGGER.severe("Error saving department goal: " + e.getMessage());
             throw new OperationFailedException("Failed to save department goal: " + e.getMessage());
         }
     }
@@ -102,112 +121,94 @@ public class DepartmentGoalFormDialog extends DialogForm<DepartmentGoal> {
     public void resetModal() {
         super.resetModal();
         super.model = new DepartmentGoal();
-        // Set default values
+        setEdit(false);
         super.model.setProgress(BigDecimal.ZERO);
         super.model.setEvaluationTarget(new BigDecimal("100.0"));
-        super.model.setContributionToParent(new BigDecimal("100.0"));
+        // Don't set contributionToParent here - let the service handle it
         super.model.setIsActive(true);
+        super.model.setGoalLevel(GoalLevel.DEPARTMENT); // Ensure goal level is set
     }
 
     @Override
     public void setFormProperties() {
-        if (super.model == null) {
-            super.model = new DepartmentGoal();
-            super.model.setProgress(BigDecimal.ZERO);
-            super.model.setEvaluationTarget(new BigDecimal("100.0"));
-            super.model.setContributionToParent(new BigDecimal("100.0"));
-            super.model.setIsActive(true);
+        super.setFormProperties();
+        try {
+            this.availableOrganisationGoals = organisationGoalService.findAllActive();
+            this.owner = SharedAppData.getLoggedInUser();
+        } catch (Exception e) {
+            LOGGER.severe("Failed to load form properties: " + e.getMessage());
+        }
+
+        if (super.model != null && super.model.getId() != null) {
+            setEdit(true);
+        } else {
+            if (super.model == null) {
+                super.model = new DepartmentGoal();
+            }
+            super.model.setGoalLevel(GoalLevel.DEPARTMENT); // Ensure goal level is set
+            setEdit(false);
         }
     }
 
-    private User getLoggedInUser() {
-        return SharedAppData.getLoggedInUser();
+    public Date getCurrentDate() {
+        return currentDate != null ? currentDate : new Date(); // Return current date if null
+    }
+
+    public String getUserDepartmentName() {
+        if (owner == null) {
+            return "No Department Assigned";
+        }
+
+        try {
+            Department department = assignedUserService.getDepartmentForUser(owner);
+            if (department != null) {
+                return department.getName();
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Failed to get department for user " + owner.getUsername() + ": " + e.getMessage());
+        }
+
+        return "No Department Assigned";
+    }
+
+    public String getParentGoalTitle() {
+        try {
+            if (super.model != null && super.model.getParentGoal() != null) {
+                return super.model.getParentGoal().getTitle();
+            }
+        } catch (Exception e) {
+            // Handle lazy initialization or other exceptions
+        }
+        return "Select a parent goal";
     }
 
     public void loadGoal(DepartmentGoal goal) {
         if (goal != null) {
             super.model = goal;
-            // Set form fields from the model
-            this.title = goal.getTitle();
-            this.description = goal.getDescription();
-            this.departmentName = goal.getDepartmentName();
-            this.owner = goal.getOwner();
-         //   this.endDate = goal.getEndDate();
-            this.evaluationTarget = goal.getEvaluationTarget();
-            this.parentGoal = goal.getParentGoal();
+            setFormProperties();
         }
     }
 
-    // Getters and Setters
-    public String getTitle() {
-        return title;
+    /**
+     * Parameterless show method for JSF action binding
+     */
+    public void show() {
+        show(new ActionEvent(null));
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public BigDecimal getEvaluationTarget() {
-        return evaluationTarget;
-    }
-
-    public void setEvaluationTarget(BigDecimal evaluationTarget) {
-        this.evaluationTarget = evaluationTarget;
-    }
-
-    public OrganisationGoal getParentGoal() {
-        return parentGoal;
-    }
-
-    public void setParentGoal(OrganisationGoal parentGoal) {
-        this.parentGoal = parentGoal;
-    }
-
-    public List<OrganisationGoal> getAvailableOrganisationGoals() {
+    // Getters for XHTML binding
+    public List<OrganisationGoal> getOrganisationGoals() {
+        if (availableOrganisationGoals == null) {
+            LOGGER.warning("availableOrganisationGoals is null, reloading...");
+            try {
+                availableOrganisationGoals = organisationGoalService.findAllActive();
+                LOGGER.info("Reloaded " + availableOrganisationGoals.size() + " organisation goals");
+            } catch (Exception e) {
+                LOGGER.severe("Failed to reload organisation goals: " + e.getMessage());
+                availableOrganisationGoals = new ArrayList<>();
+            }
+        }
+        LOGGER.info("Returning " + availableOrganisationGoals.size() + " organisation goals");
         return availableOrganisationGoals;
-    }
-
-    public void setAvailableOrganisationGoals(List<OrganisationGoal> availableOrganisationGoals) {
-        this.availableOrganisationGoals = availableOrganisationGoals;
-    }
-
-    public List<User> getAvailableUsers() {
-        return availableUsers;
-    }
-
-    public void setAvailableUsers(List<User> availableUsers) {
-        this.availableUsers = availableUsers;
     }
 }

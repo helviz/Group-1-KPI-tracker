@@ -26,8 +26,6 @@ public class TeamGoal extends BaseGoal {
         this.setGoalLevel(GoalLevel.TEAM);
     }
 
-
-
     @Override
     public String goalType() {
         return "Team Goal";
@@ -93,14 +91,7 @@ public class TeamGoal extends BaseGoal {
         return totalContribution.compareTo(new BigDecimal("100")) == 0;
     }
 
-//    public boolean validateEndDate() {
-//        if (parentGoal == null || parentGoal.getEndDate() == null) {
-//            return true;
-//        }
-//        return this.getEndDate() == null || !this.getEndDate().after(parentGoal.getEndDate());
-//    }
-
-    // Getters and Setters
+    // Getters
     @NotNull(message = "Parent department goal is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_goal_id", nullable = false)

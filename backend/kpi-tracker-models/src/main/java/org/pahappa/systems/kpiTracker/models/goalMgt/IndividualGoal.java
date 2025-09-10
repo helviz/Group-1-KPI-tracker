@@ -52,13 +52,14 @@ public class IndividualGoal extends BaseGoal {
         return false; // Individual goals cannot have child goals
     }
 
-//    // Business logic methods
-//    public boolean validateEndDate() {
-//        if (parentGoal == null || parentGoal.getEndDate() == null) {
-//            return true;
-//        }
-//        return this.getEndDate() == null || !this.getEndDate().after(parentGoal.getEndDate());
-//    }
+    // // Business logic methods
+    // public boolean validateEndDate() {
+    // if (parentGoal == null || parentGoal.getEndDate() == null) {
+    // return true;
+    // }
+    // return this.getEndDate() == null ||
+    // !this.getEndDate().after(parentGoal.getEndDate());
+    // }
 
     public void updateOwnerName() {
         if (this.getOwner() != null) {

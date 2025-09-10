@@ -62,9 +62,9 @@
                         </div>
                     </div>
                     <div class="flex justify-content-end mt-3">
-                        <p:commandButton value="Search" action="#{individualGoalView.searchGoals}"
+                        <p:commandButton value="Search" actionListener="#{individualGoalView.searchGoals}"
                             styleClass="p-button-primary mr-2" />
-                        <p:commandButton value="Clear" action="#{individualGoalView.clearSearch}"
+                        <p:commandButton value="Clear" actionListener="#{individualGoalView.clearSearch}"
                             styleClass="p-button-secondary" />
                     </div>
                 </div>
@@ -74,7 +74,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Individual Goals</h5>
-                    <p:commandButton value="Create New Goal" action="#{individualGoalFormDialog.show}"
+                    <p:commandButton value="Create New Goal" actionListener="#{individualGoalFormDialog.show}"
                         styleClass="p-button-primary" />
                 </div>
                 <div class="card-body">
@@ -115,11 +115,10 @@
                         <p:column headerText="Actions" styleClass="text-center">
                             <div class="flex justify-content-center">
                                 <p:commandButton icon="pi pi-pencil" styleClass="p-button-text p-button-sm mr-1"
-                                    action="#{individualGoalFormDialog.show}"
-                                    actionListener="#{individualGoalFormDialog.loadGoal(goal)}" />
+                                    actionListener="#{individualGoalFormDialog.show}" />
                                 <p:commandButton icon="pi pi-trash"
                                     styleClass="p-button-text p-button-danger p-button-sm"
-                                    action="#{individualGoalView.showDeleteGoalDialog(goal)}" />
+                                    actionListener="#{individualGoalView.showDeleteGoalDialog(goal)}" />
                             </div>
                         </p:column>
                     </p:dataTable>
@@ -137,7 +136,7 @@
                 </div>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Delete" action="#{individualGoalView.deleteGoal}"
+                    <p:commandButton value="Delete" actionListener="#{individualGoalView.deleteGoal}"
                         styleClass="p-button-danger" />
                     <p:commandButton value="Cancel" onclick="PF('deleteGoalDialog').hide()"
                         styleClass="p-button-secondary" />
