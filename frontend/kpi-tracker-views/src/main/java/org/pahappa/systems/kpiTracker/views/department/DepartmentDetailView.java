@@ -4,13 +4,13 @@ import com.googlecode.genericdao.search.Search;
 import lombok.Getter;
 import lombok.Setter;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
+import org.pahappa.systems.kpiTracker.core.services.StaffService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
-import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 import org.pahappa.systems.kpiTracker.models.team.Team;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.sers.webutils.model.RecordStatus;
-import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 import javax.annotation.PostConstruct;
@@ -27,11 +27,11 @@ public class DepartmentDetailView {
 
     private DepartmentService departmentService;
     private TeamService teamService;
-    private AssignedUserService assignedUserService;
+    private StaffService staffService;
 
     private Department department;
     private List<Team> teams;
-    private List<User> unassignedMembers;
+    private List<Staff> unassignedStaff;
     private String departmentId;
 
     @PostConstruct
@@ -39,7 +39,7 @@ public class DepartmentDetailView {
         try {
             this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
             this.teamService = ApplicationContextProvider.getBean(TeamService.class);
-            this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
+            this.staffService = ApplicationContextProvider.getBean(StaffService.class);
 
             // Get department ID from flash scope or request parameters
             javax.faces.context.FacesContext facesContext = javax.faces.context.FacesContext.getCurrentInstance();
@@ -86,14 +86,14 @@ public class DepartmentDetailView {
             teamSearch.addFilterEqual("department.id", this.departmentId);
             this.teams = teamService.getInstances(teamSearch, 0, 1000); // Get all teams
 
-            // Load unassigned members (users assigned to department but not to any team)
-            this.unassignedMembers = assignedUserService.getUnassignedMembersForDepartment(this.departmentId);
+            // Load unassigned staff (staff in department but not in any team)
+            this.unassignedStaff = staffService.getUnassignedStaffInDepartment(this.department);
 
         } catch (Exception e) {
             System.err.println("Error loading department details: " + e.getMessage());
             e.printStackTrace();
             this.teams = new ArrayList<>();
-            this.unassignedMembers = new ArrayList<>();
+            this.unassignedStaff = new ArrayList<>();
         }
     }
 
@@ -132,11 +132,10 @@ public class DepartmentDetailView {
      * Get total member count for the department
      */
     public int getTotalMemberCount() {
-        int teamMembers = teams.stream()
-                .mapToInt(team -> team.getMembers() != null ? team.getMembers().size() : 0)
-                .sum();
-        int unassignedCount = unassignedMembers != null ? unassignedMembers.size() : 0;
-        return teamMembers + unassignedCount;
+        if (this.department == null) {
+            return 0;
+        }
+        return staffService.getStaffByDepartment(this.department).size();
     }
 
     public void nothingStayOnPage(){
@@ -153,8 +152,8 @@ public class DepartmentDetailView {
     /**
      * Check if department has unassigned members
      */
-    public boolean hasUnassignedMembers() {
-        return unassignedMembers != null && !unassignedMembers.isEmpty();
+    public boolean hasUnassignedStaff() {
+        return unassignedStaff != null && !unassignedStaff.isEmpty();
     }
 
     public String navigateToTeamDetail(Team team) {

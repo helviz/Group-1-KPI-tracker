@@ -8,46 +8,46 @@
     <ui:define name="content">
         <div class="ui-g ui-fluid">
             <div class="ui-g-12">
-                <h:form id="usersView" enctype="multipart/form-data">
+                <h:form id="staffView" enctype="multipart/form-data">
                     <div class="card">
                         <p:growl id="messages" showDetail="true" />
                         <div class="p-grid">
                             <div class="p-col-12 p-md-6 p-lg-2">
                                 <p:inputText id="searchTerm" required="false"
-                                             value="#{usersView.searchTerm}" placeholder="Search ..."
-                                             onkeyup="#{usersView.reloadFilterReset()}">
+                                             value="#{staffView.searchTerm}" placeholder="Search ..."
+                                             onkeyup="#{staffView.reloadFilterReset()}">
 
                                     <p:ajax event="keyup"
-                                            update="usersView"
-                                            listener="#{usersView.reloadFilterReset()}" />
+                                            update="staffView"
+                                            listener="#{staffView.reloadFilterReset()}" />
                                 </p:inputText>
                             </div>
 
                             <div class="p-col-12 p-md-6 p-lg-3">
                                 <p:selectOneMenu id="genders" label="Filter gender"
-                                                 title="Filter gender" value="#{usersView.selectedGender}"
+                                                 title="Filter gender" value="#{staffView.selectedGender}"
                                                  style="height: 100%" converter="genderConverter">
                                     <f:selectItem itemLabel="All" value="#{null}" />
-                                    <f:selectItems value="#{usersView.genders}" />
-                                    <p:ajax event="change" update="usersView"
-                                            listener="#{usersView.reloadFilterReset()}" />
+                                    <f:selectItems value="#{staffView.genders}" />
+                                    <p:ajax event="change" update="staffView"
+                                            listener="#{staffView.reloadFilterReset()}" />
                                 </p:selectOneMenu>
                             </div>
                             <div class="p-col-12 p-md-6 p-lg-3">
                                 <p:calendar placeholder="From Date Created"
-                                            value="#{usersView.createdFrom}" inputStyleClass="Wid100 "
+                                            value="#{staffView.createdFrom}" inputStyleClass="Wid100 "
                                             navigator="true" pattern="dd MMM, yyyy" />
                             </div>
                             <div class="p-col-12 p-md-6 p-lg-3">
                                 <p:calendar placeholder="To Date Created"
-                                            value="#{usersView.createdTo}" inputStyleClass="Wid100 "
+                                            value="#{staffView.createdTo}" inputStyleClass="Wid100 "
                                             navigator="true" pattern="dd MMM, yyyy" />
                             </div>
                             <div class="p-col-12 p-md-6 p-lg-1">
                                 <p:commandButton icon="fa fa-search"
                                                  styleClass="ui-button" id="searchBtn"
-                                                 style="margin-right: 18px" update="usersView"
-                                                 actionListener="#{usersView.reloadFilterReset()}">
+                                                 style="margin-right: 18px" update="staffView"
+                                                 actionListener="#{staffView.reloadFilterReset()}">
                                 </p:commandButton>
                             </div>
 
@@ -59,31 +59,31 @@
                         <div class="p-grid table-demo">
                             <div class="p-col-12">
                                 <div class="card">
-                                    <p:dataTable id="usersTable" var="model" value="#{usersView.dataModels}"
-                                                 widgetVar="usersTable"
+                                    <p:dataTable id="staffTable" var="model" value="#{staffView.dataModels}"
+                                                 widgetVar="staffTable"
                                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                                  paginator="true" lazy="true" rows="20"
-                                                 emptyMessage="#{usersView.dataEmptyMessage}"
+                                                 emptyMessage="#{staffView.dataEmptyMessage}"
                                                  paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                  rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
 
                                         <f:facet name="header">
                                             <div class="p-d-flex p-jc-between">
                                                 <div>
-                                                    <span class="table-header-text">User Management</span>
+                                                    <span class="table-header-text">Staff Management</span>
 
                                                 </div>
 
                                                 <div>
                                                     <div class="p-d-flex p-flex-wrap">
                                                         <div class="p-mr-2 p-mb-2">
-                                                            <p:commandButton value="Add user" process="@this" icon="fa fa-plus"
+                                                            <p:commandButton value="Add Staff" process="@this" icon="fa fa-plus"
                                                                              styleClass="ui-button" immediate="true"
-                                                                             actionListener="#{userFormDialog.show}">
+                                                                             actionListener="#{staffFormDialog.show}">
                                                                 <f:setPropertyActionListener value="#{null}"
-                                                                                             target="#{userFormDialog.model}" />
+                                                                                             target="#{staffFormDialog.model}" />
 
-                                                                <p:ajax event="dialogReturn" listener="#{usersView.reloadFilterReset}" update="usersTable" />
+                                                                <p:ajax event="dialogReturn" listener="#{staffView.reloadFilterReset}" update="staffTable" />
                                                             </p:commandButton>
                                                         </div>
                                                     </div>
@@ -100,60 +100,54 @@
                                             <f:facet name="header">
                                                 <h:outputText value="Full name" />
                                             </f:facet>
-                                            <h:outputText value="#{model.fullName}" />
-                                        </p:column>
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="User name" />
-                                            </f:facet>
-                                            <h:outputText value="#{model.username}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Gender" />
-                                            </f:facet>
-                                            <h:outputText value="#{model.gender}" />
+                                            <h:outputText value="#{model.getFullName()}" />
                                         </p:column>
 
                                         <p:column>
                                             <f:facet name="header">
                                                 <h:outputText value="Roles" />
                                             </f:facet>
-                                            <h:outputText value="#{model.roles}"/>
+                                            <h:outputText value="#{staffView.getRolesAsString(model)}"/>
                                         </p:column>
 
                                         <p:column>
                                             <f:facet name="header">
                                                 <h:outputText value="Department" />
                                             </f:facet>
-                                            <h:outputText value="#{usersView.getUserAssignedDepartment(model.id)}" />
+                                            <h:outputText value="#{model.department.name}" />
                                         </p:column>
 
                                         <p:column>
                                             <f:facet name="header">
-                                                <h:outputText style="text-align: center" value="Created by" />
+                                                <h:outputText value="Created By" />
                                             </f:facet>
-                                            <h:outputText value="#{model.createdBy}" />
+                                            <h:outputText value="#{model.user != null ? model.user.createdBy : model.createdBy}" />
                                         </p:column>
 
                                         <p:column headerText="Action" width="140" exportable="false"
                                                   style="text-align: center">
                                             <p:commandButton process="@this" icon="fa fa-edit"
                                                              styleClass="ui-button" immediate="true" rendered="true"
-                                                             actionListener="#{userFormDialog.show}">
+                                                             actionListener="#{staffFormDialog.show}">
                                                 <f:setPropertyActionListener value="#{model}"
-                                                                             target="#{userFormDialog.model}" />
-                                                <p:ajax event="dialogReturn" update="usersTable" />
+                                                                             target="#{staffFormDialog.model}" />
+                                                <p:ajax event="dialogReturn" listener="#{staffView.reloadFilterReset}" update="staffTable" />
                                             </p:commandButton>
-
+                                            <p:commandButton icon="fa fa-user-plus" title="Activate User Account" process="@this"
+                                                             styleClass="ui-button-success" update="staffView"
+                                                             actionListener="#{staffView.activateUserAccount(model)}"
+                                                             rendered="#{model.user == null}">
+                                                <p:confirm header="Confirmation"
+                                                           message="Are you sure you want to activate a user account for #{model.fullName}? A default password will be set."
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
                                             <p:commandButton icon="fa fa-trash" title="Delete"
                                                              styleClass="ui-button-danger"
                                                              style="margin-left: 5px"
-                                                             actionListener="#{usersView.deleteSelectedUser(model)}"
-                                                             update="usersView">
+                                                             actionListener="#{staffView.deleteSelectedStaff(model)}"
+                                                             update="staffView">
                                                 <p:confirm header="Confirmation"
-                                                           message="You are about to delete a user. Do you wish to continue?"
+                                                           message="You are about to delete a staff member. Do you wish to continue?"
                                                            icon="ui-icon-alert" />
                                             </p:commandButton>
 
@@ -161,7 +155,7 @@
 
                                     </p:dataTable>
 
-                                    <p:blockUI block="usersView" trigger="searchBtn">
+                                    <p:blockUI block="staffView" trigger="searchBtn">
                                         <p:graphicImage value="/resources/images/workingicon.png" />
                                     </p:blockUI>
 
@@ -171,7 +165,7 @@
                             </div>
                         </div>
                     </ui:fragment>
-                    <p:blockUI block="usersView">
+                    <p:blockUI block="staffView">
                         <p:graphicImage value="/resources/images/workingicon.png" />
                     </p:blockUI>
                     <p:confirmDialog global="true">

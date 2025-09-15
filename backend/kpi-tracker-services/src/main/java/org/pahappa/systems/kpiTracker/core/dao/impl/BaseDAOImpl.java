@@ -126,18 +126,32 @@ public abstract class BaseDAOImpl<T> extends GenericDAOImpl<T, String> implement
 					.getBean(CustomSessionProvider.class);
 			logged = customSessionProvider.getLoggedInUser();
 		} catch (Exception e) {
+			// Fail silently if no session provider is available (e.g., in a background thread)
 		}
 
-		if (logged != null) {
+		// If no user is logged in, fall back to the default admin user for auditing.
+		if (logged == null) {
+			try {
+				org.sers.webutils.server.core.service.UserService userService = ApplicationContextProvider.getBean(org.sers.webutils.server.core.service.UserService.class);
+				logged = userService.findUserByUsername(User.DEFAULT_ADMIN);
+			} catch (Exception e) {
+				// Could log an error here if the default admin user is crucial and not found.
+			}
+		}
+
+		if (logged != null && !StringUtils.isBlank(logged.getId())) {
 			if (entity instanceof BaseEntity) {
 				BaseEntity obj = (BaseEntity) entity;
+				// Use getReference to avoid detached entity issues. This creates a proxy
+				// and is the standard way to set an association without merging a complex object.
+				User userRef = entityManager.getReference(User.class, logged.getId());
 				if (StringUtils.isBlank(obj.getId()) || StringUtils.isEmpty(obj.getId())) {
-					obj.setCreatedBy(logged);
+					obj.setCreatedBy(userRef);
 
 					if (StringUtils.isBlank(obj.getCustomPropOne()) || StringUtils.isEmpty(obj.getCustomPropOne()))
 						obj.setCustomPropOne(SharedAppData.getCustomPropOne());
 				}
-				obj.setChangedBy(logged);
+				obj.setChangedBy(userRef);
 				return super.save((T) obj);
 			}
 		}
@@ -157,23 +171,36 @@ public abstract class BaseDAOImpl<T> extends GenericDAOImpl<T, String> implement
 					.getBean(CustomSessionProvider.class);
 			logged = customSessionProvider.getLoggedInUser();
 		} catch (Exception e) {
+			// Fail silently if no session provider is available (e.g., in a background thread)
 		}
-		if (logged != null) {
+
+		// If no user is logged in, fall back to the default admin user for auditing.
+		if (logged == null) {
+			try {
+				org.sers.webutils.server.core.service.UserService userService = ApplicationContextProvider.getBean(org.sers.webutils.server.core.service.UserService.class);
+				logged = userService.findUserByUsername(User.DEFAULT_ADMIN);
+			} catch (Exception e) {
+				// Could log an error here if the default admin user is crucial and not found.
+			}
+		}
+
+		if (logged != null && !StringUtils.isBlank(logged.getId())) {
 			if (entity instanceof BaseEntity) {
 				BaseEntity obj = (BaseEntity) entity;
+				// Use getReference to avoid detached entity issues. This creates a proxy
+				// and is the standard way to set an association without merging a complex object.
+				User userRef = entityManager.getReference(User.class, logged.getId());
 				if (StringUtils.isBlank(obj.getId()) || StringUtils.isEmpty(obj.getId())) {
-					obj.setCreatedBy(logged);
+					obj.setCreatedBy(userRef);
 
 					if (StringUtils.isBlank(obj.getCustomPropOne()) || StringUtils.isEmpty(obj.getCustomPropOne())) {
 						obj.setCustomPropOne(SharedAppData.getCustomPropOne());
 					}
 				}
-				obj.setChangedBy(logged);
-
+				obj.setChangedBy(userRef);
 				return super.merge((T) obj);
 			}
 		}
-
 		return super.merge(entity);
 	}
 

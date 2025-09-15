@@ -2,13 +2,13 @@ package org.pahappa.systems.kpiTracker.views.department;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.pahappa.systems.kpiTracker.core.services.StaffService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
-import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 import org.pahappa.systems.kpiTracker.models.team.Team;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.pahappa.systems.kpiTracker.views.dialogs.MessageComposer;
-import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 import javax.annotation.PostConstruct;
@@ -22,12 +22,11 @@ import java.util.List;
 @Getter
 @Setter
 @SessionScoped
-public class MemberAssignmentDialog extends DialogForm<User> {
+public class MemberAssignmentDialog extends DialogForm<Staff> {
 
     private TeamService teamService;
-    private AssignedUserService assignedUserService;
+    private StaffService staffService;
 
-    private User selectedMember;
     private Department selectedDepartment;
     private Team selectedTeam;
     private List<Team> availableTeams;
@@ -40,7 +39,7 @@ public class MemberAssignmentDialog extends DialogForm<User> {
     public void init() {
         try {
             this.teamService = ApplicationContextProvider.getBean(TeamService.class);
-            this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
+            this.staffService = ApplicationContextProvider.getBean(StaffService.class);
         } catch (Exception e) {
             System.err.println("Error initializing MemberAssignmentDialog: " + e.getMessage());
             e.printStackTrace();
@@ -80,7 +79,7 @@ public class MemberAssignmentDialog extends DialogForm<User> {
      */
     public void assignMemberToTeam() {
         try {
-            if (selectedMember == null) {
+            if (super.getModel() == null) {
                 MessageComposer.error("Error", "No member selected.");
                 return;
             }
@@ -90,12 +89,11 @@ public class MemberAssignmentDialog extends DialogForm<User> {
                 return;
             }
 
-            // Add member to team
-            selectedTeam.getMembers().add(selectedMember);
-            teamService.saveInstance(selectedTeam);
+            // Use StaffService to assign staff to team
+            staffService.assignStaffToTeam(super.getModel(), selectedTeam);
 
             MessageComposer.info("Success",
-                    "Member '" + selectedMember.getFullName() + "' has been assigned to team '"
+                    "Member '" + super.getModel().getUser().getFullName() + "' has been assigned to team '"
                             + selectedTeam.getTeamName() + "'.");
 
             // Reset and hide dialog
@@ -116,7 +114,6 @@ public class MemberAssignmentDialog extends DialogForm<User> {
     @Override
     public void resetModal() {
         super.resetModal();
-        this.selectedMember = null;
         this.selectedDepartment = null;
         this.selectedTeam = null;
         this.availableTeams = new ArrayList<>();

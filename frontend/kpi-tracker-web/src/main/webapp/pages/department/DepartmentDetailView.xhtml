@@ -132,13 +132,13 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h5 style="margin: 0; font-weight: 600;">
-                                        Members without a team (#{departmentDetailView.unassignedMembers.size()})
+                                        Members without a team (#{departmentDetailView.unassignedStaff.size()})
                                     </h5>
                                 </div>
                                 <div class="card-body">
-                                    <ui:fragment rendered="#{not empty departmentDetailView.unassignedMembers}">
+                                    <ui:fragment rendered="#{not empty departmentDetailView.unassignedStaff}">
                                         <div class="member-list">
-                                            <ui:repeat value="#{departmentDetailView.unassignedMembers}" var="member"
+                                            <ui:repeat value="#{departmentDetailView.unassignedStaff}" var="member"
                                                 varStatus="status">
                                                 <div class="member-item p-p-3 p-mb-2"
                                                     style="border: 1px solid #e9ecef; border-radius: 8px; background: #fff;">
@@ -168,7 +168,7 @@
                                         </div>
                                     </ui:fragment>
 
-                                    <ui:fragment rendered="#{empty departmentDetailView.unassignedMembers}">
+                                    <ui:fragment rendered="#{empty departmentDetailView.unassignedStaff}">
                                         <div class="p-text-center p-p-4">
                                             <i class="fa fa-check-circle"
                                                 style="font-size: 3rem; color: #28a745; margin-bottom: 1rem;"></i>
