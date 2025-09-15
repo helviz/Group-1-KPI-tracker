@@ -1,16 +1,15 @@
 package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import com.googlecode.genericdao.search.Search;
-import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
+import org.pahappa.systems.kpiTracker.core.services.StaffService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
-import org.pahappa.systems.kpiTracker.models.user.AssignedUser;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 import org.pahappa.systems.kpiTracker.models.team.Team;
 import org.pahappa.systems.kpiTracker.utils.Validate;
 import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.exception.ValidationFailedException;
 import org.sers.webutils.model.security.User;
-import org.sers.webutils.server.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,24 +23,17 @@ import java.util.Set;
 @Transactional
 public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamService {
 
-    private UserService userService;
-    private AssignedUserService assignedUserService;
+    private final StaffService staffService;
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setAssignedUserService(AssignedUserService assignedUserService) {
-        this.assignedUserService = assignedUserService;
+    public TeamServiceImpl(StaffService staffService) {
+        this.staffService = staffService;
     }
 
     @Override
     public Team saveInstance(Team team) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(team, "Team details cannot be null");
         Validate.hasText(team.getTeamName(), "Team name is required");
-        //Validate.notNull(team.getTeamLead(), "Team must have a team lead");
         Validate.notNull(team.getDepartment(), "Department is required");
 
         if (isDuplicate(team, "teamName", team.getTeamName())) {
@@ -53,9 +45,8 @@ public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamSer
 
     @Override
     public boolean isDeletable(Team instance) throws OperationFailedException {
-        // This is for future logic.
-        // if the team has active members or KPIs. For now, we allow it.
-        return true;
+        // A team is not deletable if it has members.
+        return staffService.getStaffByTeam(instance).isEmpty();
     }
 
     @Override
@@ -72,32 +63,28 @@ public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamSer
     public List<User> getUsersWithoutTeamInDepartment(Department department) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(department, "Department cannot be null");
 
-        // Get users belonging to the specified department using AssignedUserService
-        List<User> usersInDepartment = new ArrayList<User>();
-        List<AssignedUser> assignedUsers = assignedUserService.getAssignedUsersByDepartment(department);
-        for (AssignedUser assignedUser : assignedUsers) {
-            usersInDepartment.add(assignedUser.getUser());
-        }
+        // Get all staff in the department
+        List<Staff> staffInDepartment = staffService.getStaffByDepartment(department);
 
+        // Get all teams in the department
         Search teamSearch = new Search();
         teamSearch.addFilterEqual("department", department);
         List<Team> teamsInDepartment = getInstances(teamSearch, 0, 0);
 
-        // Collect all user IDs of members who are already in a team in this department
-        Set<String> memberIdsInDepartmentTeams = new HashSet<String>();
+        // Collect all staff IDs of members who are already in any team in this department
+        Set<String> staffIdsInAnyTeam = new HashSet<>();
         for (Team team : teamsInDepartment) {
-            if (team.getMembers() != null) {
-                for (User member : team.getMembers()) {
-                    memberIdsInDepartmentTeams.add(member.getId());
-                }
+            List<Staff> staffInTeam = staffService.getStaffByTeam(team);
+            for (Staff staff : staffInTeam) {
+                staffIdsInAnyTeam.add(staff.getId());
             }
         }
 
-        // Filter the department's users to find those not in any team
-        List<User> usersWithoutTeam = new ArrayList<User>();
-        for (User user : usersInDepartment) {
-            if (!memberIdsInDepartmentTeams.contains(user.getId())) {
-                usersWithoutTeam.add(user);
+        // Filter the department's staff to find those not in any team, then map to User
+        List<User> usersWithoutTeam = new ArrayList<>();
+        for (Staff staff : staffInDepartment) {
+            if (!staffIdsInAnyTeam.contains(staff.getId())) {
+                usersWithoutTeam.add(staff.getUser());
             }
         }
         return usersWithoutTeam;

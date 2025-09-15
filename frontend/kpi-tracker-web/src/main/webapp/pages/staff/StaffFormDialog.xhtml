@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/pages/californiatemplate/dialog-template.xhtml">
+    <ui:define name="head">
+        <style type="text/css">
+            .capitalized {
+                text-transform: capitalize;
+            }
+
+            .card {
+                background: #ffffff;
+                padding: 1rem;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-container {
+                margin-top: 1rem;
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 2rem;
+            }
+
+            hr {
+                margin: 1rem 0;
+                border: 0;
+                border-top: 1px solid #ccc;
+            }
+
+            .ui-selectmanymenu {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .error {
+                color: #d32f2f;
+                font-size: 0.9rem;
+                margin-top: 0.25rem;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <title>Staff Details</title>
+        <h:form id="staffFormDialog" styleClass="card">
+            <div class="ui-g ui-fluid form-container">
+                <div class="ui-g-12 ui-md-6">
+                    <h5>First name</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputText id="firstName" value="#{staffFormDialog.model.firstName}" required="true"
+                                     requiredMessage="First name is required."
+                                     validatorMessage="First name must contain only letters, spaces, or hyphens (e.g., Mary-Jane).">
+                            <f:validateRegex pattern="^[a-zA-Z\s-]{2,50}$" />
+                            <f:validateLength minimum="2" maximum="50" />
+                        </p:inputText>
+                        <p:message for="staffFormDialog:firstName" styleClass="error" />
+                    </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-6">
+                    <h5>Last name</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputText id="lastName" value="#{staffFormDialog.model.lastName}" required="true"
+                                     requiredMessage="Last name is required."
+                                     validatorMessage="Last name must contain only letters, spaces, or hyphens (e.g., Alvin-yoo).">
+                            <f:validateRegex pattern="^[a-zA-Z\s-]{2,50}$" />
+                            <f:validateLength minimum="2" maximum="50" />
+                        </p:inputText>
+                        <p:message for="staffFormDialog:lastName" styleClass="error" />
+                    </div>
+                </div>
+
+                <div class="ui-g-12">
+                    <h5>Email</h5>
+                    <div class="ui-inputgroup">
+                        <p:inputText id="emailAddress" value="#{staffFormDialog.model.email}" required="true"
+                                     requiredMessage="Email is required." validatorMessage="Please enter a valid email address.">
+                            <f:validateRegex pattern="^[A-Za-z0-9+_.-]+@(.+)$" />
+                        </p:inputText>
+                        <p:message for="staffFormDialog:emailAddress" styleClass="error" />
+                    </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-12">
+                    <h5>Department</h5>
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="department" value="#{staffFormDialog.selectedDepartment}"
+                                         converter="departmentConverter" required="true" requiredMessage="Department is required.">
+                            <f:selectItem itemLabel="Select Department" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{staffFormDialog.listOfDepartments}" var="department"
+                                           itemLabel="#{department.name}" itemValue="#{department}" />
+                        </p:selectOneMenu>
+                        <p:message for="staffFormDialog:department" styleClass="error" />
+                    </div>
+                </div>
+
+                <div class="ui-g-12 button-container">
+                    <div class="ui-g-6" style="text-align: right;">
+                        <p:commandButton value="Cancel" validateClient="false" process="@this"
+                                         action="#{staffFormDialog.hide}" styleClass="ui-button-outlined ui-button-help" />
+                    </div>
+                    <div class="ui-g-6">
+                        <p:commandButton value="Save" process="@form" actionListener="#{staffFormDialog.persist}"
+                                         update="@form" validateClient="true" />
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,14 +1,12 @@
 package org.pahappa.systems.kpiTracker.views.teams;
 
-import com.googlecode.genericdao.search.Search;
 import lombok.Getter;
 import lombok.Setter;
+import org.pahappa.systems.kpiTracker.core.services.StaffService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
-import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 import org.pahappa.systems.kpiTracker.models.team.Team;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
-import org.sers.webutils.model.RecordStatus;
-import org.sers.webutils.model.security.User;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 import javax.annotation.PostConstruct;
@@ -24,17 +22,17 @@ import java.util.List;
 public class TeamDetailView {
 
     private TeamService teamService;
-    private AssignedUserService assignedUserService;
+    private StaffService staffService;
 
     private Team team;
     private String teamId;
-    private List<User> teamMembers;
+    private List<Staff> teamMembers;
 
     @PostConstruct
     public void init() {
         try {
             this.teamService = ApplicationContextProvider.getBean(TeamService.class);
-            this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
+            this.staffService = ApplicationContextProvider.getBean(StaffService.class);
 
             javax.faces.context.FacesContext facesContext = javax.faces.context.FacesContext.getCurrentInstance();
             if (facesContext != null) {
@@ -67,11 +65,11 @@ public class TeamDetailView {
                 System.err.println("Team not found with ID: " + this.teamId);
                 return;
             }
-            this.teamMembers = new ArrayList<>(this.team.getMembers()); // Convert Set to List
+            this.teamMembers = staffService.getStaffByTeam(this.team);
         } catch (Exception e) {
             System.err.println("Error loading team details: " + e.getMessage());
             e.printStackTrace();
-            this.teamMembers = new ArrayList<>();
+            this.teamMembers = new ArrayList<Staff>();
         }
     }
 

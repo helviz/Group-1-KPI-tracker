@@ -24,15 +24,15 @@ public class NavigationController implements Serializable {
      *
      */
     private static final long serialVersionUID = 1L;
-    private String userForm = HyperLinks.USER_FORM;
+    private String staffForm = HyperLinks.STAFF_FORM;
     private String rolesView = HyperLinks.ROLES_VIEW;
     private String profileView = HyperLinks.PROFILE_VIEW;
     private String mailSettingForm = HyperLinks.MAIL_SETTING_FORM;
     private String loginForm = HyperLinks.LOGIN_FORM;
     private String homePage = HyperLinks.DASHBOARD;
 
-    public String getUserForm() {
-        return userForm;
+    public String getStaffForm() {
+        return staffForm;
     }
 
     public String getRolesView() {
@@ -51,8 +51,8 @@ public class NavigationController implements Serializable {
         return loginForm;
     }
 
-    public void setUserForm(String userForm) {
-        this.userForm = userForm;
+    public void setStaffForm(String staffForm) {
+        this.staffForm = staffForm;
     }
 
     public void setRolesView(String rolesView) {

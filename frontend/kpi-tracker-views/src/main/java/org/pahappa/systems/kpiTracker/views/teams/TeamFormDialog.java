@@ -2,19 +2,17 @@ package org.pahappa.systems.kpiTracker.views.teams;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.pahappa.systems.kpiTracker.core.services.AssignedUserService;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
+import org.pahappa.systems.kpiTracker.core.services.StaffService;
 import org.pahappa.systems.kpiTracker.core.services.TeamService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 import org.pahappa.systems.kpiTracker.models.team.Team;
-import org.pahappa.systems.kpiTracker.models.user.AssignedUser;
 import org.pahappa.systems.kpiTracker.security.HyperLinks;
 import org.pahappa.systems.kpiTracker.views.dialogs.DialogForm;
 import org.sers.webutils.client.views.presenters.ViewPath;
 import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.exception.ValidationFailedException;
-import org.sers.webutils.model.security.User;
-import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -22,7 +20,6 @@ import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @ManagedBean(name = "teamFormDialog", eager = true)
 @Getter
@@ -34,12 +31,11 @@ public class TeamFormDialog extends DialogForm<Team> {
     private static final long serialVersionUID = 1L;
     private TeamService teamService;
     private DepartmentService departmentService;
-    private UserService userService;
-    private AssignedUserService assignedUserService;
+    private StaffService staffService;
     private List<Department> availableDepartments;
     private Department selectedDepartment;
-    private List<User> selectedMembers = new ArrayList<>();
-    private List<User> availableUsersForSelect = new ArrayList<>();
+    private List<Staff> selectedStaff = new ArrayList<>();
+    private List<Staff> availableStaffForSelect = new ArrayList<>();
     private boolean edit;
     private boolean departmentSelectionDisabled;
 
@@ -48,8 +44,7 @@ public class TeamFormDialog extends DialogForm<Team> {
         try {
             this.teamService = ApplicationContextProvider.getBean(TeamService.class);
             this.departmentService = ApplicationContextProvider.getBean(DepartmentService.class);
-            this.userService = ApplicationContextProvider.getBean(UserService.class);
-            this.assignedUserService = ApplicationContextProvider.getBean(AssignedUserService.class);
+            this.staffService = ApplicationContextProvider.getBean(StaffService.class);
             this.availableDepartments = this.departmentService.getAllInstances();
             resetModal();
         } catch (Exception e) {
@@ -63,18 +58,22 @@ public class TeamFormDialog extends DialogForm<Team> {
 
     @Override
     public void persist() throws ValidationFailedException, OperationFailedException {
-        Team team = (Team) super.model;
-        team.setMembers(new HashSet<User>(this.selectedMembers));
-        team.setDepartment(selectedDepartment);
-        this.teamService.saveInstance(team);
+        super.getModel().setDepartment(selectedDepartment);
+        Team savedTeam = this.teamService.saveInstance(super.getModel());
+
+        // A more robust way is to calculate diffs, but clearing and re-adding is simpler for a form dialog.
+        staffService.clearTeamMembers(savedTeam);
+        if (this.selectedStaff != null && !this.selectedStaff.isEmpty()) {
+            staffService.assignMultipleStaffToTeam(this.selectedStaff, savedTeam);
+        }
     }
 
     @Override
     public void resetModal() {
         super.resetModal();
         super.model = new Team();
-        this.selectedMembers = new ArrayList<User>();
-        this.availableUsersForSelect = new ArrayList<User>();
+        this.selectedStaff = new ArrayList<>();
+        this.availableStaffForSelect = new ArrayList<>();
         this.selectedDepartment = null;
         this.departmentSelectionDisabled =false;
         setEdit(false);
@@ -85,9 +84,8 @@ public class TeamFormDialog extends DialogForm<Team> {
         super.setFormProperties();
         if (super.model != null && super.model.getId() != null) {
             setEdit(true);
-            Team team = (Team) super.model;
-            this.selectedMembers = new ArrayList<User>(team.getMembers());
-            this.selectedDepartment = team.getDepartment();
+            this.selectedStaff = staffService.getStaffByTeam(getModel());
+            this.selectedDepartment = getModel().getDepartment();
             this.departmentSelectionDisabled = true;
             onDepartmentChange();
         } else {
@@ -95,8 +93,8 @@ public class TeamFormDialog extends DialogForm<Team> {
                 super.model = new Team();
             }
             setEdit(false);
-            this.selectedMembers = new ArrayList<User>();
-            this.availableUsersForSelect = new ArrayList<User>();
+            this.selectedStaff = new ArrayList<>();
+            this.availableStaffForSelect = new ArrayList<>();
             this.selectedDepartment = null;
             this.departmentSelectionDisabled = false;
         }
@@ -105,20 +103,14 @@ public class TeamFormDialog extends DialogForm<Team> {
     public void onDepartmentChange() {
         if (this.selectedDepartment != null) {
             try {
-                List<AssignedUser> assignedUsersInDepartment = assignedUserService
-                        .getAssignedUsersByDepartment(this.selectedDepartment);
-                List<User> users = new ArrayList<>();
-                for (AssignedUser assignedUser : assignedUsersInDepartment) {
-                    users.add(assignedUser.getUser());
-                }
-                this.availableUsersForSelect = users;
+                this.availableStaffForSelect = staffService.getStaffByDepartment(this.selectedDepartment);
             } catch (Exception e) {
                 System.err.println("An error occurred while fetching users for department.");
                 e.printStackTrace();
-                this.availableUsersForSelect = new ArrayList<User>();
+                this.availableStaffForSelect = new ArrayList<>();
             }
         } else {
-            this.availableUsersForSelect = new ArrayList<User>();
+            this.availableStaffForSelect = new ArrayList<>();
         }
     }
 
@@ -127,7 +119,7 @@ public class TeamFormDialog extends DialogForm<Team> {
         if (super.model == null) {
             super.model = new Team();
         }
-        ((Team) super.model).setDepartment(department);
+        getModel().setDepartment(department);
         this.selectedDepartment = department;
         this.departmentSelectionDisabled = true;
         if (this.selectedDepartment != null) {

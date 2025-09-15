@@ -46,7 +46,8 @@
 		<mapping class="org.pahappa.systems.kpiTracker.models.kpi.KPI" />
         <mapping class="org.pahappa.systems.kpiTracker.models.department.Department" />
         <mapping class="org.pahappa.systems.kpiTracker.models.team.Team" />
-		<mapping class="org.pahappa.systems.kpiTracker.models.user.AssignedUser" />
+		<mapping class="org.pahappa.systems.kpiTracker.models.staff.Staff" />
+		<mapping class="org.pahappa.systems.kpiTracker.models.staff.StaffTeam" />
 		<mapping class="org.pahappa.systems.kpiTracker.models.activity.Activity" />
 		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyCategory" />
 		<mapping class="org.pahappa.systems.kpiTracker.models.organisationFit.SurveyQuestion" />
