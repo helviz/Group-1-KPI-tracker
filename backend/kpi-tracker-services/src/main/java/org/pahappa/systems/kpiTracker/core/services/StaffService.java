@@ -36,7 +36,7 @@ public interface StaffService extends GenericService<Staff> {
 
     void createMultipleStaff(List<User> users, Department department);
 
-    void assignMultipleStaffToTeam(List<Staff> staffList, Team team);
+    void assignMultipleStaffToTeam(List<Staff> staffList, Team team) throws ValidationFailedException, OperationFailedException;
 
     Staff getStaffByUser(User user);
 
@@ -46,7 +46,8 @@ public interface StaffService extends GenericService<Staff> {
 
     List<User> getUnassignedUsersForTeam(Team team);
 
-    void clearTeamMembers(Team team);
+    void clearTeamMembers(Team team) throws ValidationFailedException, OperationFailedException;
+
     List<Staff> getUnassignedStaffInDepartment(Department department);
 
     Staff createUser(Staff staff) throws ValidationFailedException, OperationFailedException;

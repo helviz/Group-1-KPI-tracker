@@ -7,11 +7,13 @@ import org.pahappa.systems.kpiTracker.core.dao.StaffDao;
 import org.pahappa.systems.kpiTracker.core.dao.StaffTeamDao;
 import org.pahappa.systems.kpiTracker.core.dao.TeamDao;
 import org.pahappa.systems.kpiTracker.core.services.StaffService;
+import org.pahappa.systems.kpiTracker.core.services.EmailService; // NEW
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.pahappa.systems.kpiTracker.models.staff.Staff;
 import org.pahappa.systems.kpiTracker.models.staff.StaffTeam;
 import org.pahappa.systems.kpiTracker.models.team.Team;
 import org.pahappa.systems.kpiTracker.models.security.RoleConstants;
+import org.pahappa.systems.kpiTracker.utils.OtpUtils; // NEW
 import org.pahappa.systems.kpiTracker.utils.Validate;
 import org.sers.webutils.model.RecordStatus;
 import org.sers.webutils.model.exception.OperationFailedException;
@@ -43,19 +45,21 @@ public class StaffServiceImpl extends GenericServiceImpl<Staff> implements Staff
     private final TeamDao teamDao;
     private final UserService userService;
     private final RoleService roleService;
+    private final EmailService EmailService; // NEW: Inject the new email service
 
     @Autowired
     RoleDao roleDao;
 
     @Autowired
     public StaffServiceImpl(StaffDao staffDao, StaffTeamDao staffTeamDao, DepartmentDao departmentDao, TeamDao teamDao,
-                            UserService userService, RoleService roleService) {
+                            UserService userService, RoleService roleService, EmailService EmailService) {
         this.staffDao = staffDao;
         this.staffTeamDao = staffTeamDao;
         this.departmentDao = departmentDao;
         this.teamDao = teamDao;
         this.userService = userService;
         this.roleService = roleService;
+        this.EmailService = EmailService;
     }
 
     @Override
@@ -365,7 +369,7 @@ public class StaffServiceImpl extends GenericServiceImpl<Staff> implements Staff
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Staff createUser(Staff staff) throws ValidationFailedException, OperationFailedException {
+    public User createUser(Staff staff) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(staff, "Staff details cannot be null.");
         Validate.isTrue(staff.getUser() == null, "This staff member already has a user account.");
         Validate.hasText(staff.getEmail(), "Staff email is required to create a user account.");
@@ -377,32 +381,50 @@ public class StaffServiceImpl extends GenericServiceImpl<Staff> implements Staff
 
         User user = new User();
         user.setUsername(staff.getEmail());
-        user.setClearTextPassword("Welcome@123");
-        user.setChangePassword(true);
         user.setFirstName(staff.getFirstName());
         user.setLastName(staff.getLastName());
         user.setEmailAddress(staff.getEmail());
+        user.setDateCreated(new Date());
 
-        // Assign a default role
+        String generatedOtp = OtpUtils.generateOTP(); // NEW: Generate OTP
+        user.setClearTextPassword(generatedOtp);     // Set the generated OTP as clear text password
+        user.setChangePassword(true); // Force password change on first login
+
         Role staffRole = roleService.getRoleByName(RoleConstants.ROLE_STAFF);
         if (staffRole == null) {
-            throw new OperationFailedException("Default 'Staff' role not found. Please ensure migrations are run or the role is created manually.");
+            throw new OperationFailedException("The default 'Staff' role is not configured in the system. Cannot create user.");
         }
         user.setRoles(new HashSet<>(Collections.singletonList(staffRole)));
 
         User savedUser = userService.saveUser(user);
 
-        // The 'staff' object passed to this method is a "detached" entity from the web layer.
-        // Merging it directly can cause issues if it has a complex graph of other detached objects
-        // (like Department -> departmentLead -> User), leading to the "Unable to find User" error.
-        //
-        // The correct approach is to load the "managed" instance of the Staff entity from the database
-        // within the current transaction, update it, and then save it.
         Staff managedStaff = staffDao.find(staff.getId());
         if (managedStaff == null) {
             throw new OperationFailedException("Could not find the staff member to associate the user with. The staff member may have been deleted.");
         }
         managedStaff.setUser(savedUser);
-        return this.saveStaff(managedStaff);
+        this.saveStaff(managedStaff);
+
+        // NEW: Send email with OTP
+        try {
+            String subject = "KPI Tracker Account Created - Temporary Password";
+            String body = String.format(
+                    "Hello %s %s,\n\n" +
+                            "An account has been created for you on the KPI Tracker system.\n" +
+                            "Your username is your email address: %s\n" +
+                            "Your temporary password is: %s\n\n" +
+                            "You will be required to change this password on your first login for security reasons.\n\n" +
+                            "Regards,\nKPI Tracker System Admin",
+                    staff.getFirstName(), staff.getLastName(), staff.getEmail(), generatedOtp
+            );
+            EmailService.sendEmail(staff.getEmail(), subject, body);
+            log.info("OTP email sent successfully to " + staff.getEmail());
+        } catch (OperationFailedException e) {
+            log.error("Failed to send OTP email to {}: {}");
+            // Optionally, re-throw or notify admin, but allow user creation to proceed if email fails.
+            // For now, we'll just log and let it continue.
+        }
+
+        return savedUser;
     }
 }

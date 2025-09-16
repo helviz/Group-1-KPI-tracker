@@ -60,7 +60,7 @@ public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamSer
     }
 
     @Override
-    public List<User> getUsersWithoutTeamInDepartment(Department department) throws ValidationFailedException, OperationFailedException {
+    public List<Staff> getUsersWithoutTeamInDepartment(Department department) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(department, "Department cannot be null");
 
         // Get all staff in the department
@@ -81,13 +81,13 @@ public class TeamServiceImpl extends GenericServiceImpl<Team> implements TeamSer
         }
 
         // Filter the department's staff to find those not in any team, then map to User
-        List<User> usersWithoutTeam = new ArrayList<>();
+        List<Staff> staffWithoutTeam = new ArrayList<>();
         for (Staff staff : staffInDepartment) {
             if (!staffIdsInAnyTeam.contains(staff.getId())) {
-                usersWithoutTeam.add(staff.getUser());
+                staffWithoutTeam.add(staff.getUser());
             }
         }
-        return usersWithoutTeam;
+        return staffWithoutTeam;
     }
 
     private boolean isDuplicate(Team entity, String property, Object value) {

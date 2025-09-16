@@ -2,7 +2,7 @@ package org.pahappa.systems.kpiTracker.models.team;
 
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.sers.webutils.model.BaseEntity;
-import org.sers.webutils.model.security.User;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -15,10 +15,10 @@ public class Team extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
     private String teamName;
-    private User teamLead;
+    private Staff teamLead;
     private String description;
     private Department department;
-    private Set<User> members = new HashSet<>();
+    private Set<Staff> members = new HashSet<>();
 
     @Column(name = "team_name", nullable = false, unique = true)
     public String getTeamName() {
@@ -32,11 +32,11 @@ public class Team extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "team_lead_id")
-    public User getTeamLead() {
+    public Staff getTeamLead() {
         return teamLead;
     }
 
-    public void setTeamLead(User teamLead) {
+    public void setTeamLead(Staff teamLead) {
         this.teamLead = teamLead;
     }
 
@@ -65,11 +65,11 @@ public class Team extends BaseEntity {
             joinColumns = {@JoinColumn(name = "team_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    public Set<User> getMembers() {
+    public Set<Staff> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<User> members) {
+    public void setMembers(Set<Staff> members) {
         this.members = members;
     }
 

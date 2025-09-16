@@ -4,7 +4,7 @@ package org.pahappa.systems.kpiTracker.models.kpi;
 import org.pahappa.systems.kpiTracker.constants.KpiType;
 import org.pahappa.systems.kpiTracker.models.goalMgt.IndividualGoal;
 import org.sers.webutils.model.BaseEntity;
-import org.sers.webutils.model.security.User;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -48,9 +48,9 @@ public class KPI extends BaseEntity {
     @Column(name = "is_complete")
     private Boolean isComplete = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_staff_id", nullable = false)
+    private Staff ownerStaff;
 
     @Transient
     public BigDecimal getProgressPercentage() {
@@ -143,6 +143,14 @@ public class KPI extends BaseEntity {
         this.unitOfMeasure = unitOfMeasure;
     }
 
+    public Staff getOwnerStaff() {
+        return ownerStaff;
+    }
+
+    public void setOwnerStaff(Staff ownerStaff) {
+        this.ownerStaff = ownerStaff;
+    }
+
     public Boolean getIsComplete() {
         return isComplete;
     }
@@ -151,13 +159,6 @@ public class KPI extends BaseEntity {
         this.isComplete = isComplete;
     }
 
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
 
     public IndividualGoal getGoal() {
         return goal;
