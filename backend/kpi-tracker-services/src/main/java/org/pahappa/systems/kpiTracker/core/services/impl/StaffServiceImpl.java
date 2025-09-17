@@ -369,7 +369,7 @@ public class StaffServiceImpl extends GenericServiceImpl<Staff> implements Staff
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public User createUser(Staff staff) throws ValidationFailedException, OperationFailedException {
+    public Staff createUser(Staff staff) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(staff, "Staff details cannot be null.");
         Validate.isTrue(staff.getUser() == null, "This staff member already has a user account.");
         Validate.hasText(staff.getEmail(), "Staff email is required to create a user account.");
@@ -425,6 +425,6 @@ public class StaffServiceImpl extends GenericServiceImpl<Staff> implements Staff
             // For now, we'll just log and let it continue.
         }
 
-        return savedUser;
+        return managedStaff;
     }
 }

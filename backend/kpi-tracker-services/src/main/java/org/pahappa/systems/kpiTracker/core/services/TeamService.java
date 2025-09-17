@@ -11,5 +11,5 @@ import java.util.List;
 public interface TeamService extends GenericService<Team> {
     Team getTeamByName(String name);
 
-    List<Staff> getUsersWithoutTeamInDepartment(Department department) throws ValidationFailedException, OperationFailedException;
+    List<Staff> getStaffWithoutTeamInDepartment(Department department) throws ValidationFailedException, OperationFailedException;
 }
