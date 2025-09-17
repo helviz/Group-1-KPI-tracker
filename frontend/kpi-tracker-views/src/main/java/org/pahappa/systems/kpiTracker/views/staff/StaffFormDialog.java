@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ import org.sers.webutils.server.core.service.UserService;
 import org.sers.webutils.server.core.utils.ApplicationContextProvider;
 
 @ManagedBean(name = "staffFormDialog", eager = true)
-@SessionScoped
+@ViewScoped
 @Setter
 @Getter
 public class StaffFormDialog extends DialogForm<Staff> {

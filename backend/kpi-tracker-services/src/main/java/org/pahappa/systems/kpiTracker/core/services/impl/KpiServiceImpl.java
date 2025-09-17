@@ -3,6 +3,7 @@ package org.pahappa.systems.kpiTracker.core.services.impl;
 import com.googlecode.genericdao.search.Search;
 import org.pahappa.systems.kpiTracker.core.services.KpiService;
 import org.pahappa.systems.kpiTracker.models.kpi.KPI;
+import org.pahappa.systems.kpiTracker.models.kpi.KPI;
 
 import org.pahappa.systems.kpiTracker.constants.KpiType;
 
@@ -14,6 +15,7 @@ import org.sers.webutils.model.exception.ValidationFailedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service("kpiService")
@@ -23,48 +25,27 @@ public class KpiServiceImpl extends GenericServiceImpl<KPI> implements KpiServic
     @Override
     public KPI saveInstance(KPI kpi) throws ValidationFailedException, OperationFailedException {
         Validate.notNull(kpi, "KPI details cannot be null");
-        //Validate.notNull(kpi.getGoal(), "KPI must be attached to a goal");
+        Validate.notNull(kpi.getGoal(), "KPI must be attached to a goal");
         Validate.hasText(kpi.getTitle(), "KPI title is required");
         Validate.notNull(kpi.getKpiType(), "KPI type is required");
 
-        if (isDuplicate(kpi, "title", kpi.getTitle())) {
+        if (isDuplicateTitleInGoal(kpi)) {
             throw new ValidationFailedException("A KPI with the same title already exists for this goal.");
         }
+
         if (kpi.getKpiType() == KpiType.QUANTITATIVE) {
-            Validate.notNull(kpi.getStartValue(), "Start value is required for a Quantitative KPI");
-            Validate.notNull(kpi.getTargetValue(), "Target value is required for a Quantitative KPI");
-            Validate.isTrue(kpi.getTargetValue().compareTo(kpi.getStartValue()) > 0, "Target value must be greater than the start value.");
-
-
-            // Initialize current value if not set
-            if (kpi.isNew() && kpi.getCurrentValue() == null) {
-                kpi.setCurrentValue(kpi.getStartValue());
-            }
-
-            // Clear QUALITATIVE fields to ensure data integrity
-            kpi.setIsComplete(null);
-
+            prepareQuantitativeKpi(kpi);
         } else if (kpi.getKpiType() == KpiType.QUALITATIVE) {
-            // Initialize QUALITATIVE fields if not set
-            if (kpi.isNew() && kpi.getIsComplete() == null) {
-                kpi.setIsComplete(false);
-            }
-
-            // Clear Quantitative fields to ensure data integrity
-            kpi.setStartValue(null);
-            kpi.setTargetValue(null);
-            kpi.setCurrentValue(null);
-            kpi.setUnitOfMeasure(null);
+            prepareQualitativeKpi(kpi);
         }
 
         return super.save(kpi);
     }
 
     @Override
-    public boolean isDeletable(KPI instance) throws OperationFailedException {
-        // For now, we allow deletion.
-        // Future logic could prevent deletion if it's part of a performance review.
-        return true;
+    public boolean isDeletable(KPI kpi) throws OperationFailedException {
+        // A KPI is not deletable if progress has been made on it.
+        return kpi.getProgressPercentage().compareTo(BigDecimal.ZERO) == 0;
     }
 
     @Override
@@ -76,10 +57,40 @@ public class KpiServiceImpl extends GenericServiceImpl<KPI> implements KpiServic
         return super.search(search);
     }
 
-    private boolean isDuplicate(KPI entity, String property, Object value) {
-        Search search = new Search().addFilterEqual(property, value).addFilterEqual("goal", entity.getGoal());
-        if (!entity.isNew())
-            search.addFilterNotEqual("id", entity.getId());
+    private boolean isDuplicateTitleInGoal(KPI kpi) {
+        Search search = new Search(KPI.class);
+        search.addFilterEqual("title", kpi.getTitle());
+        search.addFilterEqual("goal", kpi.getGoal());
+        if (!kpi.isNew()) {
+            search.addFilterNotEqual("id", kpi.getId());
+        }
         return super.count(search) > 0;
+    }
+
+    private void prepareQuantitativeKpi(KPI kpi) throws ValidationFailedException {
+        Validate.notNull(kpi.getStartValue(), "Start value is required for a Quantitative KPI");
+        Validate.notNull(kpi.getTargetValue(), "Target value is required for a Quantitative KPI");
+        Validate.isTrue(kpi.getTargetValue().compareTo(kpi.getStartValue()) > 0, "Target value must be greater than the start value.");
+
+        // Initialize current value if not set
+        if (kpi.isNew() && kpi.getCurrentValue() == null) {
+            kpi.setCurrentValue(kpi.getStartValue());
+        }
+
+        // Clear QUALITATIVE fields to ensure data integrity
+        kpi.setIsComplete(null);
+    }
+
+    private void prepareQualitativeKpi(KPI kpi) {
+        // Initialize QUALITATIVE fields if not set
+        if (kpi.isNew() && kpi.getIsComplete() == null) {
+            kpi.setIsComplete(false);
+        }
+
+        // Clear Quantitative fields to ensure data integrity
+        kpi.setStartValue(null);
+        kpi.setTargetValue(null);
+        kpi.setCurrentValue(null);
+        kpi.setUnitOfMeasure(null);
     }
 }

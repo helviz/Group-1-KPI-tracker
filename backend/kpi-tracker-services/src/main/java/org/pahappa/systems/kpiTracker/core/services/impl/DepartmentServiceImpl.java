@@ -2,6 +2,7 @@ package org.pahappa.systems.kpiTracker.core.services.impl;
 
 import org.pahappa.systems.kpiTracker.core.dao.DepartmentDao;
 import org.pahappa.systems.kpiTracker.core.services.DepartmentService;
+import org.pahappa.systems.kpiTracker.core.services.StaffService;
 import org.pahappa.systems.kpiTracker.models.department.Department;
 import org.sers.webutils.model.exception.OperationFailedException;
 import org.sers.webutils.model.exception.ValidationFailedException;
@@ -17,6 +18,9 @@ public class DepartmentServiceImpl extends GenericServiceImpl<Department> implem
     @Autowired
     private DepartmentDao departmentDao;
 
+    @Autowired
+    private StaffService staffService;
+
 
     @Override
     public Department saveInstance(Department entityInstance) throws ValidationFailedException, OperationFailedException {
@@ -25,12 +29,12 @@ public class DepartmentServiceImpl extends GenericServiceImpl<Department> implem
     }
 
     /**
-     * This method specifies if a department can be deleted. For now, we'll say yes.
-     * This is an abstract method from your GenericServiceImpl that must be implemented.
+     * A department is deletable only if it has no staff members assigned to it.
      */
     @Override
     public boolean isDeletable(Department instance) throws OperationFailedException {
-        return true;
+        // A department can be deleted only if it has no staff members.
+        return staffService.getStaffByDepartment(instance).isEmpty();
     }
 
     @Override
@@ -40,7 +44,7 @@ public class DepartmentServiceImpl extends GenericServiceImpl<Department> implem
 
     @Override
     public Department getDepartmentById(String id) {
-        return this.departmentDao.searchUniqueByPropertyEqual("id", id);
+        return this.departmentDao.find(id);
     }
 
 

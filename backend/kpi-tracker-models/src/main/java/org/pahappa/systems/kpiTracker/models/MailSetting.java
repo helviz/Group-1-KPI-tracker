@@ -14,8 +14,8 @@ public class MailSetting extends BaseEntity {
      */
     private static final long serialVersionUID = 1L;
     
-    private String senderAddress = "fred@pahappa.com";
-    private String senderPassword = "fred";
+    private String senderAddress = "jovantrevor8@gmail.com";
+    private String senderPassword = "ljyy vlpf lyji aibm";
     private String senderSmtpHost = "smtp.gmail.com";
     private String senderSmtpPort = "587";
     

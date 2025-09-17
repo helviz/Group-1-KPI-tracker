@@ -2,7 +2,7 @@ package org.pahappa.systems.kpiTracker.models.department;
 
 import lombok.Setter;
 import org.sers.webutils.model.BaseEntity;
-import org.sers.webutils.model.security.User;
+import org.pahappa.systems.kpiTracker.models.staff.Staff;
 
 
 import javax.persistence.*;
@@ -24,7 +24,9 @@ public class Department extends BaseEntity {
     private String name;
 
 
-    private User departmentLead;
+    @ManyToOne
+    @JoinColumn(name = "department_lead_id")
+    private Staff departmentLead;
 
 
     private String description;
@@ -36,9 +38,11 @@ public class Department extends BaseEntity {
 
 
 
-    @ManyToOne
-    @JoinColumn(name = "department_lead " )
-    public User getDepartmentLead() {
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_lead_staff_id")
+    private Staff departmentLeadStaff;
+
+    public Staff getDepartmentLead() {
         return departmentLead;
     }
 

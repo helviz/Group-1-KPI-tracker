@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
@@ -6,177 +7,128 @@
                 template="/pages/californiatemplate/template.xhtml">
 
     <ui:define name="content">
-        <div class="ui-g ui-fluid">
-            <div class="ui-g-12">
-                <h:form id="staffView" enctype="multipart/form-data">
-                    <div class="card">
-                        <p:growl id="messages" showDetail="true" />
-                        <div class="p-grid">
-                            <div class="p-col-12 p-md-6 p-lg-2">
-                                <p:inputText id="searchTerm" required="false"
-                                             value="#{staffView.searchTerm}" placeholder="Search ..."
-                                             onkeyup="#{staffView.reloadFilterReset()}">
+        <h:form id="staffForm">
+            <p:growl id="messages" showDetail="true"/>
 
-                                    <p:ajax event="keyup"
-                                            update="staffView"
-                                            listener="#{staffView.reloadFilterReset()}" />
-                                </p:inputText>
-                            </div>
+            <div class="card">
+                <p:panelGrid columns="2" columnClasses="ui-g-12 ui-md-6,ui-g-12 ui-md-6" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                    <p:outputPanel>
+                        <p:inputText id="searchTerm" required="false"
+                                     value="#{staffView.searchTerm}" placeholder="Search by name or email..."/>
+                    </p:outputPanel>
 
-                            <div class="p-col-12 p-md-6 p-lg-3">
-                                <p:selectOneMenu id="genders" label="Filter gender"
-                                                 title="Filter gender" value="#{staffView.selectedGender}"
-                                                 style="height: 100%" converter="genderConverter">
-                                    <f:selectItem itemLabel="All" value="#{null}" />
-                                    <f:selectItems value="#{staffView.genders}" />
-                                    <p:ajax event="change" update="staffView"
-                                            listener="#{staffView.reloadFilterReset()}" />
-                                </p:selectOneMenu>
-                            </div>
-                            <div class="p-col-12 p-md-6 p-lg-3">
-                                <p:calendar placeholder="From Date Created"
-                                            value="#{staffView.createdFrom}" inputStyleClass="Wid100 "
-                                            navigator="true" pattern="dd MMM, yyyy" />
-                            </div>
-                            <div class="p-col-12 p-md-6 p-lg-3">
-                                <p:calendar placeholder="To Date Created"
-                                            value="#{staffView.createdTo}" inputStyleClass="Wid100 "
-                                            navigator="true" pattern="dd MMM, yyyy" />
-                            </div>
-                            <div class="p-col-12 p-md-6 p-lg-1">
-                                <p:commandButton icon="fa fa-search"
-                                                 styleClass="ui-button" id="searchBtn"
-                                                 style="margin-right: 18px" update="staffView"
-                                                 actionListener="#{staffView.reloadFilterReset()}">
-                                </p:commandButton>
-                            </div>
+                    <p:outputPanel>
+                        <p:selectOneMenu id="genders" label="Filter gender"
+                                         title="Filter gender" value="#{staffView.selectedGender}"
+                                         converter="genderConverter">
+                            <f:selectItem itemLabel="All" value="#{null}"/>
+                            <f:selectItems value="#{staffView.genders}"/>
+                        </p:selectOneMenu>
+                    </p:outputPanel>
 
+                    <p:outputPanel>
+                        <p:calendar placeholder="From Date Created"
+                                    value="#{staffView.createdFrom}" inputStyleClass="Wid100"
+                                    navigator="true" pattern="dd MMM, yyyy"/>
+                    </p:outputPanel>
 
-                        </div>
-                    </div>
+                    <p:outputPanel>
+                        <p:calendar placeholder="To Date Created"
+                                    value="#{staffView.createdTo}" inputStyleClass="Wid100"
+                                    navigator="true" pattern="dd MMM, yyyy"/>
+                    </p:outputPanel>
 
-                    <ui:fragment>
-                        <div class="p-grid table-demo">
-                            <div class="p-col-12">
-                                <div class="card">
-                                    <p:dataTable id="staffTable" var="model" value="#{staffView.dataModels}"
-                                                 widgetVar="staffTable"
-                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                                 paginator="true" lazy="true" rows="20"
-                                                 emptyMessage="#{staffView.dataEmptyMessage}"
-                                                 paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                 rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
+                    <p:outputPanel>
+                        <p:outputLabel value="Show System Users Only" for="showSystemUsersOnly"/>
+                        <p:selectBooleanCheckbox id="showSystemUsersOnly" value="#{staffView.showSystemUsersOnly}"/>
+                    </p:outputPanel>
 
-                                        <f:facet name="header">
-                                            <div class="p-d-flex p-jc-between">
-                                                <div>
-                                                    <span class="table-header-text">Staff Management</span>
-
-                                                </div>
-
-                                                <div>
-                                                    <div class="p-d-flex p-flex-wrap">
-                                                        <div class="p-mr-2 p-mb-2">
-                                                            <p:commandButton value="Add Staff" process="@this" icon="fa fa-plus"
-                                                                             styleClass="ui-button" immediate="true"
-                                                                             actionListener="#{staffFormDialog.show}">
-                                                                <f:setPropertyActionListener value="#{null}"
-                                                                                             target="#{staffFormDialog.model}" />
-
-                                                                <p:ajax event="dialogReturn" listener="#{staffView.reloadFilterReset}" update="staffTable" />
-                                                            </p:commandButton>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </f:facet>
-
-                                        <p:column width="30" headerText="No.">
-                                            <h:outputText value="#{row + 1}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Full name" />
-                                            </f:facet>
-                                            <h:outputText value="#{model.getFullName()}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Roles" />
-                                            </f:facet>
-                                            <h:outputText value="#{staffView.getRolesAsString(model)}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Department" />
-                                            </f:facet>
-                                            <h:outputText value="#{model.department.name}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Created By" />
-                                            </f:facet>
-                                            <h:outputText value="#{model.user != null ? model.user.createdBy : model.createdBy}" />
-                                        </p:column>
-
-                                        <p:column headerText="Action" width="140" exportable="false"
-                                                  style="text-align: center">
-                                            <p:commandButton process="@this" icon="fa fa-edit"
-                                                             styleClass="ui-button" immediate="true" rendered="true"
-                                                             actionListener="#{staffFormDialog.show}">
-                                                <f:setPropertyActionListener value="#{model}"
-                                                                             target="#{staffFormDialog.model}" />
-                                                <p:ajax event="dialogReturn" listener="#{staffView.reloadFilterReset}" update="staffTable" />
-                                            </p:commandButton>
-                                            <p:commandButton icon="fa fa-user-plus" title="Activate User Account" process="@this"
-                                                             styleClass="ui-button-success" update="staffView"
-                                                             actionListener="#{staffView.activateUserAccount(model)}"
-                                                             rendered="#{model.user == null}">
-                                                <p:confirm header="Confirmation"
-                                                           message="Are you sure you want to activate a user account for #{model.fullName}? A default password will be set."
-                                                           icon="ui-icon-alert" />
-                                            </p:commandButton>
-                                            <p:commandButton icon="fa fa-trash" title="Delete"
-                                                             styleClass="ui-button-danger"
-                                                             style="margin-left: 5px"
-                                                             actionListener="#{staffView.deleteSelectedStaff(model)}"
-                                                             update="staffView">
-                                                <p:confirm header="Confirmation"
-                                                           message="You are about to delete a staff member. Do you wish to continue?"
-                                                           icon="ui-icon-alert" />
-                                            </p:commandButton>
-
-                                        </p:column>
-
-                                    </p:dataTable>
-
-                                    <p:blockUI block="staffView" trigger="searchBtn">
-                                        <p:graphicImage value="/resources/images/workingicon.png" />
-                                    </p:blockUI>
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </ui:fragment>
-                    <p:blockUI block="staffView">
-                        <p:graphicImage value="/resources/images/workingicon.png" />
-                    </p:blockUI>
-                    <p:confirmDialog global="true">
-                        <p:commandButton value="Yes" type="button"
-                                         styleClass="ui-confirmdialog-yes" icon="fa fa-thumbs-up" />
-                        <p:commandButton value="No" type="button"
-                                         styleClass="ui-confirmdialog-no" icon="fa fa-thumbs-down" />
-                    </p:confirmDialog>
-
-                </h:form>
+                    <p:commandButton value="Search" icon="pi pi-search" actionListener="#{staffView.doSearch}" update=":staffForm:staffTable"/>
+                </p:panelGrid>
             </div>
-        </div>
+
+            <div class="p-grid table-demo">
+                <div class="p-col-12">
+                    <div class="card">
+                        <p:dataTable id="staffTable" var="model" value="#{staffView.dataModels}"
+                                     widgetVar="staffTableWidget"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     paginator="true" lazy="true" rows="10" rowsPerPageTemplate="5,10,15"
+                                     emptyMessage="No staff found."
+                                     paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                     rowIndexVar="row" reflow="true" styleClass="TableAlgnment">
+
+                            <f:facet name="header">
+                                <div class="p-d-flex p-jc-between">
+                                    <span class="table-header-text">Staff Management</span>
+                                    <p:commandButton value="Add Staff" process="@this" icon="pi pi-plus"
+                                                     styleClass="ui-button" immediate="true"
+                                                     actionListener="#{staffFormDialog.show}">
+                                        <f:setPropertyActionListener value="#{null}"
+                                                                     target="#{staffFormDialog.model}"/>
+                                        <p:ajax event="dialogReturn" listener="#{staffView.doSearch}" update="@form"/>
+                                    </p:commandButton>
+                                </div>
+                            </f:facet>
+
+                            <p:column width="30" headerText="No.">
+                                <h:outputText value="#{row + 1}"/>
+                            </p:column>
+
+                            <p:column headerText="Full Name" sortBy="#{model.firstName}">
+                                <h:outputText value="#{model.fullName}"/>
+                            </p:column>
+
+                            <p:column headerText="Email Address" sortBy="#{model.emailAddress}">
+                                <h:outputText value="#{model.emailAddress}"/>
+                            </p:column>
+
+                            <p:column headerText="Roles">
+                                <h:outputText value="#{staffView.getRolesAsString(model)}"/>
+                            </p:column>
+
+                            <p:column headerText="Department" sortBy="#{model.department.name}">
+                                <h:outputText value="#{model.department.name}"/>
+                            </p:column>
+
+                            <p:column headerText="User Account" style="text-align: center;">
+                                <h:outputText value="#{model.user != null ? 'Yes' : 'No'}"
+                                              style="color:#{model.user != null ? 'green' : 'red'}; font-weight: bold;"/>
+                            </p:column>
+
+                            <p:column headerText="Actions" width="120" style="text-align: center" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" styleClass="ui-button-info ui-button-flat"
+                                                 title="Edit Staff" actionListener="#{staffFormDialog.setModel(model)}"
+                                                 oncomplete="PF('staffFormDialogWidget').show()" update=":staffFormDialog:staffDetailPanel"/>
+
+                                <p:commandButton icon="pi pi-user-plus" styleClass="ui-button-success ui-button-flat"
+                                                 title="Activate User Account" rendered="#{model.user == null}"
+                                                 actionListener="#{staffView.activateUserAccount(model)}"
+                                                 update="@form" process="@this">
+                                    <p:confirm header="Activate User Account" message="Are you sure you want to activate a user account for #{model.fullName}? An email will be sent with a temporary password." icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+
+                                <p:commandButton icon="pi pi-times" styleClass="ui-button-danger ui-button-flat"
+                                                 title="Deactivate Staff" actionListener="#{staffView.deleteSelectedStaff(model)}"
+                                                 update="@form" process="@this">
+                                    <p:confirm header="Deactivate Staff" message="Are you sure you want to deactivate #{model.fullName}? This will also remove their user account." icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" widgetVar="deleteConfirmDialog">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+
+        <p:blockUI block="staffForm" trigger="staffTable,searchBtn,showSystemUsersOnly">
+            <p:graphicImage value="/resources/images/workingicon.png"/>
+        </p:blockUI>
+
+        <ui:include src="/pages/staff/StaffFormDialog.xhtml"/>
     </ui:define>
 </ui:composition>
