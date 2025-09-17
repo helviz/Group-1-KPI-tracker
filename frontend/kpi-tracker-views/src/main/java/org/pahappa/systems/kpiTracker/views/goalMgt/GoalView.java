@@ -31,7 +31,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@ManagedBean(name = "goalView")
+@ManagedBean(name = "goalViews")
 @ViewScoped
 @ViewPath(path = HyperLinks.GOAL_VIEW)
 public class GoalView extends PaginatedTableView<Object, Object, Object> {

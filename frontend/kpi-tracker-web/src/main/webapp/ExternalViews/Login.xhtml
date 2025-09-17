@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
     <f:facet name="first">
@@ -12,92 +15,59 @@
     <title>Pahappa Goals Bucket - Sign In</title>
 
     <style type="text/css">
+        /* Background container */
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('#{resource["images/login_background.png"]}') no-repeat center center fixed;
+            background-size: cover;
             padding: 20px;
         }
 
+        /* Login card styling */
         .login-card {
             display: flex;
+            flex-direction: column;
             width: 100%;
-            max-width: 1000px;
-            background: white;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            min-height: 600px;
-        }
-
-        .branding-section {
-            flex: 1;
-            background: linear-gradient(135deg, #2C67B1 0%, #1e4a8a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             padding: 40px;
-            position: relative;
-            color: white;
+            box-sizing: border-box;
         }
 
-        .branding-section::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><line x1="75" y1="25" x2="50" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(%23arrowhead)"/><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.2)"/></marker></defs></svg>') no-repeat center;
-            opacity: 0.8;
-        }
-
-        .welcome-text {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .app-name {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            line-height: 1.2;
-        }
-
-        .tagline {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            line-height: 1.6;
-            max-width: 300px;
-        }
-
-        .form-section {
-            flex: 1;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 60px 50px;
-        }
-
-        .signin-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 40px;
+        /* Welcome section */
+        .welcome-section {
             text-align: center;
+            margin-bottom: 30px;
         }
 
+        .welcome-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2C67B1;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .welcome-section p {
+            font-size: 0.95rem;
+            color: #555;
+            margin: 0;
+        }
+
+        /* Form groups */
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-label {
@@ -116,6 +86,7 @@
             font-size: 1rem;
             transition: all 0.3s ease;
             background: #f8f9fa;
+            box-sizing: border-box;
         }
 
         .form-input:focus {
@@ -125,9 +96,10 @@
             box-shadow: 0 0 0 3px rgba(44, 103, 177, 0.1);
         }
 
+        /* Sign in button */
         .signin-button {
-            width: 30%;
-            padding: 10px;
+            width: 100%;
+            padding: 15px;
             background: #2C67B1;
             color: white;
             border: none;
@@ -136,7 +108,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .signin-button:hover {
@@ -145,9 +117,10 @@
             box-shadow: 0 5px 15px rgba(44, 103, 177, 0.3);
         }
 
+        /* Forgot password link */
         .forgot-password {
             text-align: right;
-
+            margin-top: 10px;
         }
 
         .forgot-password a {
@@ -161,6 +134,7 @@
             text-decoration: underline;
         }
 
+        /* Help link */
         .help-link {
             text-align: center;
             margin-top: 30px;
@@ -176,30 +150,19 @@
             text-decoration: underline;
         }
 
+        /* Responsive for smaller screens */
         @media (max-width: 768px) {
             .login-card {
-                flex-direction: column;
-                max-width: 400px;
+                max-width: 90%;
+                padding: 30px;
             }
 
-            .branding-section {
-                padding: 30px 20px;
+            .welcome-section h1 {
+                font-size: 1.8rem;
             }
 
-            .form-section {
-                padding: 40px 30px;
-            }
-
-            .welcome-text {
-                font-size: 2rem;
-            }
-
-            .app-name {
-                font-size: 2.5rem;
-            }
-
-            .signin-title {
-                font-size: 2rem;
+            .welcome-section h2 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -208,52 +171,54 @@
 <h:body>
     <div class="login-container">
         <div class="login-card">
-            <!-- Left Section - Branding -->
-            <div class="branding-section">
-                <div class="welcome-text">Welcome !!</div>
-                <div class="app-name">Pahappa<br />Goals Bucket</div>
-                <div class="tagline">Align goals, track performance with the platform.</div>
-            </div>
+            <h:form id="loginForm" prependId="false">
 
-            <!-- Right Section - Sign In Form -->
-            <div class="form-section">
-                <h:form id="loginForm" prependId="false">
-                    <div class="signin-title">Sign In</div>
+                <!-- Welcome Text -->
+                <div class="welcome-section">
+                    <h1>Welcome !!!</h1>
+                    <h2>Pahappa Goal Bucket</h2>
+                    <p>Align Goals. Track performance with the system.</p>
+                </div>
 
-                  
+                <!-- Username / Email Field -->
+                <div class="form-group">
+                    <label class="form-label">Email Address or Username</label>
+                    <p:inputText id="j_username" required="true"
+                                 placeholder="Enter your email address or username"
+                                 styleClass="form-input" />
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Email Address or Username</label>
-                        <p:inputText id="j_username" required="true" placeholder="Enter your email address or username"
-                            styleClass="form-input">
-                        </p:inputText>
-                    </div>
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <p:password id="j_password" required="true"
+                                placeholder="Enter your password"
+                                styleClass="form-input" />
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <p:password id="j_password" required="true" placeholder="Enter your password"
-                            styleClass="form-input">
-                        </p:password>
-                    </div>
+                <!-- Sign In Button -->
+                <p:commandButton id="login" value="Sign In" ajax="false"
+                                 styleClass="signin-button"
+                                 validateClient="true"
+                                 update="loginForm"
+                                 action="#{loginController.doLogin}" />
 
-                    <p:commandButton id="login" value="Sign In" ajax="false" styleClass="signin-button"
-                        validateClient="true" update="loginForm" action="#{loginController.doLogin}" />
+                <!-- Forgot Password Link -->
+                <div class="forgot-password">
+                    <a href="#">Forgot Password?</a>
+                </div>
 
-                    <div class="forgot-password">
-                        <a href="#">Forgot Password?</a>
-                    </div>
-
-                    <div class="help-link">
-                        <a href="#">Need special assistance, contact help?</a>
-                    </div>
-                </h:form>
-            </div>
+                <!-- Help Link -->
+                <div class="help-link">
+                    <a href="#">Need special assistance? Contact help.</a>
+                </div>
+            </h:form>
         </div>
     </div>
 
+    <!-- PrimeFaces Stylesheets -->
     <h:outputStylesheet name="css/primeicons.css" library="california-layout" />
     <h:outputStylesheet name="css/primeflex.min.css" library="california-layout" />
     <h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="california-layout" />
 </h:body>
-
 </html>
