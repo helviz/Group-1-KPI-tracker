@@ -1,5 +1,8 @@
 package org.pahappa.systems.kpiTracker.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum GoalLevel {
     ORGANISATION("Organisation Goal", 1),
     DEPARTMENT("Department Goal", 2),
@@ -12,14 +15,6 @@ public enum GoalLevel {
     GoalLevel(String displayName, int hierarchyLevel) {
         this.displayName = displayName;
         this.hierarchyLevel = hierarchyLevel;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public int getHierarchyLevel() {
-        return hierarchyLevel;
     }
 
     public boolean isHigherThan(GoalLevel other) {

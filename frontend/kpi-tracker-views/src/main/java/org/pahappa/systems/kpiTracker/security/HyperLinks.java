@@ -30,8 +30,11 @@ public class HyperLinks {
     public static final String GOAL_PERIOD_FORM = "/pages/goals/goalPeriod/GoalPeriodForm.xhtml?faces-redirect=true";
     public static final String GOAL_LEVEL_VIEW = "/pages/goals/goalLevel/GoalLevelView.xhtml?faces-redirect=true";
 
+    public static final String GOAL_FORM_DIALOG="/pages/goal/GoalFormDialog.xhtml?faces-redirect=true";
+    public static final String GOAL_VIEW = "/pages/goal/GoalView.xhtml?faces-redirect=true";
 
-    public static final String GOAL_VIEW = "/pages/goals/GoalsView.xhtml?faces-redirect=true";
+
+
     public static final String KPIS_VIEW = "/pages/kpis/KpisView.xhtml?faces-redirect=true";
     public static final String KPI_FORM_DIALOG = "/pages/kpis/KpiFormDialog.xhtml?faces-redirect=true";
     public static final String PERMISSION_VIEW = "/pages/permissions/Permissions.xhtml?faces-redirect=true";
