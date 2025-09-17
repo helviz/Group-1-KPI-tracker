@@ -1,0 +1,208 @@
+/* General form container styling */
+.card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    height: auto;
+    min-height: 500px;
+    overflow-y: auto;
+}
+
+/* Capitalized text utility */
+.capitalized {
+    text-transform: capitalize;
+}
+
+/* Required field indicator */
+.required-asterisk {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+/* Auto-set label styling */
+.auto-set-label {
+    color: #27ae60;
+    font-style: italic;
+    font-size: 0.9em;
+    margin-left: 8px;
+}
+
+/* Field hint text */
+.field-hint {
+    color: #7f8c8d;
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Dynamic fields container with smooth transitions */
+#dynamicFieldsContainer {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Field section transitions */
+.field-section {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* Info message styling */
+.ui-message-info {
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    color: #1976d2;
+    padding: 12px;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.ui-message-info i {
+    margin-right: 8px;
+}
+
+/* Field labels */
+.field-label {
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Input group styling */
+.ui-inputgroup {
+    width: 100%;
+}
+
+/* PrimeFaces selectOneMenu and input styling */
+.ui-selectonemenu,
+.ui-inputtext,
+.ui-inputtextarea,
+.ui-inputnumber {
+    width: 100% !important;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 1em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ui-selectonemenu:hover,
+.ui-inputtext:hover,
+.ui-inputtextarea:hover,
+.ui-inputnumber:hover {
+    border-color: #3498db;
+}
+
+.ui-selectonemenu:focus,
+.ui-inputtext:focus,
+.ui-inputtextarea:focus,
+.ui-inputnumber:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+/* Placeholder text styling */
+.ui-inputtext::placeholder,
+.ui-inputtextarea::placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* SelectOneMenu dropdown styling */
+.ui-selectonemenu .ui-selectonemenu-label {
+    padding: 8px;
+    color: #34495e;
+}
+
+.ui-selectonemenu-panel {
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ui-selectonemenu-items {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Error message styling */
+.ui-message-error {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-top: 4px;
+}
+
+/* Button styling */
+.ui-button {
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.ui-button-outlined.ui-button-danger {
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    background: transparent;
+}
+
+.ui-button-outlined.ui-button-danger:hover {
+    background: #e74c3c;
+    color: #ffffff;
+}
+
+.ui-button:not(.ui-button-outlined) {
+    background: #3498db;
+    border: 1px solid #3498db;
+    color: #ffffff;
+}
+
+.ui-button:not(.ui-button-outlined):hover {
+    background: #2980b9;
+    border-color: #2980b9;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+    .p-col-12.p-md-6 {
+        margin-bottom: 16px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .ui-button {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
+
+/* Form section headers */
+h5 {
+    color: #2c3e50;
+    font-size: 1.1em;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* Ensure proper spacing for form fields */
+.p-grid.ui-fluid > .ui-col-12 {
+    margin-bottom: 16px;
+}
+
+/* Smooth fade-in for dynamic sections */
+.ui-col-12.ui-md-6 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ui-col-12.ui-md-6[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(10px);
+}
