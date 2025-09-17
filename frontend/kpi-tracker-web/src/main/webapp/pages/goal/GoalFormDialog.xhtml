@@ -1,0 +1,172 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/pages/californiatemplate/dialog-template.xhtml">
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="goal_form_styles.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="GoalFormDialog" styleClass="card">
+            <h:panelGrid columns="1" styleClass="p-grid ui-fluid">
+                <!-- Period -->
+                <h:panelGroup styleClass="p-col-12 p-md-6">
+                    <p:outputLabel for="period" value="Period *" styleClass="field-label" />
+                    <p:selectOneMenu id="period" value="#{goalFormDialog.model.goalPeriod}"
+                                     converter="goalPeriodConverter"
+                                     required="true" filter="true" filterMatchMode="contains"
+                                     requiredMessage="Period is required.">
+                        <f:selectItem itemLabel="Select Period" itemValue="#{null}" />
+                        <f:selectItems value="#{goalFormDialog.goalPeriods}" var="p1"
+                                       itemLabel="#{p1.periodName}" itemValue="#{p1}" />
+                    </p:selectOneMenu>
+                    <p:message for="period" display="icon" />
+                </h:panelGroup>
+
+                <!-- Goal Level -->
+                <h:panelGroup styleClass="p-col-12 p-md-6">
+                    <h5>Goal Level</h5>
+                    <p:selectOneMenu id="goalLevel" value="#{goalFormDialog.model.goalLevel}"
+                                     converter="goalLevelConverter"
+                                     filter="true" filterMatchMode="contains" required="true"
+                                     styleClass="w-full">
+                        <f:selectItem itemLabel="-- Select Goal Level --" itemValue="#{null}"
+                                      noSelectionOption="true" />
+                        <f:selectItems value="#{goalFormDialog.goalLevels}" var="goalLevel"
+                                       itemLabel="#{goalLevel.displayName}" itemValue="#{goalLevel}" />
+                        <p:ajax event="change" listener="#{goalFormDialog.onGoalLevelChange}"
+                                update="goalLevelInfo dynamicFieldsContainer" />
+                    </p:selectOneMenu>
+                    <p:message for="goalLevel" display="icon" />
+                </h:panelGroup>
+
+                <!-- Goal Title -->
+                <h:panelGroup styleClass="p-col-12">
+                    <h5>Goal Title</h5>
+                    <p:inputText id="goalName" value="#{goalFormDialog.model.goalName}"
+                                 placeholder="e.g. Increase Sales Revenue by 15%"
+                                 required="true" styleClass="w-full" />
+                    <p:message for="goalName" display="icon" />
+                </h:panelGroup>
+
+                <!-- Goal Description -->
+                <h:panelGroup styleClass="p-col-12">
+                    <h5>Description</h5>
+                    <p:inputTextarea id="description" value="#{goalFormDialog.model.description}"
+                                     rows="4" placeholder="Describe the goal in detail..."
+                                     styleClass="w-full" />
+                    <p:message for="description" display="icon" />
+                </h:panelGroup>
+
+                <!-- Goal Level Info Panel -->
+                <p:outputPanel id="goalLevelInfo" styleClass="p-col-12">
+                    <p:panel rendered="#{goalFormDialog.model.goalLevel != null}"
+                             styleClass="ui-message ui-message-info">
+                        <i class="pi pi-info-circle"></i>
+                        <h:panelGroup id="goalLevelDescription">
+                            <ui:fragment rendered="#{goalFormDialog.model.goalLevel == 'ORGANISATION'}">
+                                Organisation goals are top-level goals that don't require a parent. They set the overall direction for the organization.
+                            </ui:fragment>
+                            <ui:fragment rendered="#{goalFormDialog.model.goalLevel == 'DEPARTMENT'}">
+                                Department goals must have a parent organisation goal and specify which department they belong to.
+                            </ui:fragment>
+                            <ui:fragment rendered="#{goalFormDialog.model.goalLevel == 'TEAM'}">
+                                Team goals must have a parent department goal. The department will be automatically set from the parent goal.
+                            </ui:fragment>
+                            <ui:fragment rendered="#{goalFormDialog.model.goalLevel == 'INDIVIDUAL'}">
+                                Individual goals must have a parent team goal and specify the individual owner. The department will be automatically set from the parent goal.
+                            </ui:fragment>
+                        </h:panelGroup>
+                    </p:panel>
+                </p:outputPanel>
+
+                <!-- Dynamic Fields Container -->
+                <p:outputPanel id="dynamicFieldsContainer" layout="block">
+                    <!-- Parent Goal -->
+                    <p:outputPanel id="parentGoalSection" styleClass="p-col-12 p-md-6 field-section"
+                                   rendered="#{goalFormDialog.isParentApplicable()}">
+                        <h5>Parent Goal <span class="required-asterisk">*</span></h5>
+                        <p:selectOneMenu id="parentGoalDropdown" value="#{goalFormDialog.model.parentGoal}"
+                                         converter="goalConverter" filter="true" filterMatchMode="contains"
+                                         required="true" styleClass="w-full">
+                            <f:selectItem itemLabel="-- Select Parent Goal --" itemValue="#{null}"
+                                          noSelectionOption="true" />
+                            <f:selectItems value="#{goalFormDialog.availableParentGoals}" var="goal"
+                                           itemLabel="#{goal.goalName}" itemValue="#{goal}" />
+                            <p:ajax event="change" listener="#{goalFormDialog.onParentGoalChange}"
+                                    update="departmentSection weightSection" />
+                        </p:selectOneMenu>
+                        <p:message for="parentGoalDropdown" display="icon" />
+                    </p:outputPanel>
+
+                    <!-- Weight -->
+                    <p:outputPanel id="weightSection" styleClass="p-col-12 p-md-6 field-section"
+                                   rendered="#{goalFormDialog.isWeightApplicable()}">
+                        <h5>Weight (%) <span class="required-asterisk">*</span></h5>
+                        <p:inputNumber id="weight" value="#{goalFormDialog.model.weight}"
+                                       min="0" max="100" required="true" decimalPlaces="2"
+                                       styleClass="w-full">
+                            <f:validateDoubleRange minimum="0" maximum="100" />
+                        </p:inputNumber>
+                        <p:message for="weight" display="icon" />
+                        <small class="field-hint">Contribution to parent goal (0-100%)</small>
+                    </p:outputPanel>
+
+                    <!-- Department -->
+                    <p:outputPanel id="departmentSection" styleClass="p-col-12 p-md-6 field-section"
+                                   rendered="#{goalFormDialog.isDepartmentApplicable()}">
+                        <h5>Department
+                            <ui:fragment rendered="#{goalFormDialog.departmentEditable}">
+                                <span class="required-asterisk">*</span>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{not goalFormDialog.departmentEditable}">
+                                <span class="auto-set-label">(Auto-set from parent)</span>
+                            </ui:fragment>
+                        </h5>
+                        <p:selectOneMenu id="department" value="#{goalFormDialog.model.department}"
+                                         converter="departmentConverter" filter="true" filterMatchMode="contains"
+                                         disabled="#{not goalFormDialog.departmentEditable}"
+                                         required="#{goalFormDialog.departmentEditable}" styleClass="w-full">
+                            <f:selectItem itemLabel="-- Select Department --" itemValue="#{null}"
+                                          noSelectionOption="true" />
+                            <f:selectItems value="#{goalFormDialog.availableDepartments}" var="dept"
+                                           itemLabel="#{dept.name}" itemValue="#{dept}" />
+                        </p:selectOneMenu>
+                        <p:message for="department" display="icon" />
+                        <ui:fragment rendered="#{not goalFormDialog.departmentEditable}">
+                            <small class="field-hint">Department is automatically set from the parent goal</small>
+                        </ui:fragment>
+                    </p:outputPanel>
+
+                    <!-- Owner -->
+                    <p:outputPanel id="ownerSection" styleClass="p-col-12 p-md-6 field-section"
+                                   rendered="#{goalFormDialog.isOwnerApplicable()}">
+                        <h5>Owner <span class="required-asterisk">*</span></h5>
+                        <p:selectOneMenu id="owner" value="#{goalFormDialog.model.owner}"
+                                         converter="staffConverter" filter="true" filterMatchMode="contains"
+                                         required="true" styleClass="w-full">
+                            <f:selectItem itemLabel="-- Select Owner --" itemValue="#{null}"
+                                          noSelectionOption="true" />
+                            <f:selectItems value="#{goalFormDialog.availableStaff}" var="staff"
+                                           itemLabel="#{staff.fullName}" itemValue="#{staff}" />
+                        </p:selectOneMenu>
+                        <p:message for="owner" display="icon" />
+                        <small class="field-hint">Individual responsible for this goal</small>
+                    </p:outputPanel>
+                </p:outputPanel>
+
+                <!-- Form Buttons -->
+                <h:panelGroup styleClass="p-col-12 p-d-flex p-jc-end p-mt-4">
+                    <p:commandButton value="Cancel" immediate="true" process="@this"
+                                     actionListener="#{goalFormDialog.hide}"
+                                     styleClass="ui-button-outlined ui-button-danger p-mr-2" />
+                    <p:commandButton value="Save" process="@form"
+                                     actionListener="#{goalFormDialog.save}" update="@form" />
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>
